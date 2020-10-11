@@ -9,3 +9,6 @@ Current Issues that need resolving:
 Drawer functionality is not working. Drawer navigation, icons, buttons, and the such are implemented by not functional. Suspect the drawer navigation/class must be moved to seperate file and exported to work.
 Friendlist features are not functional due to changes in functional hooks. Flatlist no longer can take useState functions and must be revised. 
 Preferences Page: class and code is written but not implemented at this time. 
+
+Addendum: setNames, setPasswords not functional due to lack of middle layer at this time - mostly used as reminder. Need to comment out. 
+After group discussion, Search and Browse functionality should be merged into one.
