@@ -51,7 +51,7 @@ class CreatePage extends React.Component{
           
           <Button
             title= 'Sign In'
-            onPress={() =>this.props.navigation.navigate('Home')}
+            onPress={() =>this.props.navigation.navigate('InitialPreferences')}
           />
         </View>
       )
@@ -92,17 +92,41 @@ class HomePage extends React.Component{
         />
           <Text>'Welcome User_Name'</Text>
           <Text>'Books your Friends Recommend!'</Text>
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
-          </TouchableOpacity>
+          <ScrollView horizontal={true}>  
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
+            <View>
+              <View style={{ flexDirection: 'row'}}>
+              <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
+              <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
+              <Image source={require('Dune.jpg')} style={{width: 75, height: 105}}/>
+              </View>
+            </View>
+            </TouchableOpacity>
+          </ScrollView>
           <Text>'Books we recommend!'</Text>
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
-          </TouchableOpacity>
+          <ScrollView horizontal={true}>
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
+            <View>
+              <View style={{ flexDirection:'row'}}>
+              <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
+              <Image source={require('Dune.jpg')} style={{width: 75, height: 105}}/>
+              <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
+              </View>
+            </View>
+            </TouchableOpacity>
+          </ScrollView>
           <Text>'Books Your Friends are Reading!'</Text>
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('Dune.jpg')} style={{width: 75, height: 105}}/>
-          </TouchableOpacity>
+          <ScrollView horizontal={true}>
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
+            <View>
+              <View style={{ flexDirection:'row'}}>
+              <Image source={require('Dune.jpg')} style={{width: 75, height: 105}}/>
+              <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
+              <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
+              </View>
+            </View>
+            </TouchableOpacity>
+          </ScrollView>
       </View>
     )
   }
@@ -114,12 +138,8 @@ class MyLibraryPage extends React.Component{
       <View style={styles.container}>
       <ScrollView>
         <Text>My Library</Text>
-        <Button 
-          title='Find Books'
-          onPress={() =>this.props.navigation.navigate('SearchBook')}
-        />
         <Button
-          title='Browse Books'
+          title='Find/Browse Books'
           onPress={() =>this.props.navigation.navigate('BrowseBooks')}
         />
         <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
@@ -139,12 +159,8 @@ class WishListPage extends React.Component{
       <View style={styles.container}>
       <ScrollView>
       <Text>My WishList</Text>
-        <Button 
-          title='Find Books'
-          onPress={() =>this.props.navigation.navigate('SearchBook')}
-        />
         <Button
-          title='Browse Books'
+          title='Find/Browse Books'
           onPress={() =>this.props.navigation.navigate('BrowseBooks')}
         />
         <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
@@ -165,10 +181,7 @@ class BookPage extends React.Component{
         <Image source={require('Dune.jpg')}></Image>
 
         <Text>Book Information from Google API</Text>
-        <Text>E.G. Frank Herbert's Dune (1965), Science Fiction, etc.</Text>
-        <Button
-          title='Back'
-        />        
+        <Text>E.G. Frank Herbert's Dune (1965), Science Fiction, etc.</Text>    
         <Button
           title='WishList'
           onPress={() =>this.props.navigation.navigate('WishList')}
@@ -196,38 +209,67 @@ class ProfilePage extends React.Component{
             title= 'WishList'
             onPress={() =>this.props.navigation.navigate('WishList')}
           />
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('LOTR.jpg')} style={{width: 50, height: 70}}/>
-          </TouchableOpacity>
+          <ScrollView horizontal={true}>  
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
+            <View>
+              <View style={{ flexDirection: 'row'}}>
+              <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
+              <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
+              <Image source={require('Dune.jpg')} style={{width: 75, height: 105}}/>
+              </View>
+            </View>
+            </TouchableOpacity>
+          </ScrollView>
           
           <Button 
             title= 'Library'
             onPress={() =>this.props.navigation.navigate('MyLibrary')}
           />
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('GOTs.jpeg')} style={{width: 50, height: 70}}/>
-          </TouchableOpacity>
+          <ScrollView horizontal={true}>  
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
+            <View>
+              <View style={{ flexDirection: 'row'}}>
+              <Image source={require('Dune.jpg')} style={{width: 75, height: 105}} />
+              <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
+              <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
+              </View>
+            </View>
+            </TouchableOpacity>
+          </ScrollView>
   
           <Text>'Currently Reading'</Text>
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('GOTs.jpeg')} style={{width: 50, height: 70}}/>
-          </TouchableOpacity>
-  
-          <Text>Friends</Text>
-          {friend.map((item)=> {
-            return (
-              <View key={item.key}>
-                <Text style={styles.item}>{item.name}</Text>
+          <ScrollView horizontal={true}>  
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
+            <View>
+              <View style={{ flexDirection: 'row'}}>
+              <Image source={require('Dune.jpg')} style={{width: 75, height: 105}} />
+              <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
+              <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
               </View>
-            )
-          })}
+            </View>
+            </TouchableOpacity>
+          </ScrollView>
+          <Text>Friends</Text>
+          <ScrollView>
+          <TouchableOpacity  onPress={() =>this.props.navigation.navigate('FrProfile')}>
+          <FlatList
+            data={[
+                {key: 'Yang Wen-Li'},
+                {key: 'Reinhard von Lohengramm'},
+                {key: 'Oskar von Reuenthal'},
+                {key: 'Julian Minci'},
+            ]}
+            renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
+            />
+            </TouchableOpacity>
+            </ScrollView>
         </ScrollView>
         </View>
       )
     }
   }
 
-class FrProfilePage extends React.Component{
+  class FrProfilePage extends React.Component{
     render() {
       return (
         <View style={styles.container}>
@@ -236,33 +278,62 @@ class FrProfilePage extends React.Component{
           <Text>About Me:</Text>
           <Button
             title= 'WishList'
-            onPress={() =>this.props.navigation.navigate('WishList')}
+            onPress={() =>this.props.navigation.navigate('FriWishList')}
           />
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('LOTR.jpg')} style={{width: 50, height: 70}}/>
-          </TouchableOpacity>
+          <ScrollView horizontal={true}>  
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
+            <View>
+              <View style={{ flexDirection: 'row'}}>
+              <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
+              <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
+              <Image source={require('Dune.jpg')} style={{width: 75, height: 105}}/>
+              </View>
+            </View>
+            </TouchableOpacity>
+          </ScrollView>
           
           <Button 
             title= 'Library'
-            onPress={() =>this.props.navigation.navigate(FrLibrary)}
+            onPress={() =>this.props.navigation.navigate('FrLibrary')}
           />
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('Dune.jpg')} style={{width: 50, height: 70}}/>
-          </TouchableOpacity>
+          <ScrollView horizontal={true}>  
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
+            <View>
+              <View style={{ flexDirection: 'row'}}>
+              <Image source={require('Dune.jpg')} style={{width: 75, height: 105}} />
+              <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
+              <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
+              </View>
+            </View>
+            </TouchableOpacity>
+          </ScrollView>
   
           <Text>'Currently Reading'</Text>
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('Dune.jpg')} style={{width: 50, height: 70}}/>
-          </TouchableOpacity>
-  
-          <Text>Friends</Text>
-          {friend.map((item)=> {
-            return (
-              <View key={item.key}>
-                <Text style={styles.item}>{item.name}</Text>
+          <ScrollView horizontal={true}>  
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
+            <View>
+              <View style={{ flexDirection: 'row'}}>
+              <Image source={require('Dune.jpg')} style={{width: 75, height: 105}} />
+              <Image source={require('GOTs.jpeg')} style={{width: 75, height: 75}} />
+              <Image source={require('LOTR.jpg')} style={{width: 75, height: 90}} />
               </View>
-            )
-          })}
+            </View>
+            </TouchableOpacity>
+          </ScrollView>
+          <ScrollView>
+            <Text>Friends</Text>
+          <TouchableOpacity  onPress={() =>this.props.navigation.navigate('FrProfile')}>
+          <FlatList
+            data={[
+                {key: 'Yang Wen-Li'},
+                {key: 'Reinhard von Lohengramm'},
+                {key: 'Oskar von Reuenthal'},
+                {key: 'Julian Minci'},
+            ]}
+            renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
+            />
+            </TouchableOpacity>
+            </ScrollView>
         </ScrollView>
         </View>
       )
@@ -287,6 +358,12 @@ class BrowseBooksPage extends React.Component{
         placeholder='e.g. J. R. R. Tolkien'
         onChangeText={(val) => setName(val)} />
 
+        <Text>Enter ISBN:</Text>
+        <TextInput style={styles.input}
+        keyboardType='default'
+        placeholder='e.g. 978-3-16-148410-0'
+        onChangeText={(val) => setName(val)} />
+
         <Text>Enter Genre:</Text>
         <TextInput style={styles.input}
         keyboardType='default'
@@ -299,24 +376,6 @@ class BrowseBooksPage extends React.Component{
     )
   }
 }
-
-class FriendListPage extends React.Component{
-    render() {
-      return (
-        <View style={styles.container}>
-          <Text>Friends List</Text>
-          <FlatList
-            data={friend}
-            renderItem={({ item }) => (
-              <TouchableOpacity>
-                <Text styles={styles.item}>{item.name}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-      )
-    }
-  }
 
 class SettingsPage extends React.Component{
   render() {
@@ -389,50 +448,36 @@ class FrLibraryPage extends React.Component{
     }
   }
 
-  class SearchBoPage extends React.Component{
+class FriendListPage extends React.Component{
     render() {
-        return (
-            <View style={styles.container}>
-                <Text>Search for Book(s)</Text>
-                <TextInput style={styles.input}
-                keyboardType='default'
-                placeholder='Enter Title, Author or ISBN'
-                onChangeText={(val) => setName(val)} />
-            <Button
-                title='Search!'
+      return (
+        <View style={styles.container}>
+          <Text>Friends List</Text>
+          <Text>Enter Username or Email:</Text>
+          <TextInput style={styles.input}
+            keyboardType='default'
+            placeholder='Enter Username'
+            onChangeText={(val) => setName(val)} />
+          <Button
+            title='Search!'
+          />
+          <ScrollView>
+          <TouchableOpacity  onPress={() =>this.props.navigation.navigate('FrProfile')}>
+          <FlatList
+            data={[
+                {key: 'Yang Wen-Li'},
+                {key: 'Reinhard von Lohengramm'},
+                {key: 'Oskar von Reuenthal'},
+                {key: 'Julian Minci'},
+            ]}
+            renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
             />
-            <ScrollView>
-                <Text>Search Results:</Text>
-                <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-                    <Image source={require('GOTs.jpeg')} style={{width: 50, height: 50}} />
-                    <Image source={require('LOTR.jpg')} style={{width: 50, height: 60}} />
-                    <Image source={require('Dune.jpg')} style={{width: 50, height: 70}} />
-                </TouchableOpacity>
+            </TouchableOpacity>
             </ScrollView>
-            </View>
-        )
+        </View>
+      )
     }
-}
-class SearchPage extends React.Component{
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Search for Friends!</Text>
-        <TextInput style={styles.input}
-                keyboardType='default'
-                placeholder='Enter Username'
-                onChangeText={(val) => setName(val)} />
-        <ScrollView>
-            <Text>Search Results:</Text>
-            <FlatList
-            data={friend}
-            renderItem={({ item }) => (<Text styles={styles.item}>{item.name}</Text>)}
-            />
-        </ScrollView>
-      </View>
-    )
   }
-}
 
 class FriWishListPage extends React.Component{
     render() {
@@ -451,69 +496,7 @@ class FriWishListPage extends React.Component{
     }
   }
 
-  class SearchBoPage extends React.Component{
-    render() {
-        return (
-            <View style={styles.container}>
-                <Text>Search for Book(s)</Text>
-                <TextInput style={styles.input}
-                keyboardType='default'
-                placeholder='Enter Title, Author or ISBN'
-                onChangeText={(val) => setName(val)} />
-            <Button
-                title='Search!'
-            />
-            <ScrollView>
-                <Text>Search Results:</Text>
-                <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-                    <Image source={require('GOTs.jpeg')} style={{width: 50, height: 50}} />
-                    <Image source={require('LOTR.jpg')} style={{width: 50, height: 60}} />
-                    <Image source={require('Dune.jpg')} style={{width: 50, height: 70}} />
-                </TouchableOpacity>
-            </ScrollView>
-            </View>
-        )
-    }
-}
-class SearchPage extends React.Component{
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Search for Friends!</Text>
-        <TextInput style={styles.input}
-                keyboardType='default'
-                placeholder='Enter Username'
-                onChangeText={(val) => setName(val)} />
-        <ScrollView>
-            <Text>Search Results:</Text>
-            <FlatList
-            data={friend}
-            renderItem={({ item }) => (<Text styles={styles.item}>{item.name}</Text>)}
-            />
-        </ScrollView>
-      </View>
-    )
-  }
-}
-
-class FriWishListPage extends React.Component{
-    render() {
-      return (
-        <View style={styles.container}>
-        <ScrollView>
-        <Text>Friend_1's WishList</Text>
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('BookInfo')}>
-            <Image source={require('GOTs.jpeg')} style={{width: 50, height: 50}} />
-            <Image source={require('LOTR.jpg')} style={{width: 50, height: 60}} />
-            <Image source={require('Dune.jpg')} style={{width: 50, height: 70}} />
-          </TouchableOpacity>
-        </ScrollView>
-        </View>
-      )
-    }
-  }
-
-class PreferencesPage extends React.Component{
+class InitPreferencesPage extends React.Component{
     render() {
         return (
             <View style={styles.container}>
@@ -532,21 +515,27 @@ class PreferencesPage extends React.Component{
                 keyboardType='default'
                 placeholder='Favorite Book?'/>
                 <Text>Please Select Genres You Like!</Text>
+                <Text>The genres available will ultimately depend on the categories listed under the Google Library API. e.g.</Text>
+                <TouchableOpacity>
+                  <Text>Science Fiction</Text>
+                  <Text>High Fantasy</Text>
+                  <Text>Romance</Text>
+                </TouchableOpacity>
                 <Button
                     title='Continue to Homepage!'
-                    onPress={() =>this.props.navigation.navigate('HomePage')}
+                    onPress={() =>this.props.navigation.navigate('Home')}
                 />
             </View>
         )
     }
 }
 
-const [friend, setFriend] = useState([
-   {friend: 'Yang Wen-Li', key: '1'},
-     {friend: 'Reinhard von Lohengramm', key: '2'},
-    {friend: 'Oskar von Reuenthal', key: '3'},
-    {friend: 'Julian Minci', key: '4'}
-  ])
+// const [friend, setFriend] = useState([
+//    {friend: 'Yang Wen-Li', key: '1'},
+//      {friend: 'Reinhard von Lohengramm', key: '2'},
+//     {friend: 'Oskar von Reuenthal', key: '3'},
+//     {friend: 'Julian Minci', key: '4'}
+//   ])
 
 const friend = [
   {
@@ -583,13 +572,15 @@ function App() {
                 <Stack.Screen name="WishList" component={WishListPage} />
                 <Stack.Screen name="BookInfo" component={BookPage} />
                 <Stack.Screen name="BrowseBooks" component={BrowseBooksPage} />
-                <Stack.Screen name="Search" component={SearchPage} />
-                <Stack.Screen name="SearchBook" component={SearchBoPage} />
+                {/* <Stack.Screen name="Search" component={SearchPage} /> */}
+                {/* <Stack.Screen name="SearchBook" component={SearchBoPage} /> */}
                 <Stack.Screen name="Settings" component={SettingsPage} />
-                <Stack.Screen name="Results" component={ResultsPage} />
+                {/* <Stack.Screen name="Results" component={ResultsPage} /> */}
                 <Stack.Screen name="FriendList" component={FriendListPage} />
                 <Stack.Screen name="FriWishList" component={FriWishListPage} />
                 <Stack.Screen name="Menu" component={MenuPage} />
+                <Stack.Screen name="InitialPreferences" component={InitPreferencesPage} />
+                <Stack.Screen name="FrProfile" component={FrProfilePage} /> 
             </Stack.Navigator>
         </NavigationContainer>
     )
