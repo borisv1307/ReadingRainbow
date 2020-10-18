@@ -1,5 +1,3 @@
-import {useState, useEffect} from 'react';
-
 export function SearchBooksByTitle(searchTitle, startIndex = 0)
 {
   if (searchTitle != "")
@@ -30,46 +28,22 @@ export function SearchBooksByISBN(searchIsbn, startIndex = 0)
   return GetBooks(searchIsbn, startIndex);
 }
 
-export function GetBooks(searchStr, startIndex = 0) {
-
-    const [books, setBooks] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+export async function GetBooks(searchStr, startIndex = 0) {
 
     const baseurl = 'https://www.googleapis.com/books/v1/volumes';
     const mykey = 'AIzaSyCY-Xy_wHFKlBpZfEHI1kthE-t9KeU0LHo';
 
     // create full request URL by joining parts of the string with the base request
     let fullurl = [baseurl, '?q=', searchStr, '&startIndex=', CheckInt(startIndex), '&key=', mykey].join('');
-
-    useEffect (() =>  {fetch(fullurl)
-      .then(response => {
-            if (response.ok) 
-              return response.json();
-      })
-      .then(responsejson => {
-            setBooks (responsejson.items);
-       })
-      .catch(error => {
-        console.error(error);
-        setError(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-    }, []);
-
-    if (loading) return "Loading...";
-    if (error) return "Oops!";
-    if (books == null)
-    {
-      return "No books found";
-    }
-    else
-    {
-      return (books.map((name, index) => (
-        ReturnBook(name, index)
-    )));
+    
+    try{
+        const response = await fetch(fullurl);
+        const json = await response.json();
+        return json.items.map((name, index) => ReturnBook(name, index));
+    } catch (err) {
+        console.error(err);
+    } finally {
+        console.log('All tasks complete'); //Feel free to change this
     }
  }
 

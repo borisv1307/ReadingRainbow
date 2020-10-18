@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Image, TouchableOpacity, ScrollView, Button, TextInput, View, Text } from 'react-native';
+import { ScrollView, Button, TextInput, View, Text } from 'react-native';
 import { globalStyles } from '../styles/global';
+import { GetBooks } from '../api-functions/getbooks';
 
 export default function Search() {
     const [ text, setText ] = useState('');
+    const [ results, setResults ] = useState([]);
+    console.log(results);
     return (
         <View style={globalStyles.container}>
             <Text style={globalStyles.titleText}>Search for Books</Text>
@@ -11,10 +14,13 @@ export default function Search() {
                 keyboardType="default"
                 placeholder="Enter Title, Author or ISBN"
                 onChangeText={(text) => setText(text)} />
-            <Button title='Search!' /*onPress={() => GetBooks(text)}*/ />
-    <ScrollView>
-        <Text>Search Results</Text>
-    </ScrollView>
-    </View>
+            <Button
+                disabled={text.length===0}
+                title='Search!'
+                onPress={() => GetBooks(text).then(r=>setResults(r)) } />
+            <ScrollView>
+                {results.map(book => <Text key={book.Index}> {book.Title} </Text>)}
+            </ScrollView>
+        </View>
     );
 }

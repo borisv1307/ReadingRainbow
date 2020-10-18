@@ -20,7 +20,7 @@ export const globalStyles = StyleSheet.create({
     
   },
   profileInfo: {
-
+    
   },
   smallButton: {
     padding: 30,
