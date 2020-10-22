@@ -1,7 +1,7 @@
 
 export async function GetBooksFromDatabase() {
 
-    const fullurl = 'http://localhost:5000/api/book/FindfromNeo';
+    const fullurl = 'https://localhost:5001/api/book/FindfromNeo';
 
     // create full request URL by joining parts of the string with the base request
     try{
@@ -14,7 +14,6 @@ export async function GetBooksFromDatabase() {
                 }
             });
         const json = await response.json();
-        console.log(json);
         return json.map((name, index) => ReturnBook(name, index));
     } catch (err) {
         console.error(err);
