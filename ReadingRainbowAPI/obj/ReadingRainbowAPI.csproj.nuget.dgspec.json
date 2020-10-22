@@ -41,6 +41,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Neo4j.Driver": {
+              "target": "Package",
+              "version": "[4.1.1, )"
+            },
             "Neo4jClient": {
               "target": "Package",
               "version": "[3.2.0.1, )"
