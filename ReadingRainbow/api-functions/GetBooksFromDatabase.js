@@ -14,6 +14,7 @@ export async function GetBooksFromDatabase() {
                 }
             });
         const json = await response.json();
+        console.log(json);
         return json.map((name, index) => ReturnBook(name, index));
     } catch (err) {
         console.error(err);
