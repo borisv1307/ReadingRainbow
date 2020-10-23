@@ -8,9 +8,8 @@ export default function Library() {
         <View style={globalStyles.container}>
             <Text style={globalStyles.titleText}>My Library</Text>
             <Button
-                disabled={text.length===0}
                 title='Get My Library'
-                onPress={() => GetBooks().then(r=>setResults(r)) } />
+                onPress={() => GetBooksFromDatabase().then(r=>setResults(r)) } />
             <View style={globalStyles.box}>
             <ScrollView>
                 {results.map(book => <Text style={globalStyles.item} key={book.Index}> {book.Title} </Text>)}
