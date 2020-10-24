@@ -1,23 +1,54 @@
 import { StyleSheet } from 'react-native';
-
+import colors from './colors.js';
 export const globalStyles = StyleSheet.create({
-  titleText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    textAlign: "center",
+  avatar: {
+    height: 100,
+    width: 100,
+  },
+  box: {
+    backgroundColor: colors.LIGHT_GREEN,
+    flex: 1,
+    padding: 6,
+    margin: 6,
+  },
+  bookImage: {
+    
+  },
+  buttonText: {
+    fontSize: 16,
+    flexWrap: 'wrap',
   },
   container: {
     flex: 1,
     padding: 60,
+    justifyContent: 'space-between',
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    margin: 10,
   },
   input: {
     padding: 8,
     margin: 10,
-    backgroundColor: "beige",
-  },
-  bookImage: {
+    flexDirection: 'row',
     
+  },
+  item: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: colors.RED,
+    fontSize: 12
+  },
+  largeButton:{
+    fontSize: 200,
+    fontWeight: 'bold',
+    color: '#333',
+    padding: 60,
+    backgroundColor: "yellow",
+    borderColor: "black",
+    margin: 10,
+    justifyContent: "space-around"
   },
   profileInfo: {
     
@@ -30,46 +61,22 @@ export const globalStyles = StyleSheet.create({
     justifyContent: "space-between",
     alignContent: "space-between",
   },
-  largeButton:{
-    fontSize: 200,
-    fontWeight: 'bold',
-    color: '#333',
-    padding: 60,
-    backgroundColor: "yellow",
-    borderColor: "black",
-    margin: 10,
-    justifyContent: "space-around"
-  },
-  warningButton:{
-    padding: 40,
-    backgroundColor: "red",
-    margin: 10,
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    alignContent: "space-between",
-  },
-  buttonText: {
-    fontSize: 16
-  },
-  box: {
-    backgroundColor: "beige",
-    flex: 1,
-    padding: 6,
-    margin: 6,
-  },
-  avatar: {
-    height: 100,
-    width: 100,
+  titleText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
   },
   thumbnail: {
     height: 193,
     width: 128,
     margin: 4,
   },
-  item: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: 'pink',
-    fontSize: 12
-  }
+  warningButton:{
+    padding: 40,
+    margin: 10,
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignContent: "space-between",
+  },
 });

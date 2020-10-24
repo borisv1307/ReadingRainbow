@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, FlatList, Button, TextInput, TouchableOpacity, View, Text } from 'react-native';
+import { FlatList, Button, TextInput, TouchableOpacity, View, Text } from 'react-native';
 import { globalStyles } from '../styles/global';
 import { useNavigation } from '@react-navigation/native';
 
@@ -13,7 +13,6 @@ export default function FriendList() {
             placeholder='Enter Username'
             onChangeText={(val) => setName(val)} />
           <Button title='Search!' />
-          <TouchableOpacity onPress={() => navigate('Profile')}>
             <FlatList
                 data={[
                     {key: 'Yang Wen-Li'},
@@ -21,9 +20,11 @@ export default function FriendList() {
                     {key: 'Oskar von Reuenthal'},
                     {key: 'Julian Minci'},
                 ]}
-                renderItem={({item}) => <Text style={globalStyles.item}>{item.key}</Text>}
-                />
-            </TouchableOpacity>
+                renderItem={({item}) =>
+                    <TouchableOpacity onPress={() => navigate('Profile')}>
+                    <Text style={globalStyles.item}>{item.key}</Text>
+                    </TouchableOpacity>
+                }/>
         </View>
         
     );

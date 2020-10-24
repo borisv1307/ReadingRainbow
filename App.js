@@ -12,7 +12,6 @@ import WishList from "./screens/wishlist";
 import Book from "./screens/book";
 import Search from "./screens/search";
 import Settings from "./screens/settings";
-import Results from "./screens/results";
 import FriendList from "./screens/friend_list";
 import Menu from "./screens/menu";
 
@@ -35,7 +34,6 @@ export default function App() {
             {/* <Stack.Screen name="Search" component={SearchPage} /> */}
             {/* <Stack.Screen name="SearchBook" component={SearchBoPage} /> */}
             <Stack.Screen name="Settings" component={Settings} />
-            <Stack.Screen name="Results" component={Results} />
             <Stack.Screen name="FriendList" component={FriendList} />
             {/* <Stack.Screen name="FriWishList" component={FriWishListPage} /> */}
             <Stack.Screen name="Menu" component={Menu} />

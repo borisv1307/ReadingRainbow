@@ -9,7 +9,7 @@ export default function Home() {
         <View style={globalStyles.container}>
             <ScrollView>
                 <Text style={globalStyles.titleText}>Welcome, Paige!</Text>
-                <Button title="Find Books" onPress={() => navigate('Search')} />
+                <Button color= "pink" title="Find Books" onPress={() => navigate('Search')} />
                 <Button title="Friends" onPress={() => navigate('FriendList')} />
                 <Button title="View My Profile" onPress={() => navigate('Profile')} />
                 <View>

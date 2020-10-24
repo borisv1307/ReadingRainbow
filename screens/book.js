@@ -7,7 +7,6 @@ export default function Book() {
     const { navigate } = useNavigation();
     return (
         <View style={globalStyles.container}>
-            <Text>Book Screen</Text>
             <Image
                 style={globalStyles.thumbnail}
                 source={require("../assets/unnamed.jpg")} />

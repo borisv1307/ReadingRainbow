@@ -18,7 +18,6 @@ export default function SignIn() {
                     placeholder='pageTurner@example.com'
                     onChangeText={(text) => setText(text)} />
                 <TextInput
-                    style={globalStyles.input}
                     placeholder='password'
                     onChangeText={(text) => setText(text)}
                     secureTextEntry={true} />
