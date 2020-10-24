@@ -1,21 +1,21 @@
 using System;
 using Xunit;
 using ReadingRainbowAPI.Controllers;
-using Neo4j.Driver;
 
 namespace ReadingRainbowAPI.ControllerTests
 {
-    public class BookControllerTests:IDisposable
+    [Collection("Database collection")]
+    public class BookControllerTests
     {
+        DatabaseFixture fixture;
 
-        private IDriver _iDriver;
         private BookController _bookController;
 
         // Initalize Method used for all tests
-        public BookControllerTests()
+        public BookControllerTests(DatabaseFixture fixture)
         {
-            _iDriver = GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("Neo4j", "Neo4jPassword"));
-            _bookController = new BookController(_iDriver);
+            this.fixture = fixture;
+            _bookController = new BookController(fixture.dbDriver);
         }
 
         [Fact]
@@ -23,19 +23,13 @@ namespace ReadingRainbowAPI.ControllerTests
         {
             var books = _bookController.GetAsync();
             Assert.True(books != null);
-        }
-
-        [Fact]
-        public void GetBookAsyncFail_Test()
-        {
-            var books = _bookController.GetAsync();
-            Assert.True(books != null);
+            // Assert.True(_neoUserName == "Neo4j");
         }
 
         // Clean up Method   
-        public void Dispose()
-        {
-           _iDriver.CloseAsync();
-        }
+        // public void Dispose()
+        //{
+          // _iDriver.CloseAsync();
+        //}
     }
 }
