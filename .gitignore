@@ -1,4 +1,4 @@
-node_modules/**/*
+ReadingRainbow/node_modules/**/*
 .expo/*
 npm-debug.*
 *.jks
@@ -8,6 +8,8 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
+ReadingRainbowAPI.Tests/bin/*
+ReadingRainbowAPI/bin/*
 
 # macOS
 .DS_Store
