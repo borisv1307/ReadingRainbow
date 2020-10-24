@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj": {}
+    "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj": {
+    "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj",
+        "projectUniqueName": "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj",
         "projectName": "ReadingRainbowAPI",
-        "projectPath": "C:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj",
+        "projectPath": "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj",
         "packagesPath": "C:\\Users\\klind\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\obj\\",
+        "outputPath": "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

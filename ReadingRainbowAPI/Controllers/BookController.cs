@@ -56,8 +56,8 @@ namespace ReadingRainbowAPI.Controllers
                 cursor  = await session.RunAsync(@"MATCH (b:Book) RETURN b.title as Title, 
                     b.thumbnail as Thumbnail, b.smallThumbnail as SmallThumbnail,
                     b.publishDate as PublishDate, b.numberPages as NumberPages,
-                    b.description as Description, b.isbn_10 as ISBN_10, b.isbn_13 as ISBN_13,
-                    b.isbn_Other as ISBN_Other Limit 10");  
+                    b.description as Description, b.isbn_10 as ISBN_10, b.isbn_13 as ISBN_13
+                    Limit 10");  
     
                 bookTitles = await cursor.ToListAsync<Book>(record =>  new Book {
                     Title = record["Title"].As<string>(),
@@ -69,7 +69,7 @@ namespace ReadingRainbowAPI.Controllers
                     Description= record["Description"].As<string>(),
                     ISBN_10= record["ISBN_10"].As<string>(),      
                     ISBN_13 = record["ISBN_13"].As<string>(), 
-                    ISBN_Other = record["ISBN_Other"].As<string>(), 
+                    // ISBN_Other = record["ISBN_Other"].As<string>(), 
                     // Cateogries.Add(record["Categories"].As<List<string>>())
                   });
 
