@@ -32,6 +32,7 @@ export const globalStyles = StyleSheet.create({
     padding: 8,
     margin: 10,
     flexDirection: 'row',
+    justifyContent: 'center',
     
   },
   item: {

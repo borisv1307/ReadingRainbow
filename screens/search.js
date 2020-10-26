@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { ScrollView, FlatList, TextInput, View, Text, TouchableOpacity, Image} from 'react-native';
+import { ScrollView, TextInput, View, Text, TouchableOpacity, Image} from 'react-native';
 import { globalStyles } from '../styles/global';
 import { GetBooks } from '../api-functions/getbooks';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Search() {
+    const { navigate } = useNavigation();
     const [ text, setText ] = useState('');
     const [ results, setResults ] = useState([]);
     console.log(results);
@@ -25,7 +27,12 @@ export default function Search() {
             </View>
             <ScrollView>
                 {results.map(book => 
-                    <TouchableOpacity style={globalStyles.smallButton} key={book.Index}>
+                    <TouchableOpacity
+                        style={globalStyles.smallButton}
+                        key={book.Index}
+                        onPress={() => navigate('Book', {
+                            id: book.Index,
+                        })}>
                         <Text style={globalStyles.buttonText}> {book.Title} </Text>
                     </TouchableOpacity>
                 )}
