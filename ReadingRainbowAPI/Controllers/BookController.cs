@@ -3,10 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ReadingRainbowAPI.DAL;
+using ReadingRainbowAPI.Models;
 using Neo4j.Driver;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Neo4jClient;
+using ReadingRainbowAPI.DAL;
 
 namespace ReadingRainbowAPI.Controllers
 {
@@ -15,31 +17,35 @@ namespace ReadingRainbowAPI.Controllers
     public class BookController : ControllerBase
     {
 
-        private readonly BaseRepository _baseRepository;
+        private readonly BookRepository _bookRepository;
         private readonly IDriver _driver;
+        private readonly IGraphClient _client;
  
-        public BookController(IDriver driver)
+        public BookController(BookRepository bookRepository)
         {
-            _driver = driver;
-            //await driver.CloseAsync();
+            // _client = client;
+
+            _bookRepository = bookRepository;
         }
         
         [HttpGet]
         // [HttpGet("{id}")]
        // public async Task<ActionResult,book.> GetAsync(string id)
         [Route("catalog")]
-        public ActionResult<IEnumerable<Book>> Get()
+        public async Task<ActionResult> Get(string UserName)
         {
-            var books =  new List<Book> {
-                new Book {
-                    Title = "book1"
-                    },
-                new Book {
-                    Title = "book2"
-                }
-            }; 
-                                  
-            return Ok(books);
+
+            await _bookRepository.Single(p => p.Id == book.Id && p.Title == book.Title);
+
+            var result = await _client.Cypher
+                .Match(@"(book: Book { title: 'Test' }) -
+                [:BELONGS_TO]->(userProfile: UserProfile)")
+                .Return ((book, userProfile) => new{
+                    Book = book.As<Book>(),
+                    UserProfile = userProfile.CollectAs<Person>()
+                }).ResultsAsync;
+                  
+            return Ok(result);
         }
  
         [HttpGet]

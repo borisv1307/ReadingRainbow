@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ReadingRainbowAPI.DAL;
 using Neo4j.Driver;
+using Neo4jClient;
 using System.Net.Http;
 
 namespace ReadingRainbowAPI
@@ -47,6 +48,11 @@ namespace ReadingRainbowAPI
                         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                     });
             });
+
+            var neo4jClient = new GraphClient(new Uri("bolt://localhost:7687"), "Neo4j", "Neo4jPassword");
+            neo4jClient.Connect();
+            services.AddSingleton<IGraphClient>(neo4jClient);
+
 
             services.AddMvcCore();
         }

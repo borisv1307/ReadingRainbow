@@ -19,4 +19,9 @@
     <ProjectReference Include="..\ReadingRainbowAPI\ReadingRainbowAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	<None Include=".\appsettings.json" CopyToPublishDirectory="Always" 
+	CopyToOutputDirectory="Always" />
+  </ItemGroup> 
+
 </Project>

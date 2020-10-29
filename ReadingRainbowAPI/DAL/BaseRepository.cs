@@ -1,62 +1,146 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
+using ReadingRainbowAPI.Models;
+using System.Linq;
+using System.Linq.Expressions;
 
-// Repo takes in database context as a constructor, uses context 
-// Provides business logic around context add/insert objects
+// Repo takes in database context as a constructor, uses context for database client connection
 namespace ReadingRainbowAPI.DAL
 {
-    public abstract class BaseRepository : IBaseRepository
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
+    where TEntity: Neo4jEntity, IEntity, new()
     {
-      protected readonly INeo4jDBContext _neoContext;
+        protected readonly Neo4jDBContext _neoContext;
  
-        protected BaseRepository(INeo4jDBContext context)
+        protected BaseRepository()
         {
-            _neoContext = context;
+             _neoContext = new Neo4jDBContext();
         }
 
-/*
-        public async Task CreateBook(Book book)
+        // Get All Entity Values
+        public virtual async Task<IEnumerable<TEntity>> All()
         {
-            if(book == null)
+            TEntity entity = new TEntity();
+
+            return await _neoContext.dbClient.Cypher
+                .Match("(e:" + entity.Label + ")")
+                .Return(e => e.As<TEntity>())
+                .ResultsAsync;
+        }
+
+        public virtual async Task<IEnumerable<TEntity>> Where(Expression<Func<TEntity, bool>> query)
+        {
+            string name = query.Parameters[0].Name;
+            TEntity entity = (TEntity)Activator.CreateInstance(query.Parameters[0].Type);
+            Expression<Func<TEntity, bool>> newQuery = PredicateRewriter.Rewrite(query, "e");
+
+            return await _neoContext.dbClient.Cypher
+                .Match("(e:" + entity.Label + ")")
+                .Where(newQuery)
+                .Return(e => e.As<TEntity>())
+                .ResultsAsync;
+        }
+
+        public virtual async Task<TEntity> Single(Expression<Func<TEntity, bool>> query)
+        {
+            IEnumerable<TEntity> results = await Where(query);
+            return results.FirstOrDefault();
+        }
+
+        // Adds Entity to table
+        public virtual async Task Add(TEntity item)
+        {
+            await _neoContext.dbClient.Cypher
+                    .Create("(e:" + item.Label + " {item})")
+                    .WithParam("item", item)
+                    .ExecuteWithoutResultsAsync();
+        }
+
+        public virtual async Task Update(Expression<Func<TEntity, bool>> query, TEntity newItem)
+        {
+            string name = query.Parameters[0].Name;
+
+            TEntity itemToUpdate = await this.Single(query);
+            this.CopyValues(itemToUpdate, newItem);
+
+            await _neoContext.dbClient.Cypher
+               .Match("(" + name + ":" + newItem.Label + ")")
+               .Where(query)
+               .Set(name + " = {item}")
+               .WithParam("item", itemToUpdate)
+               .ExecuteWithoutResultsAsync();
+        }
+
+        private void CopyValues(TEntity target, TEntity source)
+        {
+            Type t = typeof(TEntity);
+
+            var properties = t.GetProperties().Where(prop => prop.CanRead && prop.CanWrite);
+
+            foreach (var prop in properties)
             {
-                throw new ArgumentNullException("Book was not entered");
+                var value = prop.GetValue(source, null);
+                if (value != null)
+                    prop.SetValue(target, value, null);
             }
-            // _dbCollection = _neoContext.GetCollection<TEntity>(typeof(TEntity).Name);
-            await _neoContext.InsertOneAsync(book);
         }
- 
-        public void Delete(string id)
+
+        public virtual async Task Relate<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, Expression<Func<TEntity2, bool>> query2, TRelationship relationship)
+            where TEntity2 : Neo4jEntity, new()
+            where TRelationship : Neo4jRelationship, new()
         {
-            //ex. 5dc1039a1521eaa36835e541
- 
-            var objectId = new ObjectId(id);
-            _dbCollection.DeleteOneAsync(Builders<TEntity>.Filter.Eq("_id", objectId));
- 
+            string name1 = query1.Parameters[0].Name;
+            TEntity entity1 = (TEntity)Activator.CreateInstance(query1.Parameters[0].Type);
+            string name2 = query2.Parameters[0].Name;
+            TEntity2 entity2 = (TEntity2)Activator.CreateInstance(query2.Parameters[0].Type);
+
+            object properties = new object();
+
+            await _neoContext.dbClient.Cypher
+                .Match("(" + name1 + ":" + entity1.Label + ")", "(" + name2 + ":" + entity2.Label + ")")
+                .Where(query1)
+                .AndWhere(query2)
+                .CreateUnique(name1 + "-[:" + relationship.Name + " {rel}]->" + name2)
+                .WithParam("rel", relationship)
+                .ExecuteWithoutResultsAsync();
         }
-        public virtual void Update(TEntity obj)
+
+        public virtual async Task<IEnumerable<TEntity2>> GetRelated<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, Expression<Func<TEntity2, bool>> query2, TRelationship relationship)
+            where TEntity2 : Neo4jEntity, new()
+            where TRelationship : Neo4jRelationship, new()
         {
-            _dbCollection.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", obj.GetId()), obj);
+            string name1 = query1.Parameters[0].Name;
+            TEntity entity1 = (TEntity)Activator.CreateInstance(query1.Parameters[0].Type);
+            string name2 = query2.Parameters[0].Name;
+            TEntity2 entity2 = (TEntity2)Activator.CreateInstance(query2.Parameters[0].Type);
+
+            Expression<Func<TEntity2, bool>> newQuery = PredicateRewriter.Rewrite(query2, "e");
+
+            return await _neoContext.dbClient.Cypher
+                .Match("(" + name1 + ":" + entity1.Label + ")-[:" + relationship.Name + "]->(" + name2 + ":" + entity2.Label + ")")
+                .Where(query1)
+                .AndWhere(query2)
+                .Return(e => e.As<TEntity2>())
+                .ResultsAsync;
         }
- 
-        public async Task<TEntity> Get(string id)
+
+        public virtual async Task DeleteRelationship<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, Expression<Func<TEntity2, bool>> query2, TRelationship relationship)
+            where TEntity2 : Neo4jEntity, new()
+            where TRelationship : Neo4jRelationship, new()
         {
-            var objectId = new ObjectId(id);
- 
-            FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", objectId);
- 
-            _dbCollection = _neoContext.GetCollection<TEntity>(typeof(TEntity).Name);
- 
-            return await _dbCollection.FindAsync(filter).Result.FirstOrDefaultAsync();
- 
+            string name1 = query1.Parameters[0].Name;
+            TEntity entity1 = (TEntity)Activator.CreateInstance(query1.Parameters[0].Type);
+            string name2 = query2.Parameters[0].Name;
+            TEntity2 entity2 = (TEntity2)Activator.CreateInstance(query2.Parameters[0].Type);
+
+            await _neoContext.dbClient.Cypher
+                .Match("(" + name1 + ":" + entity1.Label + ")-[r:" + relationship.Name + "]->(" + name2 + ":" + entity2.Label + ")")
+                .Where(query1)
+                .AndWhere(query2)
+                .Delete("r")
+                .ExecuteWithoutResultsAsync();
         }
- 
- 
-        public async Task<IEnumerable<TEntity>> Get()
-        {
-            var all = await _dbCollection.FindAsync(Builders<TEntity>.Filter.Empty);
-            return await all.ToListAsync();
-        } 
-    } */
+
     }
 }

@@ -23,13 +23,6 @@ namespace ReadingRainbowAPI.ControllerTests
         {
             var books = _bookController.GetAsync();
             Assert.True(books != null);
-            // Assert.True(_neoUserName == "Neo4j");
         }
-
-        // Clean up Method   
-        // public void Dispose()
-        //{
-          // _iDriver.CloseAsync();
-        //}
     }
 }
