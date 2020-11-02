@@ -21,3 +21,8 @@ WIP friendlist navigation is functional. Search functionality merged into Browse
 Initial Preferences page implemeneted but lacking "genres" due to unavailability of "category" information from the Google Library API (middle layer team is currently exploring Google API).
 Scrollviews and Flex functions for images partially implemented. This will largely depend on the size of thumbnails obtained from Google Library API. 
 Proper navigation implemented to link new classes and remove old classes. 
+
+Log: 11/01/2020
+
+Back to front end after a crazy Neo4j Cypher cramming, API facepalming 2 weeks! Alex provided BISAC codes ...for some 3800 genres! 
+Ahem* Update: in order to facilitate User engagement with Library App, a search by book genre/subject is likely necessary and hence, efforts were undertaken to work around Google API roadblock (Google Books API search for exact text matches rather than genre or subject) and create an alternative method. Curiously, Google API recongnize and categorize Books (to some extent) by BISAC codes but the staggering amount of codes would make browsing cumbersome and difficult. Thus, a filter function (browse books) was implemented to narrow down user interests. The filter function parses the BISAC Category for exact text matches and returns the Category(s) and the corresponding code(s) for the User to select (should there be any).
