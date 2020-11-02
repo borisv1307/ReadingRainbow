@@ -1,0 +1,63 @@
+Neo4jCypher for API Queries
+
+NOTE! The user names, book IDs etc. are placeholder examples meant to illustrate a possible interaction. These name/id/etc. examples are meant to be replaced by variables.
+
+//For API
+[HttpPut]
+Due to the nature of Neo4j (and other graphical databases), creating new Users and or New Books consists of creating a new Node. However, it is possible that such book node already exists so it 
+may be better to use Put (or use MERGE in Cypher code which Creates Unique book nodes).
+
+Create New User
+Get, Set Unique_User_Name
+Get, Set Profile_Info
+Get, Set Portrait_URL
+
+CREATE (p:Person{name:"Unique_User_Name" , profile:"Profile_Info" , portrait:"Portrait_URL"})
+RETURN p
+
+//Create New Book (safer to use Merge in case Book already in Neo4j)
+MERGE (b:Book { id: Book_ID, title: B_Title, author: B_Authors, thumbnail: B_Thumbnail, publishdate: B_Publish_Date, pagenum: B_Pages, description: B_Description, isbn10: B_ISBN_10, isbn13: B_ISBN_13 })
+
+//Add Book to Library (create IN_LIBRARY)
+Get, Set Unique_User_Name,
+Get, Set Google_Book_ID
+
+MATCH (p:Person), (b:Book) 
+WHERE p.name="Unique_User_Name" AND b.id="Google_Book_ID"
+CREATE (p)-[r:IN_LIBRARY]->(b)
+RETURN p,b
+
+//Add Book to WishList (create WISH_LISTS relation)
+Get, Set Unique_User_Name,
+Get, Set Google_Book_ID
+
+MATCH (p:Person), (b:Book) 
+WHERE p.name="Unique_User_Name" AND b.id="Google_Book_ID"
+CREATE (p)-[r:WISH_LISTS]->(b)
+RETURN p,b
+
+//Recommend Book Already in Library (create Recommend_B relation)
+Get, Set Unique_User_Name,
+Get, Set Google_Book_ID
+
+MATCH (p:Person), (b:Book) 
+WHERE p.name="Unique_User_Name" AND b.id="Google_Book_ID"
+CREATE (p)-[r:Recommend_B]->(b)
+RETURN p,b
+
+[HttpDelete]
+//Delete Book from Library (Delete IN_LIBRARY relation)
+MATCH (p:Person {name: "Alexander Bucock"})-[r:IN_LIBRARY]->(b:Book {id: "4bn7XhMeBH8C"})
+DELETE r
+
+//Delete Recommendation (Delete Recommend_B relation)
+MATCH (p:Person {name: "Wolfgang Mittermeyer"})-[r:Recommend_B]->(b:Book {id: "8CHIVgrxz9YC"})
+DELETE r
+
+//Remove Friend from Friend List (Delete FRIENDS_WITH relation)
+MATCH (p1:Person {name: "Wolfgang Mittermeyer"})-[r:FRIENDS_WITH]-(p2:Person {name: "Siegfried Kircheis"})
+DELETE r
+
+//Delete User Account (Delete User's Node and ALL relationships associated with User Node)
+MATCH (p:Person { name: 'Siegfried Kircheis' })
+DETACH DELETE p

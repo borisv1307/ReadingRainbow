@@ -1,0 +1,49 @@
+Neo4jCypher Algorithms
+
+//Recommend to Unique_Name (in this case, Frederica Greenhill") based on favorite Author. Recommended book should not be in WISH_LISTS and IN_LIBRARY.
+MATCH (b:Book), (p:Person)
+WHERE b.author = "George R. R. Martin" AND p.name="Frederica Greenhill" AND NOT (p)-[:WISH_LISTS]->(b) AND NOT (p)-[:IN_LIBRARY]->(b)
+RETURN b
+
+//Recommeded Books from Friends
+MATCH (b:Book), (p:Person), (f:Person)
+WHERE p.name="Yang Wen-Li" AND (f)-[:FRIENDS_WITH]-(p) AND (f)-[:Recommend_B]->(b) AND NOT (p)-[:WISH_LISTS]->(b) AND NOT (p)-[:IN_LIBRARY]->(b)
+WITH b, COLLECT(DISTINCT b) AS recommendations
+RETURN recommendations
+
+Jaccard Index based on User Libraries (Assume Unique_User_Name="Dusty Attenborough")
+//API Get, Set Unique_User_Name based on Signed In User
+
+MATCH (p1:Person {name: "Dusty Attenborough"})-[:IN_LIBRARY]->(b:Book)<-[:IN_LIBRARY]-(p2:Person)
+WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.id) AS i
+MATCH (p1)-[:IN_LIBRARY]->(b1:Book)
+WITH p1, p2, intersection, i, COLLECT(b1.id) AS s1
+MATCH (p2)-[:IN_LIBRARY]->(b2:Book)
+WITH p1, p2, intersection, i, s1, COLLECT(b2.id) AS s2
+WITH p1, p2, intersection, s1, s2
+WITH p1, p2, intersection, [y IN s2 WHERE NOT y IN s1] AS unique, s1+[x IN s2 WHERE NOT x IN s1] AS union, s1, s2
+WITH p1, p2, intersection, unique, union, s1, s2, ((1.0*intersection/SIZE(union))) AS jaccard ORDER BY jaccard DESC LIMIT 10
+RETURN jaccard > 0.2, jaccard, unique
+
+Jaccard Index based on User Wish Lists (Assume Unique_User_Name="Dusty Attenborough")
+//API Get, Set Unique_User_Name based on Signed In User
+
+MATCH (p1:Person {name: "Dusty Attenborough"})-[:WISH_LISTS]->(b:Book)<-[:WISH_LISTS]-(p2:Person)
+WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.id) AS i
+MATCH (p1)-[:WISH_LISTS]->(b1:Book)
+WITH p1, p2, intersection, i, COLLECT(b1.id) AS w1
+MATCH (p2)-[:WISH_LISTS]->(b2:Book)
+WITH p1, p2, intersection, i, w1, COLLECT(b2.id) AS w2
+WITH p1, p2, intersection, w1, w2
+WITH p1, p2, intersection, [y IN w2 WHERE NOT y IN w1] AS unique, w1+[x IN w2 WHERE NOT x IN w1] AS union, w1, w2
+WITH p1, p2, intersection, unique, union, w1, w2, ((1.0*intersection/SIZE(union))) AS jaccard ORDER BY jaccard DESC LIMIT 10
+RETURN jaccard > 0.2, jaccard, unique
+
+//Popularity Indexing (show popular wish listed books or popular books that other users are reading - this is largely to make users feel connected)
+MATCH (p:Person)-[r:IN_LIBRARY]->(b:Book)
+WITH b, COUNT(r) AS popularity ORDER BY popularity DESC LIMIT 10
+RETURN popularity
+
+MATCH (p:Person)-[r:WISH_LISTS]->(b:Book)
+WITH b, COUNT(r) AS popularity ORDER BY popularity DESC LIMIT 10
+RETURN popularity
