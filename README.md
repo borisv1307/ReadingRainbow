@@ -63,3 +63,19 @@ If https://www.googleapis.com/books/v1/volumes/InsertGoogleBooksID is used, the 
       "Juvenile Fiction / School & Education"
 Each line is associated with a BISAC code that can then be added to the URL to search for books of the same genre categorization. The BISAC code associated with "Juvenile Fiction / Action & Adventure / General" is JUV001000, the URL used to find books of the same genre would be https://www.googleapis.com/books/v1/volumes?q=JUV001000
 
+Log 11/01/2020
+Expanded testing database by nearly 5 folds to 103 nodes (of 2 types) and 240 relationships (of 4 types) with intersecting user libraries and wish lists to facilite more realistic and practical testing conditions. See txt file with accompanying csv file for instructions on how to append to existing Neo4j test library. 
+
+Where appropriate (and implicit based on the nature of the relationship), bi-directional relationships at the query level are implemented. 
+
+Popularity indexing (ie. highly wish listed book! or most popular books users are reading!) based on the nominal number of relationships to specific book nodes have been implemented. Rather than a recommendation algorithm, this is done to create a sense of group and solidarity amongst our users.
+
+For the most part, previously constructed algorithms and recommendation cypher queries work as intended; however issues with duplicate recommendations inevitably arose. Furthermore, due mostly to design choices, wish lists and libraries are kept seperate, meaning it is possible to recommend a book for wish lists when said user already have book in library. 
+
+Duplicate Recommendations from Different Friends were fairly simple to resolve due to the localization of cypher variables. 
+However, duplicate Recommendations in Recommendations based on Jaccard indexing are mostly due to nature of Jaccard Index: Assume Users A,B,C all have similar books. User B and User C may have the same books that User A do not have and therefore Jaccard Index would recommend the same book (from B and C) to User A twice. This will likely be resolved at the front end (via React Native Rendering).
+
+Furthermore, since Jaccard index is based on WISH_LISTS OR LIBRARY, it does not take into account books that exists in the user's respective library/wishlist and may recommend books already in User A's library that is not in his wishlist and vice versa.
+
+Regardless, it is unlikely these issues are significantly detrimental to user experience.
+More critical is the matter of special characters or special character combinations (*,\,*\,\*) that return Neo4j errors. These remain unresolved at the API level. What to do with Null data remain unresolved. 
