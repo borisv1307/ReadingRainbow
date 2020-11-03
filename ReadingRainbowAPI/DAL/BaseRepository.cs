@@ -1,9 +1,13 @@
+// Adapted from https://github.com/pcmantinker/Neo4jRepository
+
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 using ReadingRainbowAPI.Models;
+using ReadingRainbowAPI.Relationships;
 using System.Linq;
 using System.Linq.Expressions;
+using Neo4jClient;
 
 // Repo takes in database context as a constructor, uses context for database client connection
 namespace ReadingRainbowAPI.DAL
@@ -11,11 +15,11 @@ namespace ReadingRainbowAPI.DAL
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
     where TEntity: Neo4jEntity, IEntity, new()
     {
-        protected readonly Neo4jDBContext _neoContext;
+        protected readonly IGraphClient _neoContext;
  
-        protected BaseRepository()
+        protected BaseRepository(INeo4jDBContext context)
         {
-             _neoContext = new Neo4jDBContext();
+             _neoContext = context.GetClient(); 
         }
 
         // Get All Entity Values
@@ -23,7 +27,7 @@ namespace ReadingRainbowAPI.DAL
         {
             TEntity entity = new TEntity();
 
-            return await _neoContext.dbClient.Cypher
+            return await _neoContext.Cypher
                 .Match("(e:" + entity.Label + ")")
                 .Return(e => e.As<TEntity>())
                 .ResultsAsync;
@@ -35,7 +39,7 @@ namespace ReadingRainbowAPI.DAL
             TEntity entity = (TEntity)Activator.CreateInstance(query.Parameters[0].Type);
             Expression<Func<TEntity, bool>> newQuery = PredicateRewriter.Rewrite(query, "e");
 
-            return await _neoContext.dbClient.Cypher
+            return await _neoContext.Cypher
                 .Match("(e:" + entity.Label + ")")
                 .Where(newQuery)
                 .Return(e => e.As<TEntity>())
@@ -51,8 +55,8 @@ namespace ReadingRainbowAPI.DAL
         // Adds Entity to table
         public virtual async Task Add(TEntity item)
         {
-            await _neoContext.dbClient.Cypher
-                    .Create("(e:" + item.Label + " {item})")
+            await _neoContext.Cypher
+                    .Create("(e:" + item.Label + " $item)")
                     .WithParam("item", item)
                     .ExecuteWithoutResultsAsync();
         }
@@ -64,10 +68,10 @@ namespace ReadingRainbowAPI.DAL
             TEntity itemToUpdate = await this.Single(query);
             this.CopyValues(itemToUpdate, newItem);
 
-            await _neoContext.dbClient.Cypher
+            await _neoContext.Cypher
                .Match("(" + name + ":" + newItem.Label + ")")
                .Where(query)
-               .Set(name + " = {item}")
+               .Set(name + " = $item")
                .WithParam("item", itemToUpdate)
                .ExecuteWithoutResultsAsync();
         }
@@ -97,7 +101,7 @@ namespace ReadingRainbowAPI.DAL
 
             object properties = new object();
 
-            await _neoContext.dbClient.Cypher
+            await _neoContext.Cypher
                 .Match("(" + name1 + ":" + entity1.Label + ")", "(" + name2 + ":" + entity2.Label + ")")
                 .Where(query1)
                 .AndWhere(query2)
@@ -117,7 +121,7 @@ namespace ReadingRainbowAPI.DAL
 
             Expression<Func<TEntity2, bool>> newQuery = PredicateRewriter.Rewrite(query2, "e");
 
-            return await _neoContext.dbClient.Cypher
+            return await _neoContext.Cypher
                 .Match("(" + name1 + ":" + entity1.Label + ")-[:" + relationship.Name + "]->(" + name2 + ":" + entity2.Label + ")")
                 .Where(query1)
                 .AndWhere(query2)
@@ -134,7 +138,7 @@ namespace ReadingRainbowAPI.DAL
             string name2 = query2.Parameters[0].Name;
             TEntity2 entity2 = (TEntity2)Activator.CreateInstance(query2.Parameters[0].Type);
 
-            await _neoContext.dbClient.Cypher
+            await _neoContext.Cypher
                 .Match("(" + name1 + ":" + entity1.Label + ")-[r:" + relationship.Name + "]->(" + name2 + ":" + entity2.Label + ")")
                 .Where(query1)
                 .AndWhere(query2)

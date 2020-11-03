@@ -4,6 +4,11 @@ namespace ReadingRainbowAPI.Models
 {
     public class Book : Neo4jEntity
     {
+        public Book()
+        {
+            Label = "Book";
+        }
+
         public string Id {get; set;}
         public string BookInformationLink {get; set;}
         public string Title {get; set;}
