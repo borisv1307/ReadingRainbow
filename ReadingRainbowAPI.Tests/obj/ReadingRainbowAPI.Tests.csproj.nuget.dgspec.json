@@ -55,7 +55,7 @@
             },
             "Neo4jClient": {
               "target": "Package",
-              "version": "[3.2.0.1, )"
+              "version": "[4.0.1, )"
             },
             "coverlet.collector": {
               "target": "Package",
@@ -126,13 +126,13 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
-            "Neo4j.Driver": {
-              "target": "Package",
-              "version": "[4.1.1, )"
-            },
             "Neo4jClient": {
               "target": "Package",
-              "version": "[3.2.0.1, )"
+              "version": "[4.0.1, )"
+            },
+            "RSG.Promise": {
+              "target": "Package",
+              "version": "[3.0.1, )"
             }
           },
           "imports": [

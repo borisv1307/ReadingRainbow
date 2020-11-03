@@ -25770,3 +25770,7 @@ ReadingRainbowAPI/bin/Debug/netcoreapp3.1/Newtonsoft.Json.dll
 ReadingRainbowAPI/bin/Debug/netcoreapp3.1/ReadingRainbowAPI.deps.json
 ReadingRainbowAPI/bin/Debug/netcoreapp3.1/ReadingRainbowAPI.dll
 ReadingRainbowAPI/bin/Debug/netcoreapp3.1/ReadingRainbowAPI.pdb
+ReadingRainbowAPI/obj/project.nuget.cache
+ReadingRainbowAPI.Tests/obj/project.nuget.cache
+ReadingRainbowAPI.Tests/obj/project.nuget.cache
+ReadingRainbowAPI/obj/project.nuget.cache
