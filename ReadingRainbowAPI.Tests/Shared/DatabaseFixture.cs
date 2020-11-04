@@ -1,24 +1,34 @@
 using Neo4j.Driver;
+using Neo4jClient;
 using System;
 using Xunit;
+using Microsoft.Extensions.Configuration;
+using ReadingRainbowAPI.DAL;
 
 public class DatabaseFixture : IDisposable
 {
 
     public DatabaseFixture()
     {
-        var neoUserName = Environment.GetEnvironmentVariable("neoLocalUserName");
-        var neoPassword = Environment.GetEnvironmentVariable("neoLocalPassword");
+        var config = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", false, true)
+            .Build();
 
-        dbDriver = GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("Neo4j", "Neo4jPassword"));
+        var neoUserName = config.GetSection("appSettings").GetValue<string>("neoLocalUserName");
+        var neoPassword = config.GetSection("appSettings").GetValue<string>("neoLocalPassword");
+        var neoUri = config.GetSection("appSettings").GetValue<string>("neoDevUrl");
+
+        dbContext = new Neo4jDBContext();
+
     }
 
     public void Dispose()
     {
-        dbDriver.CloseAsync();
+
     }
 
-    public IDriver dbDriver { get; private set; }
+    public INeo4jDBContext dbContext {get; private set;}
 }
 
 [CollectionDefinition("Database collection")]

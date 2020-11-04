@@ -12,7 +12,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ReadingRainbowAPI.DAL;
 using Neo4j.Driver;
+using Neo4jClient;
 using System.Net.Http;
+using ReadingRainbowAPI.Models;
+using ReadingRainbowAPI.Controllers;
 
 namespace ReadingRainbowAPI
 {
@@ -28,13 +31,7 @@ namespace ReadingRainbowAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var neoURI = Configuration["NeoURI"];
-            var neoUserName = Configuration["NeoUserName"];
-            var neoPW = Configuration["NeoPW"];
-
-            //services.AddDBContext<Neo4jDBContext>(d=>d.GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("Neo4j", "Neo4jPassword")))
-            services.AddSingleton(GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("Neo4j", "Neo4jPassword")));
-            // services.AddScoped<IBaseRepository, BaseRepository>();
+            services.AddSingleton<INeo4jDBContext, Neo4jDBContext>(c=>new Neo4jDBContext()); //(sp => new Service3(myKey));
 
             services.AddControllers();
 

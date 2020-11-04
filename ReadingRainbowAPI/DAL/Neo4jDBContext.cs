@@ -1,25 +1,86 @@
 using Neo4j.Driver;
+using Neo4jClient;
+using RSG;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Linq.Expressions;
+using System.Text;
+using System;
 
 namespace ReadingRainbowAPI.DAL
 {
     public class Neo4jDBContext : INeo4jDBContext
     {
-        private IDriver _db { get; set; }
-        // private IDriver _neoClient { get; set; }
-        // public IClientSessionHandle Session { get; set; }
+        public GraphClient dbClient {get; private set;}
  
         public Neo4jDBContext()
         {
+            dbClient = new GraphClient(new Uri("http://localhost:7474"),"Neo4j","abc123");
+            var running = true;
 
-            // IOptions<Settings> configuration
-            //var _neoUserName = configuration.Value.Connection;
-            //var _neoPassword = configuration.Value;
- 
-            //_db = _neoClient.GetDatabase(configuration.Value.DatabaseName);
-            _db = GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("neo4j", "neo"));
+            ConnectToDatabase()
+            .Then(result =>               
+                {
+                    Console.WriteLine("Async operation completed.");
+                    Console.WriteLine($"database is {result}");
+                    running = false;
+                })
+                .Done();
+
+            while (running)
+            {
+                Thread.Sleep(10);
+            }
         }
 
-        // Add disposing
+        private IPromise<string> ConnectToDatabase()
+        {
+            Console.WriteLine("Trying to connect to uri ...");
+
+            var promise = new Promise<string>();
+            var connectionCount = 0;
+  
+            do
+            {
+                dbClient.ConnectAsync();
+                connectionCount += 1;
+                Console.WriteLine($"connection test number {connectionCount}");
+
+                WaitForDatabase();
+
+                if (connectionCount > 20)
+                    break;
+
+            } while(dbClient.IsConnected == false);
+
+            if (dbClient.IsConnected)
+                promise.Resolve("connected");
+            else
+                promise.Reject(new SystemException());
+
+            return promise;
+        }
+
+        private void WaitForDatabase()
+        {
+            var waitCount = 0;
+                
+                do
+                {
+                    waitCount += 1;
+                    Thread.Sleep(200);
+                    Console.WriteLine($"waiting for connection wait number {waitCount}");
+                    if (waitCount > 20)
+                        break;
+
+                } while(dbClient.IsConnected == false);
+        }
+
+        public GraphClient GetClient()
+        {
+            return dbClient;
+        }
+}
       
-    }
 }
