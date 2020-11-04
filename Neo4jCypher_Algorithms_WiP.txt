@@ -47,3 +47,30 @@ RETURN popularity
 MATCH (p:Person)-[r:WISH_LISTS]->(b:Book)
 WITH b, COUNT(r) AS popularity ORDER BY popularity DESC LIMIT 10
 RETURN popularity
+
+//Modified Jaccard Index Recommendations:
+Since Jaccard index is based on WISH_LISTS OR LIBRARY, it does not take into account books that exists in library/wishlist and may recommend books already in User A's library
+that is not in his wishlist and vice versa. 
+It may be possible to resolve the wish list | library crossover problem by using another opposing library/wishlist MATCH query, collecting the book nodes into a list, 
+use pattern recognition to remove books recommended to User A's LIBRARY|WISH LIST that are present in User A's WISH LIST|LIBRARY, respectively, 
+and return said list of books without interfering with Jaccard calculations. 
+Performed 1 test on Siegfried + Bucock's wish list and algorithm seemed to work correctly. Will conduct further testing upon confirmation and implmentation of image hosting 
+database set up. 
+
+MATCH (p1:Person {name: "Siegfried Kircheis"})-[:WISH_LISTS]->(b:Book)<-[:WISH_LISTS]-(p2:Person)
+WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.id) AS i
+MATCH (p1)-[:WISH_LISTS]->(b1:Book)
+WITH p1, p2, intersection, i, COLLECT(b1.id) AS w1
+MATCH (p2)-[:WISH_LISTS]->(b2:Book)
+WITH p1, p2, intersection, i, w1, COLLECT(b2.id) AS w2
+WITH p1, p2, intersection, w1, w2
+WITH p1, p2, intersection, [y IN w2 WHERE NOT y IN w1] AS unique, w1+[x IN w2 WHERE NOT x IN w1] AS union, w1, w2
+MATCH (p1)-[:IN_LIBRARY]->(b3:Book)
+WITH p1, p2, intersection, unique, union, w1, w2, COLLECT(b3.id) AS l1
+WITH p1, p2, intersection, unique, union, w1, w2, [z IN unique WHERE NOT z in l1] AS rec
+WITH p1, p2, intersection, unique, union, w1, w2, rec, ((1.0*intersection/SIZE(union))) AS jaccard ORDER BY jaccard DESC LIMIT 10
+RETURN jaccard > 0.2, jaccard, rec 
+
+TEST CASE:
+MATCH (p1:Person {name: "Siegfried Kircheis"})-[r:WISH_LISTS]->(b1:Book), (p2:Person {name: "Alexander Bucock"})-[WISH_LISTS]->(b2:Book)
+RETURN p1, p2, b1, b2
