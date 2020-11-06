@@ -48,21 +48,6 @@ Hit Major Roadblock with Google Books API and instead proceeded with recommendat
 
 Currently facing problems with null data, database design concerning uni- and bi-directional relationships, and special/unusual characters from Google Books API returns. Recommendation algorithms will undoubtedly have duplicate recommendations due to the sheer number of books and how only pairs of libraries are directly compared - this may be mitigated via other layers. Neo4j cypher does not fare well thus far with nodes with numerous properties (such as those for books) or perhaps this is due to inexperience on my part. 
 
-10/30/2020: Pulling data from Google Book ID versus keyword search:
-The results obtained by using a URL like https://www.googleapis.com/books/v1/volumes?q=harry+potter vary from the results obtained by https://www.googleapis.com/books/v1/volumes/f280CwAAQBAJ
-Keyword searches return blank, miscategorized, or incomplete "categories" fields. The categories field is used for genre description.
-If https://www.googleapis.com/books/v1/volumes/InsertGoogleBooksID is used, the categories field is accurately populated. In the Harry Potter example, keyword returns only "Young Adult Fiction" whereas Google Book ID returns:
-      "Young Adult Fiction / Fantasy / Wizards & Witches",
-      "Young Adult Fiction / School & Education / Boarding School & Prep School",
-      "Juvenile Fiction / Action & Adventure / General",
-      "Fiction / Fantasy / Contemporary",
-      "Young Adult Fiction / Action & Adventure / General",
-      "Fiction / Action & Adventure",
-      "Juvenile Fiction / Fantasy & Magic",
-      "Fiction / Fantasy / General",
-      "Juvenile Fiction / School & Education"
-Each line is associated with a BISAC code that can then be added to the URL to search for books of the same genre categorization. The BISAC code associated with "Juvenile Fiction / Action & Adventure / General" is JUV001000, the URL used to find books of the same genre would be https://www.googleapis.com/books/v1/volumes?q=JUV001000
-
 Log 11/01/2020
 Expanded testing database by nearly 5 folds to 103 nodes (of 2 types) and 240 relationships (of 4 types) with intersecting user libraries and wish lists to facilite more realistic and practical testing conditions. See txt file with accompanying csv file for instructions on how to append to existing Neo4j test library. 
 
