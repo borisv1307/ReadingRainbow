@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`home renders correctly 1`] = `
+<View>
+  <Text>
+    Results Screen
+  </Text>
+</View>
+`;
+
+exports[`results renders correctly 1`] = `
+<View>
+  <Text>
+    Results
+  </Text>
+</View>
+`;
