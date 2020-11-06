@@ -79,3 +79,8 @@ Furthermore, since Jaccard index is based on WISH_LISTS OR LIBRARY, it does not 
 
 Regardless, it is unlikely these issues are significantly detrimental to user experience.
 More critical is the matter of special characters or special character combinations (*,\,*\,\*) that return Neo4j errors. These remain unresolved at the API level. What to do with Null data remain unresolved. 
+
+Log 11/05/2020
+Successfully modified Jaccard Indexing Recommendation to take into account the complementary User B's Wish Lists/Library to ensure that books recommended to User A's library is not already in User A's Wish List and vice versa (i.e. book recommended to User A's Wish List is not already in User A's Library). This is due to the highly localized nature of Cypher Variables allowing for completely seperate queries to be made sequentially and carrying the local variables into further operations using WITH clause. Extensive testing was done with several intersecting wish lists and libraries and algorithms seems to be working correctly. 
+
+NOTE: Neo4j graphical rendering capabilities are strangely glitchy and often miss a node (and the node's relationships) causing no small amount of panick. If numbers do not add up, simply re-run the query. 
