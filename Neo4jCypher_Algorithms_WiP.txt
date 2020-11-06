@@ -57,6 +57,7 @@ and return said list of books without interfering with Jaccard calculations.
 Performed 1 test on Siegfried + Bucock's wish list and algorithm seemed to work correctly. Will conduct further testing upon confirmation and implmentation of image hosting 
 database set up. 
 
+For Jaccard Indexing based on WISH LISTS
 MATCH (p1:Person {name: "Siegfried Kircheis"})-[:WISH_LISTS]->(b:Book)<-[:WISH_LISTS]-(p2:Person)
 WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.id) AS i
 MATCH (p1)-[:WISH_LISTS]->(b1:Book)
@@ -71,6 +72,31 @@ WITH p1, p2, intersection, unique, union, w1, w2, [z IN unique WHERE NOT z in l1
 WITH p1, p2, intersection, unique, union, w1, w2, rec, ((1.0*intersection/SIZE(union))) AS jaccard ORDER BY jaccard DESC LIMIT 10
 RETURN jaccard > 0.2, jaccard, rec 
 
-TEST CASE:
+EX TEST CASE:
 MATCH (p1:Person {name: "Siegfried Kircheis"})-[r:WISH_LISTS]->(b1:Book), (p2:Person {name: "Alexander Bucock"})-[WISH_LISTS]->(b2:Book)
+RETURN p1, p2, b1, b2
+
+MATCH (p1:Person {name: "Siegfried Kircheis"})-[r:WISH_LISTS]->(b1:Book), (p2:Person {name: "Reinhard von Lohengramm"})-[WISH_LISTS]->(b2:Book)
+RETURN p1, p2, b1, b2
+
+For Jaccard Indexing based on IN_LIBRARY
+MATCH (p1:Person {name: "Alexander Bucock"})-[:IN_LIBRARY]->(b:Book)<-[:IN_LIBRARY]-(p2:Person)
+WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.id) AS i
+MATCH (p1)-[:IN_LIBRARY]->(b1:Book)
+WITH p1, p2, intersection, i, COLLECT(b1.id) AS w1
+MATCH (p2)-[:IN_LIBRARY]->(b2:Book)
+WITH p1, p2, intersection, i, w1, COLLECT(b2.id) AS w2
+WITH p1, p2, intersection, w1, w2
+WITH p1, p2, intersection, [y IN w2 WHERE NOT y IN w1] AS unique, w1+[x IN w2 WHERE NOT x IN w1] AS union, w1, w2
+MATCH (p1)-[:WISH_LISTS]->(b3:Book)
+WITH p1, p2, intersection, unique, union, w1, w2, COLLECT(b3.id) AS l1
+WITH p1, p2, intersection, unique, union, w1, w2, [z IN unique WHERE NOT z in l1] AS rec
+WITH p1, p2, intersection, unique, union, w1, w2, rec, ((1.0*intersection/SIZE(union))) AS jaccard ORDER BY jaccard DESC LIMIT 10
+RETURN jaccard > 0.2, jaccard, rec 
+
+EX TEST CASE:
+MATCH (p1:Person {name: "Alexander Bucock"})-[r:IN_LIBRARY]->(b1:Book), (p2:Person {name: "Hildegard von Mariendorf"})-[WISH_LISTS]->(b2:Book)
+RETURN p1, p2, b1, b2
+
+MATCH (p1:Person {name: "Alexander Bucock"})-[r:IN_LIBRARY]->(b1:Book), (p2:Person {name: "Wolfgang Mittermeyer"})-[WISH_LISTS]->(b2:Book)
 RETURN p1, p2, b1, b2
