@@ -38,5 +38,29 @@ namespace ReadingRainbowAPI.DAL
         {
             return await this.Where(b=>b.Description.Contains(description));
         }
+
+        public async Task DeleteBookAsync(Book book)
+        {
+            var found = await this.Single(p => p.Id == book.Id);
+            if(found != null)
+            {
+               await this.Delete(p => p.Id == book.Id);
+            }
+        }
+
+        public async Task CreateInLibraryRelationshipAsync(Book book, Person person, InLibrary inLibrary)
+        {
+            await this.Relate<Person, InLibrary>(b=>b.Id == book.Id, p=>p.Name == person.Name, inLibrary);
+        }
+
+        public async Task<IEnumerable<Person>> GetInLibraryPersonRelationshipAsync(Book book, InLibrary inLibrary)
+        {
+           return await this.GetAllRelated<Person, InLibrary>(b=>b.Id == book.Id, new Person(),  inLibrary);
+        }
+
+        public async Task DeleteInLibraryRelationshipAsync(Book book, Person person, InLibrary inLibrary)
+        {
+            await this.DeleteRelationship<Person, InLibrary>(b=>b.Id == book.Id, p=>p.Name == person.Name, inLibrary);
+        }
     }
 }

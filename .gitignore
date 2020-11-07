@@ -8,8 +8,9 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-ReadingRainbowAPI.Tests/bin/*
-ReadingRainbowAPI/bin/*
+/ReadingRainbowAPI.Tests/bin/*
+/ReadingRainbowAPI/bin/*
+/ReadingRainbowAPI/obj/*
 
 # macOS
 .DS_Store
@@ -25774,3 +25775,5 @@ ReadingRainbowAPI/obj/project.nuget.cache
 ReadingRainbowAPI.Tests/obj/project.nuget.cache
 ReadingRainbowAPI.Tests/obj/project.nuget.cache
 ReadingRainbowAPI/obj/project.nuget.cache
+ReadingRainbowAPI/bin/Debug/netcoreapp3.1/Newtonsoft.Json.dll
+ReadingRainbowAPI/bin/Debug/netcoreapp3.1/Neo4j.Driver.dll
