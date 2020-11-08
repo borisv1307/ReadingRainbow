@@ -1,8 +1,9 @@
-using System.Linq;
+
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.DAL;
+using ReadingRainbowAPI.Relationships;
 
 namespace ReadingRainbowAPI.Controllers
 {
@@ -19,18 +20,20 @@ namespace ReadingRainbowAPI.Controllers
         }
         
         [HttpGet]
-        // [HttpGet("{id}")]
-        [Route("catalog")]
-        public async Task<ActionResult> Get(string UserName)
+        [Route("Library/{bookId}")]
+        public async Task<ActionResult> GetPeopleAsync(string bookId)
         {
-            var result = await _bookRepository.GetAllBooksAsync();
+            var book = new Book(){
+                Id = bookId
+            };
+            var people = await _bookRepository.GetInLibraryPersonRelationshipAsync(book, new InLibrary());
 
-            return Ok(result);
+            return Ok(people);
         }
 
         [HttpPost]
-        [Route("AddBook")]
-        public async Task<IActionResult> AddBookAsync(Book book)
+        [Route("AddUpdateBook")]
+        public async Task<IActionResult> AddUpdateBookAsync(Book book)
         {
             await _bookRepository.AddOrUpdateAsync(book);
 
@@ -38,7 +41,7 @@ namespace ReadingRainbowAPI.Controllers
         }
 
         [HttpGet]
-        [Route("FindBook/{id}")]
+        [Route("Book/{id}")]
         public async Task<IActionResult> FindBookAsync(string id)
         {
             var book = await _bookRepository.GetBookAsync(id);
@@ -47,10 +50,10 @@ namespace ReadingRainbowAPI.Controllers
         }
  
         [HttpGet]
-        [Route("FindfromNeo")]
-        public async Task<IActionResult> GetAsync()
+        [Route("Books")]
+        public async Task<IActionResult> GetAllBooksAsync()
         {
-            var bookTitles = (await _bookRepository.GetAllBooksAsync()).ToList();
+            var bookTitles = await _bookRepository.GetAllBooksAsync();
 
             return Ok(bookTitles);
         }

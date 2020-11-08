@@ -13,5 +13,7 @@ namespace ReadingRainbowAPI.DAL
         Task<TEntity> Single(Expression<Func<TEntity, bool>> query);
         Task Add(TEntity item);
         Task Update(Expression<Func<TEntity, bool>> query, TEntity newItem);
+
+        Task Delete(Expression<Func<TEntity, bool>> query);
     }
 }
