@@ -57,8 +57,21 @@ namespace ReadingRainbowAPI.RepositoryTests
         [Fact]
         public async void GetBookAsync_Test()
         {
+            // Arrange
+            var book1 = CreateBook();
+            var book2 = CreateBook();
+            await _bookRepository.AddOrUpdateAsync(book1);
+            await _bookRepository.AddOrUpdateAsync(book2);
+
+            // Act
             var books = await _bookRepository.GetAllBooksAsync();
+
+            // Assert
             Assert.True(books != null);
+
+            // Clean up
+            await _bookRepository.DeleteBookAsync(book1);
+            await _bookRepository.DeleteBookAsync(book2);
         }
 
         [Fact]
@@ -74,6 +87,9 @@ namespace ReadingRainbowAPI.RepositoryTests
             // Assert
             Assert.True(returnedBook != null);
             Assert.True(returnedBook.Title == newBook.Title);
+
+            // Clean up
+            await _bookRepository.DeleteBookAsync(newBook);
         }
 
         [Fact]
@@ -96,6 +112,9 @@ namespace ReadingRainbowAPI.RepositoryTests
             // Assert
             Assert.True(returnedBook != null);
             Assert.True(returnedBook.Title == newBookTitle);
+
+            // Clean up
+            await _bookRepository.DeleteBookAsync(newBook);
         }
 
         [Fact]
@@ -112,6 +131,9 @@ namespace ReadingRainbowAPI.RepositoryTests
             // Assert
             Assert.True(returnedBookList.Count != 0);
             Assert.True(returnedBookList.Where(b=>b.Description.Contains(searchText)).ToList().Count == returnedBookList.Count);
+
+            // Clean up
+            await _bookRepository.DeleteBookAsync(newBook);
         }
 
         [Fact]
@@ -138,14 +160,21 @@ namespace ReadingRainbowAPI.RepositoryTests
 
             var newPerson = CreatePerson();
             await _personRepository.AddOrUpdatePersonAsync(newPerson);
+
+            var inLibrary = new Relationships.InLibrary();
             
             // Act
-            await _bookRepository.CreateInLibraryRelationshipAsync(newBook, newPerson, new Relationships.InLibrary());
-            var returnedPerson = (await _bookRepository.GetInLibraryPersonRelationshipAsync(newBook, new Relationships.InLibrary()))
+            await _bookRepository.CreateInLibraryRelationshipAsync(newBook, newPerson, inLibrary);
+            var returnedPerson = (await _bookRepository.GetInLibraryPersonRelationshipAsync(newBook, inLibrary))
                 .ToList().FirstOrDefault();
 
             // Assert
             Assert.True(newPerson.Name == returnedPerson.Name);
+
+            // Clean up
+            await _bookRepository.DeleteInLibraryRelationshipAsync(newBook, newPerson, inLibrary);
+            await _bookRepository.DeleteBookAsync(newBook);
+            await _personRepository.DeletePersonAsync(newPerson);
         }
     }
 }

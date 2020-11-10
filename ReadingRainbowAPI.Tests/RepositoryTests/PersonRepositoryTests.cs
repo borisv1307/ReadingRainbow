@@ -40,8 +40,17 @@ namespace ReadingRainbowAPI.RepositoryTests
         [Fact]
         public async void GetPeopleAsync_Test()
         {
+            var person1 = CreatePerson();
+            var person2 = CreatePerson();
+            await _personRepository.AddOrUpdatePersonAsync(person1);
+            await _personRepository.AddOrUpdatePersonAsync(person2);
+
             var people = await _personRepository.GetAllPeopleAsync();
             Assert.True(people != null);
+
+            // Clean up
+            await _personRepository.DeletePersonAsync(person1);
+            await _personRepository.DeletePersonAsync(person2);
         }
 
         [Fact]
@@ -57,6 +66,9 @@ namespace ReadingRainbowAPI.RepositoryTests
             // Assert
             Assert.True(returnedPerson != null);
             Assert.True(returnedPerson.Name == newPerson.Name);
+
+            // Clean up
+            await _personRepository.DeletePersonAsync(newPerson);
         }
 
         [Fact]
@@ -79,6 +91,9 @@ namespace ReadingRainbowAPI.RepositoryTests
             // Assert
             Assert.True(returnedPerson != null);
             Assert.True(returnedPerson.Profile == newPersonProfile);
+
+            // Clean up
+            await _personRepository.DeletePersonAsync(newPerson);
         }
 
         [Fact]
@@ -90,6 +105,9 @@ namespace ReadingRainbowAPI.RepositoryTests
             var returnedperson = await _personRepository.GetPersonAsync(newPerson.Name);
 
             Assert.True(newPerson.HashedPassword == returnedperson.HashedPassword);
+
+            // Clean up
+            await _personRepository.DeletePersonAsync(newPerson);
         }
 
     }

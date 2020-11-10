@@ -75,8 +75,11 @@ namespace ReadingRainbowAPI.ControllerTests
             await _bookRepository.AddOrUpdateAsync(book2);
             await _personRepository.AddOrUpdatePersonAsync(person1);
 
-            await _bookRepository.CreateInLibraryRelationshipAsync(book1, person1, new InLibrary());
-            await _bookRepository.CreateInLibraryRelationshipAsync(book2, person1, new InLibrary());
+            var inLibrary1 = new InLibrary();
+            var inLibrary2 = new InLibrary();
+
+            await _bookRepository.CreateInLibraryRelationshipAsync(book1, person1, inLibrary1);
+            await _bookRepository.CreateInLibraryRelationshipAsync(book2, person1, inLibrary2);
 
             // Act
 
@@ -86,6 +89,13 @@ namespace ReadingRainbowAPI.ControllerTests
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
+
+             // Clean up
+            await _bookRepository.DeleteInLibraryRelationshipAsync(book1, person1, inLibrary1);
+            await _bookRepository.DeleteInLibraryRelationshipAsync(book2, person1, inLibrary2);
+            await _bookRepository.DeleteBookAsync(book1);
+            await _bookRepository.DeleteBookAsync(book2);
+            await _personRepository.DeletePersonAsync(person1);
         }
 
         [Fact]
@@ -101,6 +111,9 @@ namespace ReadingRainbowAPI.ControllerTests
             // Assert
             Assert.True(returnedPerson != null);
             Assert.True(returnedPerson.Profile == newPerson.Profile);
+
+            // Clean up
+            await _personRepository.DeletePersonAsync(newPerson);
         }
 
         [Fact]
@@ -117,6 +130,9 @@ namespace ReadingRainbowAPI.ControllerTests
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
+
+            // Clean up
+            await _personRepository.DeletePersonAsync(newPerson);
         }
 
         [Fact]
@@ -134,6 +150,10 @@ namespace ReadingRainbowAPI.ControllerTests
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
+
+            // Clean up
+            await _personRepository.DeletePersonAsync(person1);
+            await _personRepository.DeletePersonAsync(person2);
            
         }
 
