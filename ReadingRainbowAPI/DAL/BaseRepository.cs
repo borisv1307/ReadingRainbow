@@ -122,6 +122,7 @@ namespace ReadingRainbowAPI.DAL
                 .ExecuteWithoutResultsAsync();
         }
 
+
         public virtual async Task<IEnumerable<TEntity2>> GetRelated<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, Expression<Func<TEntity2, bool>> query2, TRelationship relationship)
             where TEntity2 : Neo4jEntity, new()
             where TRelationship : Neo4jRelationship, new()

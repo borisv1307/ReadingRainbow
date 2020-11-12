@@ -26,10 +26,10 @@ namespace ReadingRainbowAPI.ControllerTests
         {
             this.fixture = fixture;
 
-            _personController = new PersonController(fixture.dbContext);
-
             _bookRepository = new BookRepository(fixture.dbContext);
             _personRepository = new PersonRepository(fixture.dbContext);
+
+            _personController = new PersonController(_personRepository);
         }
 
         private Book CreateBook()

@@ -31,9 +31,12 @@ namespace ReadingRainbowAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<INeo4jDBContext, Neo4jDBContext>(c=>new Neo4jDBContext()); //(sp => new Service3(myKey));
+           var neoUri = "http://localhost:7474";
+           var neoUserName = "Neo4j";
+           var neoPassword = "abc123";
 
-            services.AddControllers();
+           services.AddScoped<INeo4jDBContext, Neo4jDBContext>(n=>new Neo4jDBContext(neoUri,neoUserName, neoPassword));
+           services.AddAuthorization();
 
             // Add policy for CORS
             services.AddCors(options =>
@@ -45,6 +48,8 @@ namespace ReadingRainbowAPI
                     });
             });
 
+            services.AddScoped<BookRepository>(); 
+            services.AddScoped<PersonRepository>(); 
             services.AddMvcCore();
         }
 

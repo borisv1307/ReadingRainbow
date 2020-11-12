@@ -47,19 +47,40 @@ namespace ReadingRainbowAPI.DAL
             }
         }
 
+#region FriendsWith
         public async Task CreateFriendRelationshipAsync(Person person1, Person person2, FriendsWith friendsWith)
         {
-            await this.Relate<Person, FriendsWith>(p=>p.Name == person1.Name, p=>p.Name == person2.Name, friendsWith);
+            await this.Relate<Person, FriendsWith>(p1=>p1.Name == person1.Name, p2=>p2.Name == person2.Name, friendsWith);
         }
+
+        public async Task<IEnumerable<Person>> GetFriendsWithRelationshipAsync(Person person, FriendsWith friendsWith)
+        {
+            return await this.GetAllRelated(p=>p.Name == person.Name, new Person(), friendsWith);
+        }
+
+        
+        public async Task DeleteFriendsWithRelationshipAsync(Person person1, Person person2, FriendsWith friendsWith)
+        {
+            await this.DeleteRelationship<Person, FriendsWith>(p1=>p1.Name == person1.Name, p2=>p2.Name == person2.Name, friendsWith);
+        }
+
+#endregion FriendsWith
+
+#region InLibrary
 
         public async Task<IEnumerable<Book>> GetInLibraryBookRelationshipAsync(Person person, InLibrary inLibrary)
         {
            return await this.GetAllRelated(p=>p.Name == person.Name, new Book(), inLibrary);
         }
 
-        public async Task DeleteInLibraryRelationshipAsync(Person person1, Person person2, FriendsWith friendsWith)
+#endregion InLibrary
+
+#region WishList
+        public async Task<IEnumerable<Book>> GetWishListRelationshipAsync(Person person, WishList wishList)
         {
-            await this.DeleteRelationship<Person, FriendsWith>(p=>p.Name == person1.Name, p=>p.Name == person2.Name, friendsWith);
+            return await this.GetAllRelated(p=>p.Name == person.Name, new Book(), wishList);
         }
+
+#endregion WishList
     }
 }
