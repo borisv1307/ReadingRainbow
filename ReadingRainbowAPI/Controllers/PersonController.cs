@@ -13,9 +13,9 @@ namespace ReadingRainbowAPI.Controllers
 
         private readonly PersonRepository _personRepository;
  
-        public PersonController(INeo4jDBContext context)
+        public PersonController(PersonRepository personRepository)
         {
-            _personRepository = new PersonRepository(context);
+            _personRepository = personRepository;
         }
         
         [HttpGet]

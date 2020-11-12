@@ -176,5 +176,75 @@ namespace ReadingRainbowAPI.RepositoryTests
             await _bookRepository.DeleteBookAsync(newBook);
             await _personRepository.DeletePersonAsync(newPerson);
         }
+
+               [Fact]
+        public async void RemoveWishListAsync_Test()
+        {
+            var person = CreatePerson();
+            var booktostay1 = CreateBook();
+            var booktostay2 = CreateBook();
+            var booktogo = CreateBook();
+
+            await _personRepository.AddOrUpdatePersonAsync(person);
+            await _bookRepository.AddOrUpdateAsync(booktostay1);
+            await _bookRepository.AddOrUpdateAsync(booktostay2);
+            await _bookRepository.AddOrUpdateAsync(booktogo);
+
+            var wishList = new Relationships.WishList();
+
+            await _bookRepository.CreateWishlistRelationshipAsync(booktostay1, person, wishList);
+            await _bookRepository.CreateWishlistRelationshipAsync(booktostay2, person, wishList);
+            await _bookRepository.CreateWishlistRelationshipAsync(booktogo, person, wishList);
+
+            // Act
+            var allBooksInList = await _personRepository.GetWishListRelationshipAsync(person, wishList);
+            await _bookRepository.DeleteWishListRelationshipAsync(booktogo, person, wishList);
+            var twoBooksInList = await _personRepository.GetWishListRelationshipAsync(person, wishList);
+
+            // Assert
+            Assert.True(allBooksInList.Where(b=> b.Id == booktostay1.Id).ToList().Count == 1);
+            Assert.True(allBooksInList.Where(b=> b.Id == booktostay2.Id).ToList().Count == 1);
+            Assert.True(allBooksInList.Where(b=> b.Id == booktogo.Id).ToList().Count == 1);
+            Assert.True(allBooksInList.ToList().Count == 3);
+
+            Assert.True(twoBooksInList.Where(b=> b.Id == booktostay1.Id).ToList().Count == 1);
+            Assert.True(twoBooksInList.Where(b=> b.Id == booktostay2.Id).ToList().Count == 1);
+            Assert.True(twoBooksInList.Where(b=> b.Id == booktogo.Id).ToList().Count == 0);
+            Assert.True(twoBooksInList.ToList().Count == 2);
+
+            // CleanUp
+            await _bookRepository.DeleteWishListRelationshipAsync(booktostay1, person, wishList);
+            await _bookRepository.DeleteWishListRelationshipAsync(booktostay2, person, wishList);
+            await _personRepository.DeletePersonAsync(person);
+            await _bookRepository.DeleteBookAsync(booktostay1);
+            await _bookRepository.DeleteBookAsync(booktostay2);
+            await _bookRepository.DeleteBookAsync(booktogo);
+        }
+
+                
+        [Fact]
+        public async void AddWishListAsync_Test()
+        {
+            // Arrange
+            var person = CreatePerson();
+            var book = CreateBook();
+            var wishList = new Relationships.WishList();
+
+            await _personRepository.AddOrUpdatePersonAsync(person);
+            await _bookRepository.AddOrUpdateAsync(book);
+            await _bookRepository.CreateWishlistRelationshipAsync(book, person, wishList);
+
+            // Act
+            var wishListBooks = await _personRepository.GetWishListRelationshipAsync(person, wishList);
+
+            // Assert
+            Assert.True(wishListBooks.Where(b=> b.Id == book.Id).ToList().Count == 1);
+            Assert.True(wishListBooks.ToList().Count == 1);
+
+            // Clean up
+            await _bookRepository.DeleteWishListRelationshipAsync(book, person, wishList);
+            await _personRepository.DeletePersonAsync(person);
+            await _bookRepository.DeleteBookAsync(book);
+        }
     }
 }

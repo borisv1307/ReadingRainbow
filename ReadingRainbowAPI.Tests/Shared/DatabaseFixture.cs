@@ -19,7 +19,7 @@ public class DatabaseFixture : IDisposable
         var neoPassword = config.GetSection("appSettings").GetValue<string>("neoLocalPassword");
         var neoUri = config.GetSection("appSettings").GetValue<string>("neoDevUrl");
 
-        dbContext = new Neo4jDBContext();
+        dbContext = new Neo4jDBContext(neoUri, neoUserName, neoPassword);
 
     }
 

@@ -14,9 +14,9 @@ namespace ReadingRainbowAPI.Controllers
 
         private readonly BookRepository _bookRepository;
  
-        public BookController(INeo4jDBContext context)
+        public BookController(BookRepository bookRepository)
         {
-            _bookRepository = new BookRepository(context);
+            _bookRepository = bookRepository;
         }
         
         [HttpGet]

@@ -5279,11 +5279,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
+      "projectUniqueName": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
       "projectName": "ReadingRainbowAPI.Tests",
-      "projectPath": "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
+      "projectPath": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
       "packagesPath": "C:\\Users\\klind\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI.Tests\\obj\\",
+      "outputPath": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -5302,8 +5302,8 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj": {
-              "projectPath": "c:\\Users\\klind\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj"
+            "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj": {
+              "projectPath": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj"
             }
           }
         }

@@ -2,7 +2,6 @@ using ReadingRainbowAPI.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using ReadingRainbowAPI.Relationships;
-using Neo4jClient;
 
 namespace ReadingRainbowAPI.DAL
 {
@@ -48,6 +47,8 @@ namespace ReadingRainbowAPI.DAL
             }
         }
 
+#region InLibrary Relationships
+
         public async Task CreateInLibraryRelationshipAsync(Book book, Person person, InLibrary inLibrary)
         {
             await this.Relate<Person, InLibrary>(b=>b.Id == book.Id, p=>p.Name == person.Name, inLibrary);
@@ -62,5 +63,19 @@ namespace ReadingRainbowAPI.DAL
         {
             await this.DeleteRelationship<Person, InLibrary>(b=>b.Id == book.Id, p=>p.Name == person.Name, inLibrary);
         }
+
+#endregion InLibraryRelationships
+
+#region WishList
+        public async Task CreateWishlistRelationshipAsync(Book book, Person person, WishList wishList)
+        {
+            await this.Relate<Person, WishList>(b=>b.Id == book.Id, p=>p.Name == person.Name, wishList);
+        }
+
+        public async Task DeleteWishListRelationshipAsync(Book book, Person person, WishList wishList)
+        {
+            await this.DeleteRelationship<Person, WishList>(b=>b.Id == book.Id, p=>p.Name == person.Name, wishList);
+        }
+#endregion WishList
     }
 }
