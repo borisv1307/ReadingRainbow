@@ -1,11 +1,6 @@
-using Neo4j.Driver;
 using Neo4jClient;
 using RSG;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Threading;
-using System.Linq.Expressions;
-using System.Text;
 using System;
 
 namespace ReadingRainbowAPI.DAL
@@ -14,9 +9,9 @@ namespace ReadingRainbowAPI.DAL
     {
         public GraphClient dbClient {get; private set;}
  
-        public Neo4jDBContext()
+        public Neo4jDBContext(string uri, string userName, string password)
         {
-            dbClient = new GraphClient(new Uri("http://localhost:7474"),"Neo4j","abc123");
+            dbClient = new GraphClient(new Uri(uri), userName, password);
             var running = true;
 
             ConnectToDatabase()
