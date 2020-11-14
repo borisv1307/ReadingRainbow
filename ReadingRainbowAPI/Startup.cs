@@ -16,6 +16,7 @@ using Neo4jClient;
 using System.Net.Http;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.Controllers;
+using AuthTest.API.Middleware;
 
 namespace ReadingRainbowAPI
 {
@@ -32,8 +33,8 @@ namespace ReadingRainbowAPI
         public void ConfigureServices(IServiceCollection services)
         {
            var neoUri = "http://localhost:7474";
-           var neoUserName = "Neo4j";
-           var neoPassword = "abc123";
+           var neoUserName = "neo4j";
+           var neoPassword = "abc";
 
            services.AddScoped<INeo4jDBContext, Neo4jDBContext>(n=>new Neo4jDBContext(neoUri,neoUserName, neoPassword));
            services.AddAuthorization();
@@ -50,6 +51,7 @@ namespace ReadingRainbowAPI
 
             services.AddScoped<BookRepository>(); 
             services.AddScoped<PersonRepository>(); 
+            services.AddTokenAuthentication(Configuration);
             services.AddMvcCore();
         }
 
