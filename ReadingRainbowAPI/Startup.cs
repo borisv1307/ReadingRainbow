@@ -16,6 +16,7 @@ using Neo4jClient;
 using System.Net.Http;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.Controllers;
+using ReadingRainbowAPI.Middleware;
 
 namespace ReadingRainbowAPI
 {
@@ -50,6 +51,7 @@ namespace ReadingRainbowAPI
 
             services.AddScoped<BookRepository>(); 
             services.AddScoped<PersonRepository>(); 
+            services.AddTokenAuthentication(Configuration);
             services.AddMvcCore();
         }
 
@@ -68,7 +70,8 @@ namespace ReadingRainbowAPI
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();  
+            app.UseAuthorization(); 
             
             app.UseEndpoints(endpoints =>
             {

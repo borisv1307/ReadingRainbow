@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Relationships;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReadingRainbowAPI.Controllers
 {
-    [Route("api/person")]
     [ApiController]
+    [Authorize]
+    [Route("api/person")]
     public class PersonController : ControllerBase
     {
 
