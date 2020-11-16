@@ -17,10 +17,10 @@ namespace AuthTest.API.Controllers
         }
 
         [HttpGet]
-        public string GetRandomToken()
+        public string GetRandomToken(string email)
         {
             var jwt = new JwtService(_config);
-            var token = jwt.GenerateSecurityToken("fake@email.com");
+            var token = jwt.GenerateSecurityToken(email);
             return token;
         }
     }
