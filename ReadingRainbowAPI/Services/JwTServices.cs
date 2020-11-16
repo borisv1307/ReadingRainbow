@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;  
 using Microsoft.Extensions.Configuration;  
   
-namespace AuthTest.API.Services
+namespace ReadingRainbowAPI.Services
 {  
     public class JwtService  
     {  

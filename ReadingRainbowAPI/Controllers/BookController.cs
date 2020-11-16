@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Relationships;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReadingRainbowAPI.Controllers
 {
-    [Route("api/book")]
     [ApiController]
+    [Authorize]
+    [Route("api/book")]
     public class BookController : ControllerBase
     {
 
