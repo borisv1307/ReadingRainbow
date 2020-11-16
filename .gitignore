@@ -25777,3 +25777,4 @@ ReadingRainbowAPI.Tests/obj/project.nuget.cache
 ReadingRainbowAPI/obj/project.nuget.cache
 ReadingRainbowAPI/bin/Debug/netcoreapp3.1/Newtonsoft.Json.dll
 ReadingRainbowAPI/bin/Debug/netcoreapp3.1/Neo4j.Driver.dll
+/.vs

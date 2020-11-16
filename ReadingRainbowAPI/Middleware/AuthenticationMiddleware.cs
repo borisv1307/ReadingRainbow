@@ -1,11 +1,10 @@
-
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace AuthTest.API.Middleware
+namespace ReadingRainbowAPI.Middleware
 {
     public static class AuthenticationExtension
     {

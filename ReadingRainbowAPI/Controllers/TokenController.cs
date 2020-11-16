@@ -1,11 +1,11 @@
-using AuthTest.API.Services;
+using ReadingRainbowAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace AuthTest.API.Controllers
 {
     
-    [Route("api/[controller]")]
+    [Route("api/token")]
     [ApiController]
     public class TokenController : ControllerBase
     {
