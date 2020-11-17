@@ -2,9 +2,12 @@ import React from 'react';
 import { Image, View, Text, Button, TouchableOpacity, ScrollView} from 'react-native';
 import { globalStyles } from '../styles/global';
 import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../components/context';
 
 export default function Home() {
     const { navigate } = useNavigation();
+
+    const { signOut } = React.useContext(AuthContext);
     return (
         <View style={globalStyles.container}>
             <ScrollView>
@@ -20,7 +23,8 @@ export default function Home() {
                         <Text>View My Library</Text>
                     </TouchableOpacity>
                 </View>
-                <View>    
+                <View>
+                    <Button title='Sign Out' onPress={() => {signOut()}}/>    
                     <TouchableOpacity style={globalStyles.largeButton}>
                         <Text>Books your friends recommend!</Text>
                     </TouchableOpacity>
