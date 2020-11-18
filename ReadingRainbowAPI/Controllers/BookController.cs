@@ -23,7 +23,7 @@ namespace ReadingRainbowAPI.Controllers
         
         [HttpGet]
         [Route("Library/{bookId}")]
-        public async Task<ActionResult> GetPeopleAsync(string bookId)
+        public async Task<IActionResult> GetPeopleAsync(string bookId)
         {
             var book = new Book(){
                 Id = bookId
