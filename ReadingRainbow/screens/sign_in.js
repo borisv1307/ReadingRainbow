@@ -4,6 +4,7 @@ import { globalStyles } from '../styles/global.js';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../components/context';
 import Users from '../model/users';
+import * as Crypto from 'expo-crypto';
 
 const SignIn = ({navigate}) => {
     const [data, setData] = React.useState({
@@ -65,6 +66,15 @@ const SignIn = ({navigate}) => {
         }
     }
 
+    async function runCrypto() {
+        const digest = await Crypto.digestStringAsync(
+            Crypto.CryptoDigestAlgorithm.SHA256,
+            data.password
+        );
+        data.password = digest;
+        console.log('Password: ', data.password);
+    }
+
     const loginHandle = (userName, password) => {
         const foundUser = Users.filter( item => {
             return userName == item.username && password == item.password;
@@ -83,7 +93,7 @@ const SignIn = ({navigate}) => {
             ]);
             return;
         }
-
+        runCrypto();
         signIn(foundUser);
     }
 
