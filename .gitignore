@@ -11,6 +11,7 @@ web-build/
 /ReadingRainbowAPI.Tests/bin/*
 /ReadingRainbowAPI/bin/*
 /ReadingRainbowAPI/obj/*
+/.vs/*
 
 # macOS
 .DS_Store

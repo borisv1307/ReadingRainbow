@@ -19,7 +19,7 @@ namespace ReadingRainbowAPI.DAL
             }
             else
             {
-               await Update(p => p.Id == book.Id, book);
+                await Update(p => p.Id == book.Id, book);
             }
         }
 
