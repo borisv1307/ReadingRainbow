@@ -1,8 +1,10 @@
 using ReadingRainbowAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using ReadingRainbowAPI.DAL;
+using System.Threading.Tasks;
 
-namespace AuthTest.API.Controllers
+namespace ReadingRainbowAPI.Controllers
 {
     
     [Route("api/token")]
@@ -10,18 +12,27 @@ namespace AuthTest.API.Controllers
     public class TokenController : ControllerBase
     {
         private IConfiguration _config;
+        private PersonRepository _personRepository;
 
-        public TokenController(IConfiguration config)
+        public TokenController(IConfiguration config, PersonRepository personRepository)
         {
             _config = config;
+            _personRepository = personRepository;
         }
 
         [HttpGet]
-        public string GetRandomToken(string email)
+        public async Task<ActionResult> GetRandomToken(string username, string password)
         {
-            var jwt = new JwtService(_config);
-            var token = jwt.GenerateSecurityToken(email);
-            return token;
+            var person = await _personRepository.GetPersonAsync(username);
+
+            if (person.HashedPassword.Equals(password))
+            {
+                var jwt = new JwtService(_config);
+                var token = jwt.GenerateSecurityToken(username);
+                return Ok(token);
+            }
+
+            return Ok();
         }
     }
 }

@@ -4,12 +4,13 @@ using ReadingRainbowAPI.Controllers;
 using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.Relationships;
-using System.Text.Json;
+using ReadingRainbowAPI.Dto;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Threading.Tasks;
+using AutoMapper;
+using ReadingRainbowAPI.Mapping;
 
 namespace ReadingRainbowAPI.ControllerTests
 {
@@ -20,10 +21,22 @@ namespace ReadingRainbowAPI.ControllerTests
         private Mock<PersonRepository> _personRepository;
         private BookRepository _bookRepository;
 
+        private IMapper _mapper;
+
+        
+
         // Initalize Method used for all tests
         public PeopleControllerTests()
         {
             _personRepository = new Mock<PersonRepository>(new Mock<INeo4jDBContext>().Object){CallBase = true};
+
+            // Auto Mapper Configurations
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            _mapper = mapperConfig.CreateMapper();
         }
 
         private Book CreateBook()
@@ -75,14 +88,16 @@ namespace ReadingRainbowAPI.ControllerTests
                 x.GetAllRelated<Book, InLibrary>(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Book>(), It.IsAny<InLibrary>()))
                 .ReturnsAsync(bookList);
 
-            var personController = new PersonController(_personRepository.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper);
 
             // Act
             var result = await personController.GetBooksAsync(person1.Name);
             var okResult = result as OkObjectResult;
+            var returnedBookList = okResult.Value as List<Book>;
 
             // Assert
             Assert.True(okResult != null);
+            Assert.True(returnedBookList.Count == 2);
             Assert.Equal(200, okResult.StatusCode);
 
        }
@@ -103,7 +118,7 @@ namespace ReadingRainbowAPI.ControllerTests
                   .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
                   .ReturnsAsync(true);
 
-            var personController = new PersonController(_personRepository.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper);
 
             // Act
             var result = await personController.AddUpdatePersonAsync(newPerson);
@@ -124,14 +139,18 @@ namespace ReadingRainbowAPI.ControllerTests
                 .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
                 .ReturnsAsync(newPerson);
 
-            var personController = new PersonController(_personRepository.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper);
 
             // Act
             var result = await personController.FindPersonAsync(newPerson.Name);
             var okResult = result as OkObjectResult;
+            var returnedPerson = okResult.Value as PersonDto;
+            var wrongPersonType = okResult.Value as Person;
 
             // Assert
             Assert.True(okResult != null);
+            Assert.True(wrongPersonType == null);
+            Assert.True(returnedPerson != null);
             Assert.Equal(200, okResult.StatusCode);
         }
 
@@ -148,14 +167,18 @@ namespace ReadingRainbowAPI.ControllerTests
 
             _personRepository.Setup(x => x.All()).ReturnsAsync(personList);
 
-            var personController = new PersonController(_personRepository.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper);
 
             // Act
             var result = await personController.GetAllPeopleAsync();
             var okResult = result as OkObjectResult;
+            var returnedPeople = okResult.Value as List<PersonDto>;
+            var wrongListType = okResult.Value as List<Person>;
 
             // Assert
             Assert.True(okResult != null);
+            Assert.True(wrongListType == null);
+            Assert.True(returnedPeople.Count == 2);
             Assert.Equal(200, okResult.StatusCode);
            
         }
