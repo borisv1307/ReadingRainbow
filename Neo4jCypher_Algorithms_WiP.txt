@@ -42,11 +42,11 @@ RETURN jaccard > 0.2, jaccard, unique
 //Popularity Indexing (show popular wish listed books or popular books that other users are reading - this is largely to make users feel connected)
 MATCH (p:Person)-[r:IN_LIBRARY]->(b:Book)
 WITH b, COUNT(r) AS popularity ORDER BY popularity DESC LIMIT 10
-RETURN popularity
+RETURN popularity, b
 
 MATCH (p:Person)-[r:WISH_LISTS]->(b:Book)
 WITH b, COUNT(r) AS popularity ORDER BY popularity DESC LIMIT 10
-RETURN popularity
+RETURN popularity, b
 
 //Modified Jaccard Index Recommendations:
 Since Jaccard index is based on WISH_LISTS OR LIBRARY, it does not take into account books that exists in library/wishlist and may recommend books already in User A's library
