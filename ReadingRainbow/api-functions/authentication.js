@@ -8,16 +8,16 @@ export async function RetrieveToken(iUsername, iPassword) {
     const fullurl = `https://localhost:5001/api/token?username=${encodedUsername}&password=${encodedPassword}`;
     try{
 
-        // const response = await fetch(fullurl,           
-        //     {
-        //         mode: 'cors',
-        //         headers: {
-        //           'Access-Control-Allow-Origin':'*',
-        //           'Content-Type': 'application/json;charset=utf-8'
-        //         },
-        //     });
-        // const token = await response.json();
-        SecureStore.setItemAsync('jwt', 'placeholder token'); //change back
+        const response = await fetch(fullurl,           
+            {
+                mode: 'cors',
+                headers: {
+                  'Access-Control-Allow-Origin':'*',
+                  'Content-Type': 'application/json;charset=utf-8'
+                },
+            });
+        const token = await response.json();
+        SecureStore.setItemAsync('jwt', token);
     } catch (err) {
         console.error(err);
     } finally {
