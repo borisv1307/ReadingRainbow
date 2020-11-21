@@ -23,7 +23,6 @@ import RootStackScreen from './screens/rootstack';
 const Stack = createStackNavigator();
 
 const App = () => {
-
     const initialLoginState = {
         isLoading: true,
         userName: null,
