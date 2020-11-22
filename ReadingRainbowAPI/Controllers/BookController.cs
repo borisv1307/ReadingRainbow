@@ -5,6 +5,10 @@ using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Relationships;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using ReadingRainbowAPI.Dto;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ReadingRainbowAPI.Controllers
 {
@@ -15,10 +19,13 @@ namespace ReadingRainbowAPI.Controllers
     {
 
         private readonly BookRepository _bookRepository;
+
+        private readonly IMapper _mapper;
  
-        public BookController(BookRepository bookRepository)
+        public BookController(BookRepository bookRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
+            _mapper = mapper;
         }
         
         [HttpGet]
@@ -28,9 +35,10 @@ namespace ReadingRainbowAPI.Controllers
             var book = new Book(){
                 Id = bookId
             };
-            var people = await _bookRepository.GetInLibraryPersonRelationshipAsync(book, new InLibrary());
+            var people = (await _bookRepository.GetInLibraryPersonRelationshipAsync(book, new InLibrary())).ToList();
+            var peopleDto = _mapper.Map<List<Person>, List<PersonDto>>(people);
 
-            return Ok(people);
+            return Ok(peopleDto);
         }
 
         [HttpPost]
