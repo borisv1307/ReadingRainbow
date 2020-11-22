@@ -6,30 +6,21 @@ using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.Relationships;
 using System.Text.Json;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
+using System.Threading.Tasks;
 
 namespace ReadingRainbowAPI.ControllerTests
 {
-    [Collection("Database collection")]
     public class BookControllerTests
     {
-        DatabaseFixture fixture;
-
-        private BookController _bookController;
-
-        private PersonRepository _personRepository;
-        private BookRepository _bookRepository;
+        private Mock<BookRepository> _bookRepository;
 
         // Initalize Method used for all tests
-        public BookControllerTests(DatabaseFixture fixture)
+        public BookControllerTests()
         {
-            this.fixture = fixture;
-
-            _bookController = new BookController(fixture.dbContext);
-
-            _bookRepository = new BookRepository(fixture.dbContext);
-            _personRepository = new PersonRepository(fixture.dbContext);
+            _bookRepository = new Mock<BookRepository>(new Mock<INeo4jDBContext>().Object){CallBase = true};
         }
 
         private Book CreateBook()
@@ -71,31 +62,26 @@ namespace ReadingRainbowAPI.ControllerTests
             var person1 = CreatePerson();
             var person2 = CreatePerson();
 
-            await _bookRepository.AddOrUpdateAsync(book1);
-            await _personRepository.AddOrUpdatePersonAsync(person1);
-            await _personRepository.AddOrUpdatePersonAsync(person2);
+            var personList = new List<Person>()
+            {
+                person1,
+                person2
+            };
 
-            var inLibrary1 = new InLibrary();
-            var inLibrary2 = new InLibrary();
+            _bookRepository
+            .Setup(x => 
+                x.GetAllRelated<Person, InLibrary>(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<Person>(), It.IsAny<InLibrary>()))
+                .ReturnsAsync(personList);
 
-            await _bookRepository.CreateInLibraryRelationshipAsync(book1, person1, inLibrary1);
-            await _bookRepository.CreateInLibraryRelationshipAsync(book1, person2, inLibrary2);
+            var bookController = new BookController(_bookRepository.Object);
 
             // Act
-
-            var result = await _bookController.GetPeopleAsync(book1.Id);
+            var result = await bookController.GetPeopleAsync(book1.Id);
             var okResult = result as OkObjectResult;
 
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
-
-            // Clean up
-            await _bookRepository.DeleteInLibraryRelationshipAsync(book1, person1, inLibrary1);
-            await _bookRepository.DeleteInLibraryRelationshipAsync(book1, person2, inLibrary2);
-            await _bookRepository.DeleteBookAsync(book1);
-            await _personRepository.DeletePersonAsync(person1);
-            await _personRepository.DeletePersonAsync(person2);
             
         }
 
@@ -104,17 +90,26 @@ namespace ReadingRainbowAPI.ControllerTests
         {
             // Arrange
             var newBook = CreateBook();
+                
+            _bookRepository 
+                    .Setup(x => x.Single(It.IsAny<Expression<Func<Book, bool>>>()))
+                    .ReturnsAsync(newBook);
+            _bookRepository
+                    .Setup(a=>a.Add(It.IsAny<Book>()))
+                    .ReturnsAsync(true);
+            _bookRepository
+                  .Setup(x => x.Update(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<Book>()))
+                  .ReturnsAsync(true);
+
+            var bookController = new BookController(_bookRepository.Object);
 
             // Act
-            await _bookController.AddUpdateBookAsync(newBook);
-            var returnedBook = await _bookRepository.GetBookAsync(newBook.Id);
+            var result  = await bookController.AddUpdateBookAsync(newBook);
+            var okResult = result as OkResult;
 
             // Assert
-            Assert.True(returnedBook != null);
-            Assert.True(returnedBook.Title == newBook.Title);
-
-            // Clean up
-            await _bookRepository.DeleteBookAsync(newBook);
+            Assert.True(okResult != null);
+            Assert.Equal(200, okResult.StatusCode);
         }
 
         [Fact]
@@ -122,40 +117,46 @@ namespace ReadingRainbowAPI.ControllerTests
         {
             // Arrange
             var newBook = CreateBook();
-            await _bookRepository.AddOrUpdateAsync(newBook);
+            
+            _bookRepository 
+                .Setup(x => x.Single(It.IsAny<Expression<Func<Book, bool>>>()))
+                .ReturnsAsync(newBook);
+
+            var bookController = new BookController(_bookRepository.Object);
 
             // Act
-            var result = await _bookController.FindBookAsync(newBook.Id);
+            var result = await bookController.FindBookAsync(newBook.Id);
             var okResult = result as OkObjectResult;
 
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
 
-                        // Clean up
-            await _bookRepository.DeleteBookAsync(newBook);
         }
 
         [Fact]
         public async void GetAllBookRoute_Test()
         {
+            // Arrange
             var book1 = CreateBook();
             var book2 = CreateBook();
-            await _bookRepository.AddOrUpdateAsync(book1);
-            await _bookRepository.AddOrUpdateAsync(book2);
+
+            var bookList = new List<Book>() {
+                book1,
+                book2             
+            }; 
+
+            _bookRepository.Setup(x => x.All()).ReturnsAsync(bookList);
+
+            var bookController = new BookController(_bookRepository.Object);
 
             // Act
-            var result = await _bookController.GetAllBooksAsync();
+            var result = await bookController.GetAllBooksAsync();
             var okResult = result as OkObjectResult;
 
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
-
-            // Clean up
-            await _bookRepository.DeleteBookAsync(book1);
-            await _bookRepository.DeleteBookAsync(book2);
-           
         }
 
     }

@@ -53,15 +53,17 @@ namespace ReadingRainbowAPI.DAL
         }
 
         // Adds Entity to table
-        public virtual async Task Add(TEntity item)
+        public virtual async Task<bool> Add(TEntity item)
         {
             await _neoContext.Cypher
                     .Create("(e:" + item.Label + " $item)")
                     .WithParam("item", item)
                     .ExecuteWithoutResultsAsync();
+
+            return true;
         }
 
-        public virtual async Task Update(Expression<Func<TEntity, bool>> query, TEntity newItem)
+        public virtual async Task<bool> Update(Expression<Func<TEntity, bool>> query, TEntity newItem)
         {
             string name = query.Parameters[0].Name;
 
@@ -74,6 +76,8 @@ namespace ReadingRainbowAPI.DAL
                .Set(name + " = $item")
                .WithParam("item", itemToUpdate)
                .ExecuteWithoutResultsAsync();
+
+            return true;
         }
 
         private void CopyValues(TEntity target, TEntity source)
@@ -90,7 +94,7 @@ namespace ReadingRainbowAPI.DAL
             }
         }
 
-        public virtual async Task Delete(Expression<Func<TEntity, bool>> query)
+        public virtual async Task<bool> Delete(Expression<Func<TEntity, bool>> query)
         {
             string name = query.Parameters[0].Name;
             TEntity entity = (TEntity)Activator.CreateInstance(query.Parameters[0].Type);
@@ -100,9 +104,11 @@ namespace ReadingRainbowAPI.DAL
                 .Where(query)
                 .DetachDelete(name)
                 .ExecuteWithoutResultsAsync();
+            
+            return true;
         }
 
-        public virtual async Task Relate<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, 
+        public virtual async Task<bool> Relate<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, 
         Expression<Func<TEntity2, bool>> query2, TRelationship relationship)
             where TEntity2 : Neo4jEntity, new()
             where TRelationship : Neo4jRelationship, new()
@@ -120,7 +126,10 @@ namespace ReadingRainbowAPI.DAL
                 .AndWhere(query2)
                 .Create("(" + name1 + ")-[r:" + relationship.Name + "]->(" + name2 + ")")
                 .ExecuteWithoutResultsAsync();
+
+            return true;
         }
+
 
         public virtual async Task<IEnumerable<TEntity2>> GetRelated<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, Expression<Func<TEntity2, bool>> query2, TRelationship relationship)
             where TEntity2 : Neo4jEntity, new()
@@ -156,7 +165,7 @@ namespace ReadingRainbowAPI.DAL
                 .ResultsAsync;
         }
 
-        public virtual async Task DeleteRelationship<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, Expression<Func<TEntity2, bool>> query2, TRelationship relationship)
+        public virtual async Task<bool> DeleteRelationship<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, Expression<Func<TEntity2, bool>> query2, TRelationship relationship)
             where TEntity2 : Neo4jEntity, new()
             where TRelationship : Neo4jRelationship, new()
         {
@@ -171,6 +180,8 @@ namespace ReadingRainbowAPI.DAL
                 .AndWhere(query2)
                 .Delete("r")
                 .ExecuteWithoutResultsAsync();
+
+            return true;
         }
 
     }

@@ -11,6 +11,8 @@ namespace ReadingRainbowAPI.Models
         public string Profile {get; set;}
         public string Portrait {get; set;}
 
+        public string Email {get; set;}
+
         public string HashedPassword {get; set;}
     }
 }

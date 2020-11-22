@@ -3,19 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Relationships;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReadingRainbowAPI.Controllers
 {
-    [Route("api/person")]
     [ApiController]
+    [Authorize]
+    [Route("api/person")]
     public class PersonController : ControllerBase
     {
 
         private readonly PersonRepository _personRepository;
  
-        public PersonController(INeo4jDBContext context)
+        public PersonController(PersonRepository personRepository)
         {
-            _personRepository = new PersonRepository(context);
+            _personRepository = personRepository;
         }
         
         [HttpGet]

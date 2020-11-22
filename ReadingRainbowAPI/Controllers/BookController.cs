@@ -4,24 +4,26 @@ using Microsoft.AspNetCore.Mvc;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Relationships;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReadingRainbowAPI.Controllers
 {
-    [Route("api/book")]
     [ApiController]
+    [Authorize]
+    [Route("api/book")]
     public class BookController : ControllerBase
     {
 
         private readonly BookRepository _bookRepository;
  
-        public BookController(INeo4jDBContext context)
+        public BookController(BookRepository bookRepository)
         {
-            _bookRepository = new BookRepository(context);
+            _bookRepository = bookRepository;
         }
         
         [HttpGet]
         [Route("Library/{bookId}")]
-        public async Task<ActionResult> GetPeopleAsync(string bookId)
+        public async Task<IActionResult> GetPeopleAsync(string bookId)
         {
             var book = new Book(){
                 Id = bookId

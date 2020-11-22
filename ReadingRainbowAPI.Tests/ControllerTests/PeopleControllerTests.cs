@@ -6,30 +6,24 @@ using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.Relationships;
 using System.Text.Json;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
+using System.Threading.Tasks;
 
 namespace ReadingRainbowAPI.ControllerTests
 {
-    [Collection("Database collection")]
+
     public class PeopleControllerTests
     {
-        DatabaseFixture fixture;
 
-        private PersonController _personController;
-
-        private PersonRepository _personRepository;
+        private Mock<PersonRepository> _personRepository;
         private BookRepository _bookRepository;
 
         // Initalize Method used for all tests
-        public PeopleControllerTests(DatabaseFixture fixture)
+        public PeopleControllerTests()
         {
-            this.fixture = fixture;
-
-            _personController = new PersonController(fixture.dbContext);
-
-            _bookRepository = new BookRepository(fixture.dbContext);
-            _personRepository = new PersonRepository(fixture.dbContext);
+            _personRepository = new Mock<PersonRepository>(new Mock<INeo4jDBContext>().Object){CallBase = true};
         }
 
         private Book CreateBook()
@@ -71,49 +65,53 @@ namespace ReadingRainbowAPI.ControllerTests
             var book2 = CreateBook();
             var person1 = CreatePerson();
 
-            await _bookRepository.AddOrUpdateAsync(book1);
-            await _bookRepository.AddOrUpdateAsync(book2);
-            await _personRepository.AddOrUpdatePersonAsync(person1);
+            var bookList = new List<Book>(){
+                book1,
+                book2
+            };
 
-            var inLibrary1 = new InLibrary();
-            var inLibrary2 = new InLibrary();
+            _personRepository
+            .Setup(x => 
+                x.GetAllRelated<Book, InLibrary>(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Book>(), It.IsAny<InLibrary>()))
+                .ReturnsAsync(bookList);
 
-            await _bookRepository.CreateInLibraryRelationshipAsync(book1, person1, inLibrary1);
-            await _bookRepository.CreateInLibraryRelationshipAsync(book2, person1, inLibrary2);
+            var personController = new PersonController(_personRepository.Object);
 
             // Act
-
-            var result = await _personController.GetBooksAsync(person1.Name);
+            var result = await personController.GetBooksAsync(person1.Name);
             var okResult = result as OkObjectResult;
 
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
 
-             // Clean up
-            await _bookRepository.DeleteInLibraryRelationshipAsync(book1, person1, inLibrary1);
-            await _bookRepository.DeleteInLibraryRelationshipAsync(book2, person1, inLibrary2);
-            await _bookRepository.DeleteBookAsync(book1);
-            await _bookRepository.DeleteBookAsync(book2);
-            await _personRepository.DeletePersonAsync(person1);
-        }
+       }
 
         [Fact]
         public async void AddPersonRoute_Test()
         {
             // Arrange
             var newPerson = CreatePerson();
+                            
+            _personRepository 
+                    .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
+                    .ReturnsAsync(newPerson);
+            _personRepository
+                    .Setup(a=>a.Add(It.IsAny<Person>()))
+                    .ReturnsAsync(true);
+            _personRepository
+                  .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
+                  .ReturnsAsync(true);
+
+            var personController = new PersonController(_personRepository.Object);
 
             // Act
-            await _personController.AddUpdatePersonAsync(newPerson);
-            var returnedPerson = await _personRepository.GetPersonAsync(newPerson.Name);
+            var result = await personController.AddUpdatePersonAsync(newPerson);
+            var okResult = result as OkResult;
 
             // Assert
-            Assert.True(returnedPerson != null);
-            Assert.True(returnedPerson.Profile == newPerson.Profile);
-
-            // Clean up
-            await _personRepository.DeletePersonAsync(newPerson);
+            Assert.True(okResult != null);
+            Assert.Equal(200, okResult.StatusCode);
         }
 
         [Fact]
@@ -121,18 +119,20 @@ namespace ReadingRainbowAPI.ControllerTests
         {
             // Arrange
             var newPerson = CreatePerson();
-            await _personRepository.AddOrUpdatePersonAsync(newPerson);
+                        
+            _personRepository 
+                .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
+                .ReturnsAsync(newPerson);
+
+            var personController = new PersonController(_personRepository.Object);
 
             // Act
-            var result = await _personController.FindPersonAsync(newPerson.Name);
+            var result = await personController.FindPersonAsync(newPerson.Name);
             var okResult = result as OkObjectResult;
 
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
-
-            // Clean up
-            await _personRepository.DeletePersonAsync(newPerson);
         }
 
         [Fact]
@@ -140,20 +140,23 @@ namespace ReadingRainbowAPI.ControllerTests
         {
             var person1 = CreatePerson();
             var person2 = CreatePerson();
-            await _personRepository.AddOrUpdatePersonAsync(person1);
-            await _personRepository.AddOrUpdatePersonAsync(person2);
+            var personList = new List<Person>()
+            {
+                person1,
+                person2
+            }; 
+
+            _personRepository.Setup(x => x.All()).ReturnsAsync(personList);
+
+            var personController = new PersonController(_personRepository.Object);
 
             // Act
-            var result = await _personController.GetAllPeopleAsync();
+            var result = await personController.GetAllPeopleAsync();
             var okResult = result as OkObjectResult;
 
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
-
-            // Clean up
-            await _personRepository.DeletePersonAsync(person1);
-            await _personRepository.DeletePersonAsync(person2);
            
         }
 
