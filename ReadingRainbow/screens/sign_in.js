@@ -75,7 +75,6 @@ const SignIn = ({navigate}) => {
     // }
 
     const loginHandle = () => {
-        console.log('------------------------------------')
         // if ( data.username.length == 0 || data.password.length == 0 ) {
         //     Alert.alert('Wrong Input!', 'Username or password field cannot be empty.', [
         //         {text: 'Okay'}
@@ -89,8 +88,6 @@ const SignIn = ({navigate}) => {
         //     ]);
         //     return;
         // }
-        console.log('username: ', data.username);
-        console.log('password: ', data.password);
         // const digest2 = '';
         // async function runCrypto() {
         //     const digest = await Crypto.digestStringAsync(
@@ -100,21 +97,19 @@ const SignIn = ({navigate}) => {
         //     console.log('Digest: ', digest);
         //     return digest;
         // }
-        (async () => {
-            try {
-                const digest = await Crypto.digestStringAsync(
-                    Crypto.CryptoDigestAlgorithm.SHA256,
-                    data.password
-                );
-                setData({
-                    ...data,
-                    password: digest
-                });
-            } catch (e) {
-                console.log(e);
-            }
-        })().then(    
-            RetrieveToken(data.username, data.password).then(
+        console.log('------------------------------------')
+        console.log('username: ', data.username);
+        console.log('password: ', data.password);
+        (async () => await Crypto.digestStringAsync(
+            Crypto.CryptoDigestAlgorithm.SHA256,
+            data.password
+        ))().then(digest => {
+            console.log('digest: ', digest);
+            setData({
+                ...data,
+                password: ''
+            });    
+            RetrieveToken(data.username, digest).then(
                 (async () => {
                     try {
                         const token = await SecureStore.getItemAsync('jwt');
@@ -125,10 +120,18 @@ const SignIn = ({navigate}) => {
                     }
                 })()
             )
-        );
+        });
         // signIn(returnedToken);
     }
-
+    const PasswordField = true ? 
+        <TextInput
+            style={globalStyles.input}
+            placeholder='password'
+            onChangeText={(val) => setData({...data, password: val})}
+            secureTextEntry={true}
+            autoCapitalize='none'
+            // onChangeText={(val) => handlePasswordChange(val)}
+        /> : null;
     return (
         <View style={globalStyles.container}>
             <Text>
@@ -142,14 +145,8 @@ const SignIn = ({navigate}) => {
                     onChangeText={(text) => setData({...data, username: text})} 
                     // onEndEditing={(e)=>handleValidUser(e.nativeEvent.text)}
                 />
-                <TextInput
-                    style={globalStyles.input}
-                    placeholder='password'
-                    onChangeText={(val) => setData({...data, password: val})}
-                    secureTextEntry={true}
-                    autoCapitalize='none'
-                    // onChangeText={(val) => handlePasswordChange(val)}
-                />
+                {PasswordField}
+
                 <Button
                     title="Sign In"
                     onPress={() => {loginHandle()}} />
