@@ -25,6 +25,11 @@ namespace ReadingRainbowAPI.Controllers
         {
             var person = await _personRepository.GetPersonAsync(username);
 
+            if (person == null)
+            {
+                return Ok();
+            }
+
             if (person.HashedPassword.Equals(password))
             {
                 var jwt = new JwtService(_config);
@@ -32,7 +37,7 @@ namespace ReadingRainbowAPI.Controllers
                 return Ok(token);
             }
 
-            return Ok();
+                return Ok();
         }
     }
 }

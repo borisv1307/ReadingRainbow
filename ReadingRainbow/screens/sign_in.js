@@ -3,88 +3,129 @@ import { TextInput, View, Text, TouchableOpacity, Button, Alert } from 'react-na
 import { globalStyles } from '../styles/global.js';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../components/context';
-import Users from '../model/users';
+// import Users from '../model/users';
+import * as Crypto from 'expo-crypto';
+import { RetrieveToken } from '../api-functions/authentication.js';
+import * as SecureStore from 'expo-secure-store'; 
 
 const SignIn = ({navigate}) => {
     const [data, setData] = React.useState({
         username: '',
         password: '',
         check_textInputChange: false,
-        secureTextEntry: true,
         isValidUser: true,
         isValidPassword: true,
     });
 
     const { signIn } = React.useContext(AuthContext);
     
-    const textInputChange = (val) => {
-        if( val.trim().length >= 4 ) {
-            setData({
-                ...data,
-                username: val,
-                check_textInputChange: true,
-                isValidUser: true
-            });
-        } else {
-            setData({
-                ...data,
-                username: val,
-                check_textInputChange: false,
-                isValidUser: false
-            });
-        }
-    }
+    // const textInputChange = (val) => {
+    //     if( val.trim().length >= 4 ) {
+    //         setData({
+    //             ...data,
+    //             username: val,
+    //             check_textInputChange: true,
+    //             isValidUser: true
+    //         });
+    //     } else {
+    //         setData({
+    //             ...data,
+    //             username: val,
+    //             check_textInputChange: false,
+    //             isValidUser: false
+    //         });
+    //     }
+    // }
 
-    const handlePasswordChange = (val) => {
-        if( val.trim().length >= 8 ) {
-            setData({
-                ...data,
-                password: val,
-                isValidPassword: true
-            });
-        } else {
-            setData({
-                ...data,
-                password: val,
-                isValidPassword: false
-            });
-        }
-    }
+    // const handlePasswordChange = (val) => {
+    //     if( val.trim().length >= 8 ) {
+    //         setData({
+    //             ...data,
+    //             password: val,
+    //             isValidPassword: true
+    //         });
+    //     } else {
+    //         setData({
+    //             ...data,
+    //             password: val,
+    //             isValidPassword: false
+    //         });
+    //     }
+    // }
 
-    const handleValidUser = (val) => {
-        if( val.trim().length >= 4 ) {
-            setData({
-                ...data,
-                isValidUser: true
-            });
-        } else {
-            setData({
-                ...data,
-                isValidUser: false
-            });
-        }
-    }
+    // const handleValidUser = (val) => {
+    //     if( val.trim().length >= 4 ) {
+    //         setData({
+    //             ...data,
+    //             isValidUser: true
+    //         });
+    //     } else {
+    //         setData({
+    //             ...data,
+    //             isValidUser: false
+    //         });
+    //     }
+    // }
 
-    const loginHandle = (userName, password) => {
-        const foundUser = Users.filter( item => {
-            return userName == item.username && password == item.password;
-        } );
-        
-        if ( data.username.length == 0 || data.password.length == 0 ) {
-            Alert.alert('Wrong Input!', 'Username or password field cannot be empty.', [
-                {text: 'Okay'}
-            ]);
-            return;
-        }
+    // async function runCrypto(input) {
+    //     data.password = await Crypto.digestStringAsync(
+    //         Crypto.CryptoDigestAlgorithm.SHA256,
+    //         input
+    //     );
+    // }
 
-        if ( foundUser.length == 0 ) {
-            Alert.alert('Invalid User!', 'Username or password is incorrect.', [
-                {text: 'Okay'}
-            ]);
-            return;
-        }
+    const loginHandle = () => {
+        console.log('------------------------------------')
+        // if ( data.username.length == 0 || data.password.length == 0 ) {
+        //     Alert.alert('Wrong Input!', 'Username or password field cannot be empty.', [
+        //         {text: 'Okay'}
+        //     ]);
+        //     return;
+        // }
 
-        signIn(foundUser);
+        // if ( foundUser.length == 0 ) {
+        //     Alert.alert('Invalid User!', 'Username or password is incorrect.', [
+        //         {text: 'Okay'}
+        //     ]);
+        //     return;
+        // }
+        console.log('username: ', data.username);
+        console.log('password: ', data.password);
+        // const digest2 = '';
+        // async function runCrypto() {
+        //     const digest = await Crypto.digestStringAsync(
+        //         Crypto.CryptoDigestAlgorithm.SHA256,
+        //         data.password
+        //     );
+        //     console.log('Digest: ', digest);
+        //     return digest;
+        // }
+        (async () => {
+            try {
+                const digest = await Crypto.digestStringAsync(
+                    Crypto.CryptoDigestAlgorithm.SHA256,
+                    data.password
+                );
+                setData({
+                    ...data,
+                    password:  data.password
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        })().then(    
+            RetrieveToken(data.username, data.password).then(
+                (async () => {
+                    try {
+                        const token = await SecureStore.getItemAsync('jwt');
+                        await SecureStore.deleteItemAsync('jwt');
+                    } catch (e) {
+                        console.log(e);
+                    }
+                })()
+            )
+        );
+        // signIn(returnedToken);
     }
 
     return (
@@ -96,21 +137,21 @@ const SignIn = ({navigate}) => {
             <View>
                 <TextInput
                     style={globalStyles.input}
-                    placeholder='pageTurner@example.com'
-                    onChangeText={(val) => textInputChange(val)} 
-                    onEndEditing={(e)=>handleValidUser(e.nativeEvent.text)}
+                    placeholder='pageTurner123'
+                    onChangeText={(text) => setData({...data, username: text})} 
+                    // onEndEditing={(e)=>handleValidUser(e.nativeEvent.text)}
                 />
                 <TextInput
                     style={globalStyles.input}
                     placeholder='password'
-                    onChangeText={(text) => setText(text)}
-                    secureTextEntry={data.secureTextEntry ? true : false }
+                    onChangeText={(val) => setData({...data, password: val})}
+                    secureTextEntry={true}
                     autoCapitalize='none'
-                    onChangeText={(val) => handlePasswordChange(val)}
+                    // onChangeText={(val) => handlePasswordChange(val)}
                 />
                 <Button
                     title="Sign In"
-                    onPress={() => {loginHandle( data.username, data.password )}} />
+                    onPress={() => {loginHandle()}} />
                 <TouchableOpacity
                     style={globalStyles.smallButton}
                     onPress={() => navigate('SignUpScreen')}>
