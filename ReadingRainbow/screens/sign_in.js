@@ -118,8 +118,7 @@ const SignIn = ({navigate}) => {
                 (async () => {
                     try {
                         const token = await SecureStore.getItemAsync('jwt');
-                        console.log('value of token: ', token);
-                        SecureStore.deleteItemAsync('jwt');
+                        await SecureStore.deleteItemAsync('jwt');
                     } catch (e) {
                         console.log(e);
                     }
