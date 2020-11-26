@@ -9,30 +9,30 @@ Upon starting Neo4j Desktop, Create a local database (1234 or whatever password)
 Click RUN and Open in Neo4j Browser. This should give you a prompt. Copy File URL (Or file Path and Use file:/// prefix before file name) to clipboad and insert into LOAD CSV statement.
 
 LOAD CSV WITH HEADERS FROM 'http://localhost:11001/project-32e06daf-0ca3-47a0-91f0-8b4cc74c1ebc/Neo4jDB.csv' AS line
-MERGE (p1:Person { name: line.Unique_Name, profile: line.About_Me, portrait: line.Profile_Img_URL })
-MERGE (p2:Person { name: line.F_Unique_Name, profile: line.F_About_Me, portrait: line.F_Profile_Img_URL })
-MERGE (b1:Book { id: line.L_Book_ID, title: line.L_B_Title, author: line.L_B_Authors, thumbnail: line.L_B_Thumbnail, publishdate: line.L_B_Publish_Date, pagenum: line.L_B_Pages, description: line.L_B_Description, isbn10: line.L_B_ISBN_10, isbn13: line.L_B_ISBN_13 })
-MERGE (b2:Book { id: line.W_Book_ID, title: line.W_B_Title, author: line.W_B_Authors, thumbnail: line.W_B_Thumbnail, publishdate: line.W_B_Publish_Date, pagenum: line.W_B_Pages, description: line.W_B_Description, isbn10: line.W_B_ISBN_10, isbn13: line.W_B_ISBN_13 })
+MERGE (p1:Person { Name: line.Unique_Name, Profile: line.About_Me, Portrait: line.Profile_Img_URL })
+MERGE (p2:Person { Name: line.F_Unique_Name, Profile: line.F_About_Me, Portrait: line.F_Profile_Img_URL })
+MERGE (b1:Book { Id: line.L_Book_ID, Title: line.L_B_Title, Author: line.L_B_Authors, Thumbnail: line.L_B_Thumbnail, PublishDate: line.L_B_Publish_Date, PageNum: line.L_B_Pages, Description: line.L_B_Description, ISBN10: line.L_B_ISBN_10, ISBN13: line.L_B_ISBN_13 })
+MERGE (b2:Book { Id: line.W_Book_ID, Title: line.W_B_Title, Author: line.W_B_Authors, Thumbnail: line.W_B_Thumbnail, PublishDate: line.W_B_Publish_Date, PageNum: line.W_B_Pages, Description: line.W_B_Description, ISBN10: line.W_B_ISBN_10, ISBN13: line.W_B_ISBN_13 })
 MERGE (p1)-[f:FRIENDS_WITH]->(p2)
 MERGE (p1)-[w:WISH_LISTS]->(b2)
 MERGE (p1)-[l:IN_LIBRARY]->(b1)
 
-MATCH (p:Person), (b:Book) WHERE p.name="Frederica Greenhill" AND b.id="JZpeDwAAQBAJ"
-CREATE (p)-[r:Recommend_B]->(b)
+MATCH (p:Person), (b:Book) WHERE p.Name="Frederica Greenhill" AND b.Id="JZpeDwAAQBAJ"
+CREATE (p)-[r:RECOMMEND_B]->(b)
 RETURN p,b
 
-CREATE (p:Person{name:"Dusty Attenborough" , profile:"FPA Commodore" , portrait:"URL"})
+CREATE (p:Person{Name:"Dusty Attenborough" , Profile:"FPA Commodore" , Portrait:"URL"})
 RETURN p
 
-MATCH (p:Person), (b:Book) WHERE p.name="Dusty Attenborough" AND b.id="4KwCoQEACAAJ"
+MATCH (p:Person), (b:Book) WHERE p.Name="Dusty Attenborough" AND b.Id="4KwCoQEACAAJ"
 CREATE (p)-[r:WISH_LISTS]->(b)
 RETURN p,b
 
-MATCH (p:Person), (b:Book) WHERE p.name="Dusty Attenborough" AND b.id="5NomkK4EV68C"
+MATCH (p:Person), (b:Book) WHERE p.Name="Dusty Attenborough" AND b.Id="5NomkK4EV68C"
 CREATE (p)-[r:IN_LIBRARY]->(b)
 RETURN p,b
 
-MATCH (p:Person), (b:Book) WHERE p.name="Dusty Attenborough" AND b.id="fdSJDQAAQBAJ"
+MATCH (p:Person), (b:Book) WHERE p.Name="Dusty Attenborough" AND b.Id="fdSJDQAAQBAJ"
 CREATE (p)-[r:IN_LIBRARY]->(b)
 RETURN p,b
 
@@ -69,3 +69,6 @@ Log 11/05/2020
 Successfully modified Jaccard Indexing Recommendation to take into account the complementary User B's Wish Lists/Library to ensure that books recommended to User A's library is not already in User A's Wish List and vice versa (i.e. book recommended to User A's Wish List is not already in User A's Library). This is due to the highly localized nature of Cypher Variables allowing for completely seperate queries to be made sequentially and carrying the local variables into further operations using WITH clause. Extensive testing was done with several intersecting wish lists and libraries and algorithms seems to be working correctly. 
 
 NOTE: Neo4j graphical rendering capabilities are strangely glitchy and often miss a node (and the node's relationships) causing no small amount of panick. If numbers do not add up, simply re-run the query. 
+
+Log 11/25/2020
+Modified all Neo4j database related Cypher code to match proper Syntax.
