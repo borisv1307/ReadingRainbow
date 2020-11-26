@@ -2,24 +2,24 @@ Neo4jCypher Algorithms
 
 //Recommend to Unique_Name (in this case, Frederica Greenhill") based on favorite Author. Recommended book should not be in WISH_LISTS and IN_LIBRARY.
 MATCH (b:Book), (p:Person)
-WHERE b.author = "George R. R. Martin" AND p.name="Frederica Greenhill" AND NOT (p)-[:WISH_LISTS]->(b) AND NOT (p)-[:IN_LIBRARY]->(b)
+WHERE b.Author = "George R. R. Martin" AND p.Name="Frederica Greenhill" AND NOT (p)-[:WISH_LISTS]->(b) AND NOT (p)-[:IN_LIBRARY]->(b)
 RETURN b
 
 //Recommeded Books from Friends
 MATCH (b:Book), (p:Person), (f:Person)
-WHERE p.name="Yang Wen-Li" AND (f)-[:FRIENDS_WITH]-(p) AND (f)-[:Recommend_B]->(b) AND NOT (p)-[:WISH_LISTS]->(b) AND NOT (p)-[:IN_LIBRARY]->(b)
+WHERE p.Name="Yang Wen-Li" AND (f)-[:FRIENDS_WITH]-(p) AND (f)-[:RECOMMEND_B]->(b) AND NOT (p)-[:WISH_LISTS]->(b) AND NOT (p)-[:IN_LIBRARY]->(b)
 WITH b, COLLECT(DISTINCT b) AS recommendations
 RETURN recommendations
 
 Jaccard Index based on User Libraries (Assume Unique_User_Name="Dusty Attenborough")
 //API Get, Set Unique_User_Name based on Signed In User
 
-MATCH (p1:Person {name: "Dusty Attenborough"})-[:IN_LIBRARY]->(b:Book)<-[:IN_LIBRARY]-(p2:Person)
-WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.id) AS i
+MATCH (p1:Person {Name: "Dusty Attenborough"})-[:IN_LIBRARY]->(b:Book)<-[:IN_LIBRARY]-(p2:Person)
+WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.Id) AS i
 MATCH (p1)-[:IN_LIBRARY]->(b1:Book)
-WITH p1, p2, intersection, i, COLLECT(b1.id) AS s1
+WITH p1, p2, intersection, i, COLLECT(b1.Id) AS s1
 MATCH (p2)-[:IN_LIBRARY]->(b2:Book)
-WITH p1, p2, intersection, i, s1, COLLECT(b2.id) AS s2
+WITH p1, p2, intersection, i, s1, COLLECT(b2.Id) AS s2
 WITH p1, p2, intersection, s1, s2
 WITH p1, p2, intersection, [y IN s2 WHERE NOT y IN s1] AS unique, s1+[x IN s2 WHERE NOT x IN s1] AS union, s1, s2
 WITH p1, p2, intersection, unique, union, s1, s2, ((1.0*intersection/SIZE(union))) AS jaccard ORDER BY jaccard DESC LIMIT 10
@@ -28,12 +28,12 @@ RETURN jaccard > 0.2, jaccard, unique
 Jaccard Index based on User Wish Lists (Assume Unique_User_Name="Dusty Attenborough")
 //API Get, Set Unique_User_Name based on Signed In User
 
-MATCH (p1:Person {name: "Dusty Attenborough"})-[:WISH_LISTS]->(b:Book)<-[:WISH_LISTS]-(p2:Person)
-WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.id) AS i
+MATCH (p1:Person {Name: "Dusty Attenborough"})-[:WISH_LISTS]->(b:Book)<-[:WISH_LISTS]-(p2:Person)
+WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.Id) AS i
 MATCH (p1)-[:WISH_LISTS]->(b1:Book)
-WITH p1, p2, intersection, i, COLLECT(b1.id) AS w1
+WITH p1, p2, intersection, i, COLLECT(b1.Id) AS w1
 MATCH (p2)-[:WISH_LISTS]->(b2:Book)
-WITH p1, p2, intersection, i, w1, COLLECT(b2.id) AS w2
+WITH p1, p2, intersection, i, w1, COLLECT(b2.Id) AS w2
 WITH p1, p2, intersection, w1, w2
 WITH p1, p2, intersection, [y IN w2 WHERE NOT y IN w1] AS unique, w1+[x IN w2 WHERE NOT x IN w1] AS union, w1, w2
 WITH p1, p2, intersection, unique, union, w1, w2, ((1.0*intersection/SIZE(union))) AS jaccard ORDER BY jaccard DESC LIMIT 10
@@ -58,45 +58,45 @@ Performed 1 test on Siegfried + Bucock's wish list and algorithm seemed to work 
 database set up. 
 
 For Jaccard Indexing based on WISH LISTS
-MATCH (p1:Person {name: "Siegfried Kircheis"})-[:WISH_LISTS]->(b:Book)<-[:WISH_LISTS]-(p2:Person)
-WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.id) AS i
+MATCH (p1:Person {Name: "Siegfried Kircheis"})-[:WISH_LISTS]->(b:Book)<-[:WISH_LISTS]-(p2:Person)
+WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.Id) AS i
 MATCH (p1)-[:WISH_LISTS]->(b1:Book)
-WITH p1, p2, intersection, i, COLLECT(b1.id) AS w1
+WITH p1, p2, intersection, i, COLLECT(b1.Id) AS w1
 MATCH (p2)-[:WISH_LISTS]->(b2:Book)
-WITH p1, p2, intersection, i, w1, COLLECT(b2.id) AS w2
+WITH p1, p2, intersection, i, w1, COLLECT(b2.Id) AS w2
 WITH p1, p2, intersection, w1, w2
 WITH p1, p2, intersection, [y IN w2 WHERE NOT y IN w1] AS unique, w1+[x IN w2 WHERE NOT x IN w1] AS union, w1, w2
 MATCH (p1)-[:IN_LIBRARY]->(b3:Book)
-WITH p1, p2, intersection, unique, union, w1, w2, COLLECT(b3.id) AS l1
+WITH p1, p2, intersection, unique, union, w1, w2, COLLECT(b3.Id) AS l1
 WITH p1, p2, intersection, unique, union, w1, w2, [z IN unique WHERE NOT z in l1] AS rec
 WITH p1, p2, intersection, unique, union, w1, w2, rec, ((1.0*intersection/SIZE(union))) AS jaccard ORDER BY jaccard DESC LIMIT 10
 RETURN jaccard > 0.2, jaccard, rec 
 
 EX TEST CASE:
-MATCH (p1:Person {name: "Siegfried Kircheis"})-[r:WISH_LISTS]->(b1:Book), (p2:Person {name: "Alexander Bucock"})-[WISH_LISTS]->(b2:Book)
+MATCH (p1:Person {Name: "Siegfried Kircheis"})-[r:WISH_LISTS]->(b1:Book), (p2:Person {Name: "Alexander Bucock"})-[WISH_LISTS]->(b2:Book)
 RETURN p1, p2, b1, b2
 
-MATCH (p1:Person {name: "Siegfried Kircheis"})-[r:WISH_LISTS]->(b1:Book), (p2:Person {name: "Reinhard von Lohengramm"})-[WISH_LISTS]->(b2:Book)
+MATCH (p1:Person {Name: "Siegfried Kircheis"})-[r:WISH_LISTS]->(b1:Book), (p2:Person {Name: "Reinhard von Lohengramm"})-[WISH_LISTS]->(b2:Book)
 RETURN p1, p2, b1, b2
 
 For Jaccard Indexing based on IN_LIBRARY
-MATCH (p1:Person {name: "Alexander Bucock"})-[:IN_LIBRARY]->(b:Book)<-[:IN_LIBRARY]-(p2:Person)
-WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.id) AS i
+MATCH (p1:Person {Name: "Alexander Bucock"})-[:IN_LIBRARY]->(b:Book)<-[:IN_LIBRARY]-(p2:Person)
+WITH p1, p2, COUNT(b) AS intersection, COLLECT(b.Id) AS i
 MATCH (p1)-[:IN_LIBRARY]->(b1:Book)
-WITH p1, p2, intersection, i, COLLECT(b1.id) AS w1
+WITH p1, p2, intersection, i, COLLECT(b1.Id) AS w1
 MATCH (p2)-[:IN_LIBRARY]->(b2:Book)
-WITH p1, p2, intersection, i, w1, COLLECT(b2.id) AS w2
+WITH p1, p2, intersection, i, w1, COLLECT(b2.Id) AS w2
 WITH p1, p2, intersection, w1, w2
 WITH p1, p2, intersection, [y IN w2 WHERE NOT y IN w1] AS unique, w1+[x IN w2 WHERE NOT x IN w1] AS union, w1, w2
 MATCH (p1)-[:WISH_LISTS]->(b3:Book)
-WITH p1, p2, intersection, unique, union, w1, w2, COLLECT(b3.id) AS l1
+WITH p1, p2, intersection, unique, union, w1, w2, COLLECT(b3.Id) AS l1
 WITH p1, p2, intersection, unique, union, w1, w2, [z IN unique WHERE NOT z in l1] AS rec
 WITH p1, p2, intersection, unique, union, w1, w2, rec, ((1.0*intersection/SIZE(union))) AS jaccard ORDER BY jaccard DESC LIMIT 10
 RETURN jaccard > 0.2, jaccard, rec 
 
 EX TEST CASE:
-MATCH (p1:Person {name: "Alexander Bucock"})-[r:IN_LIBRARY]->(b1:Book), (p2:Person {name: "Hildegard von Mariendorf"})-[WISH_LISTS]->(b2:Book)
+MATCH (p1:Person {Name: "Alexander Bucock"})-[r:IN_LIBRARY]->(b1:Book), (p2:Person {Name: "Hildegard von Mariendorf"})-[WISH_LISTS]->(b2:Book)
 RETURN p1, p2, b1, b2
 
-MATCH (p1:Person {name: "Alexander Bucock"})-[r:IN_LIBRARY]->(b1:Book), (p2:Person {name: "Wolfgang Mittermeyer"})-[WISH_LISTS]->(b2:Book)
+MATCH (p1:Person {Name: "Alexander Bucock"})-[r:IN_LIBRARY]->(b1:Book), (p2:Person {Name: "Wolfgang Mittermeyer"})-[WISH_LISTS]->(b2:Book)
 RETURN p1, p2, b1, b2
