@@ -5,10 +5,29 @@ up a local database, and import the associated Neo4jDB_expansive_Testingv1.4 csv
 
 LOAD CSV WITH HEADERS FROM 'http://localhost:11001/project-32e06daf-0ca3-47a0-91f0-8b4cc74c1ebc/Neo4jDB_expansive_Testing_v1.4.csv' AS line
 MERGE (p1:Person { Name: line.Unique_Name, Profile: line.About_Me, Portrait: line.Profile_Img_URL })
-MERGE (b1:Book { Id: line.L_Book_ID, Title: line.L_B_Title, Author: line.L_B_Authors, Thumbnail: line.L_B_Thumbnail, PublishDate: line.L_B_Publish_Date, PageNum: line.L_B_Pages, Description: line.L_B_Description, ISBN10: line.L_B_ISBN_10, ISBN13: line.L_B_ISBN_13 })
-MERGE (b2:Book { Id: line.W_Book_ID, Title: line.W_B_Title, Author: line.W_B_Authors, Thumbnail: line.W_B_Thumbnail, PublishDate: line.W_B_Publish_Date, PageNum: line.W_B_Pages, Description: line.W_B_Description, ISBN10: line.W_B_ISBN_10, ISBN13: line.W_B_ISBN_13 })
+MERGE (b1:Book { Id: line.L_Book_ID, Title: line.L_B_Title, Author: line.L_B_Authors, Thumbnail: line.L_B_Thumbnail, PublishDate: line.L_B_Publish_Date, PageNum: line.L_B_Pages, Description: line.L_B_Description, ISBN10: line.L_B_ISBN_10, ISBN13: line.L_B_ISBN_13, Genre: line.L_B_Categories })
+MERGE (b2:Book { Id: line.W_Book_ID, Title: line.W_B_Title, Author: line.W_B_Authors, Thumbnail: line.W_B_Thumbnail, PublishDate: line.W_B_Publish_Date, PageNum: line.W_B_Pages, Description: line.W_B_Description, ISBN10: line.W_B_ISBN_10, ISBN13: line.W_B_ISBN_13, Genre: line.W_B_Categories })
 MERGE (p1)-[w:WISH_LISTS]->(b2)
 MERGE (p1)-[l:IN_LIBRARY]->(b1)
+
+Manually adding a few more books:
+
+create (b:Book {thumbnail:"http://books.google.com/books/content?id=VmOvkPNog9AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api", author:"Michael Clancy", description:"There are three park systems in Saskatchewan: Regional, Provincial, and National. All provide wonderful recreational opportunities to virtually every community in the province", id:"VmOvkPNog9AC", title:"A User's Guide to Saskatchewan Parks"})
+
+create (b:Book {thumbnail:"http://books.google.com/books/content?id=bQ1dAQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api", author:"jan jagodzinski", description:"This book offers a unique perspective of art and its education in designer capitalism. It will contribute to the debate as to possibilities art and design hold for the future. It also questions the broad technologization of art that is taking place.", id:"bQ1dAQAAQBAJ", title:"Visual Art and Education in an Era of Designer Capitalism"})
+
+create (b:Book {thumbnail:"http://books.google.com/books/content?id=3SmFEG9n6hwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api", author:"James S. Olson", description:"The Ethnic Dimension in American History is a thorough survey of the role that ethnicity has played in shaping the history of the United States. Considering ethnicity in terms of race, language, religion and national origin, this important text examines its effects on social relations, public policy and economic development. A thorough survey of the role that ethnicity has played in shaping the history of the United States, including the effects of ethnicity on social relations, public policy and economic development Includes histories of a wide range of ethnic groups including African Americans, Native Americans, Jews, Chinese, Europeans, Japanese, Muslims, Koreans, and Latinos Examines the interaction of ethnic groups with one another and the dynamic processes of acculturation, modernization, and assimilation; as well as the history of immigration Revised and updated material in the fourth edition reflects current thinking and recent history, bringing the story up to the present and including the impact of 9/11", id:"3SmFEG9n6hwC", title:"The Ethnic Dimension in American History"})
+
+create (b:Book {thumbnail:"http://books.google.com/books/content?id=QdNU9CFJXxEC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api", author:"Jane K. Brown", description:"In an impressively comparative work, Jane K. Brown explores the tension in European drama between allegory and neoclassicism from the sixteenth through the nineteenth century. Imitation of nature is generally thought to triumph over religious allegory in the Elizabethan and French classical theater, a shift attributable to the recovery of Aristotle's Poetics in the Renaissance. But if Aristotle's terminology was rapidly assimilated, Brown demonstrates that change in dramatic practice took place only gradually and partially and that allegory was never fully cast off the stage. The book traces a complex history of neoclassicism in which new allegorical forms flourish and older ones are constantly revitalized. Brown reveals the allegorical survivals in the works of such major figures as Shakespeare, Calderón, Racine, Vondel, Metastasio, Goethe, and Wagner and reads tragedy, comedy, masque, opera, and school drama together rather than as separate developments. Throughout, she draws illuminating parallels to modes of representation in the visual arts. A work of broad interest to scholars, teachers, and students of theatrical form, The Persistence of Allegory presents a fundamental rethinking of the history of European drama.", id:"QdNU9CFJXxEC", title:"The Persistence of Allegory"})
+
+create (b:Book {thumbnail:"http://books.google.com/books/content?id=nhR58UIH1N4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api", author:"Margaret Dumas", description:"Charley Fairfax - heiress, theatrical producer, newlywed - has every intention of living happily ever after with her tall, dark, and sarcastic husband Jack. The only mysteries she faces are which play to choose for next season and how to decorate her dining room. But when Jack is hired to investigate a suspicious death at a San Francisco software company, it quickly becomes clear that high-tech has some low-life elements. The only way Charley knows how to help Jack involves doing something no-body thought she would ever do. Charley needs to get a job. It might be a problem that Charley and her band of irregulars from the repertory theater learned everything they know about the workplace from a production of How To Succeed In Business Without Really Trying, but that doesn't stop them from going undercover to find a killer. And even though she's only had one day's training in corporate double-speak, Charley isn't worried. Faking it has always been her strong suit. Charley and Jack are starting to get the hang of this marriage thing. If only people would stop talking about babies, introducing them to decorators, and trying to kill them, they might even get to take a honeymoon.", id:"nhR58UIH1N4C", title:"How to Succeed in Murder"})
+
+create (b:Book {thumbnail:"http://books.google.com/books/content?id=gW6YDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api", author:"Stephen B. Heard", description:"The ability to write clearly is critical to any scientific career. The Scientist's Guide to Writing provides practical advice to help scientists become more effective writers so that their ideas have the greatest possible impact. Drawing on his own experience as a scientist, graduate adviser, and editor, Stephen Heard emphasizes that the goal of all scientific writing should be absolute clarity; that good writing takes deliberate practice; and that what many scientists need are not long lists of prescriptive rules but rather direct engagement with their behaviors and attitudes when they write. He combines advice on such topics as how to generate and maintain writing momentum with practical tips on structuring a scientific paper, revising a first draft, handling citations, responding to peer reviews, managing coauthorships, and more. In an accessible, informal tone, The Scientist's Guide to Writing explains essential techniques that students, postdoctoral researchers, and early-career scientists need to write more clearly, efficiently, and easily. Emphasizes writing as a process, not just a product Encourages habits that improve motivation and productivity Explains the structure of the scientific paper and the function of each part Provides detailed guidance on submission, review, revision, and publication Addresses issues related to coauthorship, English as a second language, and more", id:"gW6YDwAAQBAJ", title:"The Scientist's Guide to Writing"})
+
+create (b:Book {thumbnail:"http://books.google.com/books/content?id=vj24BAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api", author:"Uwe Steinmueller", description:"Today's digital cameras continue to produce increasingly higher definition image data files, making high resolution, large-format output possible. As printing technology moves forward at an equally fast pace, the new inkjet printers are capable of printing with great precision at a very fine resolution, providing an amazing tonal range and significantly superior image permanence at a more affordable price. In the hands of knowledgeable photographers, these printers are able to produce prints that are comparable to the highest quality darkroom prints on fine art paper. The third edition of this best-selling book provides the necessary foundation for successful fine art printing: the understanding of color management, profiling, paper, and inks. It offers advice on selecting an appropriate printer for long-lasting fine art prints, demonstrates how to set up the printing workflow and select a suitable paper for your subject, and guides you step-by-step through the process of converting an image file to an outstanding fine art print. This new edition covers the most recent lines of high-end inkjet printers, photo papers, and devices for monitor and printer profiling. It also addresses the printing dialogs and some new features of Photoshop CS6.", id:"vj24BAAAQBAJ", title:"Fine Art Printing for Photographers"})
+
+create (b:Book {thumbnail:"http://books.google.com/books/content?id=hIEJyToJYl0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api", author:"Roy Shuker", description:"Understanding Popular Music is a comprehensive introduction to the history and meaning of popular music. It begins with a critical assessment of the different ways in which popular music has been studied and the difficulties and debates which surround the analysis of popular culture and popular music. Drawing on the recent work of music scholars and the popular music press, Shuker explores key subjects which shape our experience of music, including music production, the music industry, music policy, fans, audiences and subcultures, the musician as 'star', music journalism, and the reception and consumption of popular music. This fully revised and updated second edition includes: *case studies and lyrics of artists such as Shania Twain, S Club 7, The Spice Girls and Fat Boy Slim * the impact of technologies including on-line delivery and the debates over MP3 and Napster * the rise of DJ culture and the changing idea of the 'musician' * a critique of gender and sexual politics and the discrimination which exists in the music industry * moral panics over popular music including the controversies surrounding artists such as Marilyn Manson and Ice-T * a comprehensive discography, guide to further reading and directory of websites.", id:"hIEJyToJYl0C", title:"Understanding Popular Music"})
+
 
 Next, create FRIENDS_WITH relations. Notice in this case, we use single Direction friend relationships at the database layer but at the query language layer, we ignore directionality (or in other words,
 use bi-directional queries). 
@@ -106,3 +125,70 @@ RETURN p,b
 MATCH (p:Person), (b:Book) WHERE p.Name="Alexander Bucock" AND b.Id="4bn7XhMeBH8C"
 CREATE (p)-[r:RECOMMEND_B]->(b)
 RETURN p,b
+
+Like and dislike genre relationships:
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Siegfried Kircheis' AND b.Name = 'Travel'
+CREATE (a)-[r:LIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Wolfgang Mittermeyer' AND b.Name = 'NonFiction'
+CREATE (a)-[r:LIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Hildegard von Mariendorf' AND b.Name = 'Art'
+CREATE (a)-[r:LIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Paul von Oberstein' AND b.Name = 'History'
+CREATE (a)-[r:LIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Walter von Schonkopf' AND b.Name = 'Literary Criticism'
+CREATE (a)-[r:LIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Wolfgang Mittermeyer' AND b.Name = 'Fiction'
+CREATE (a)-[r:DISLIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Siegfried Kircheis' AND b.Name = 'Science'
+CREATE (a)-[r:DISLIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Hildegard von Mariendorf' AND b.Name = 'Travel'
+CREATE (a)-[r:DISLIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Paul von Oberstein' AND b.Name = 'Photography'
+CREATE (a)-[r:DISLIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Walter von Schonkopf' AND b.Name = 'Music'
+CREATE (a)-[r:DISLIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Siegfried Kircheis' AND b.Name = 'Fiction'
+CREATE (a)-[r:LIKES]->(b)
+RETURN type(r)
+
+MATCH (a:Person),(b:Genre)
+WHERE a.name = 'Walter von Schonkopf' AND b.Name = 'Fiction'
+CREATE (a)-[r:LIKES]->(b)
+RETURN type(r)
+
+Create genre relationships:
+
+MATCH (a:Book), (b:Genre) WHERE a.genre = b.Name CREATE (a)-[r:HAS_GENRE]->(b)
+Create (b)-[s:HAS_GENRE]->(a)
+Create (a)-[s:HAS_GENRE]->(b)
