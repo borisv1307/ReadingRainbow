@@ -6,7 +6,6 @@ import { AuthContext } from '../components/context';
 
 export default function Home() {
     const { navigate } = useNavigation();
-
     const { signOut } = React.useContext(AuthContext);
     return (
         <View style={globalStyles.container}>

@@ -24,7 +24,7 @@ namespace ReadingRainbowAPI
         public void ConfigureServices(IServiceCollection services)
         {
            var neoUri = "http://localhost:7474";
-           var neoUserName = "Neo4j";
+           var neoUserName = "neo4j";
            var neoPassword = "abc123";
 
            services.AddScoped<INeo4jDBContext, Neo4jDBContext>(n=>new Neo4jDBContext(neoUri,neoUserName, neoPassword));
