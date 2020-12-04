@@ -59,8 +59,8 @@ namespace ReadingRainbowAPI.RepositoryTests
         {
             var person1 = CreatePerson();
             var person2 = CreatePerson();
-            await _personRepository.AddOrUpdatePersonAsync(person1);
-            await _personRepository.AddOrUpdatePersonAsync(person2);
+            await _personRepository.AddPersonAsync(person1);
+            await _personRepository.AddPersonAsync(person2);
 
             var people = await _personRepository.GetAllPeopleAsync();
             Assert.True(people != null);
@@ -77,7 +77,7 @@ namespace ReadingRainbowAPI.RepositoryTests
             var newPerson = CreatePerson();
 
             // Act
-            await _personRepository.AddOrUpdatePersonAsync(newPerson);
+            await _personRepository.AddPersonAsync(newPerson);
             var returnedPerson = await _personRepository.GetPersonAsync(newPerson.Name);
 
             // Assert
@@ -99,9 +99,9 @@ namespace ReadingRainbowAPI.RepositoryTests
             var newPerson = CreatePerson();
 
             // Act
-            await _personRepository.AddOrUpdatePersonAsync(newPerson);
+            await _personRepository.AddPersonAsync(newPerson);
             newPerson.Profile = newPersonProfile;
-            await _personRepository.AddOrUpdatePersonAsync(newPerson);
+            await _personRepository.UpdatePersonAsync(newPerson);
 
             var returnedPerson = await _personRepository.GetPersonAsync(newPerson.Name);
 
@@ -118,7 +118,7 @@ namespace ReadingRainbowAPI.RepositoryTests
         {
             var newPerson = CreatePerson();
 
-            await _personRepository.AddOrUpdatePersonAsync(newPerson);
+            await _personRepository.AddPersonAsync(newPerson);
             var returnedperson = await _personRepository.GetPersonAsync(newPerson.Name);
 
             Assert.True(newPerson.HashedPassword == returnedperson.HashedPassword);
@@ -135,8 +135,8 @@ namespace ReadingRainbowAPI.RepositoryTests
             var person2 = CreatePerson();
             var friendsWith = new Relationships.FriendsWith(); 
 
-            await _personRepository.AddOrUpdatePersonAsync(person1);
-            await _personRepository.AddOrUpdatePersonAsync(person2);
+            await _personRepository.AddPersonAsync(person1);
+            await _personRepository.AddPersonAsync(person2);
 
             // Act
             await _personRepository.CreateFriendRelationshipAsync(person1, person2, friendsWith);
@@ -159,8 +159,8 @@ namespace ReadingRainbowAPI.RepositoryTests
             var person1 = CreatePerson();
             var person2 = CreatePerson();
 
-            await _personRepository.AddOrUpdatePersonAsync(person1);
-            await _personRepository.AddOrUpdatePersonAsync(person2);
+            await _personRepository.AddPersonAsync(person1);
+            await _personRepository.AddPersonAsync(person2);
 
             // Act
             var friends = await _personRepository.GetFriendsWithRelationshipAsync(person1, new Relationships.FriendsWith());
@@ -182,9 +182,9 @@ namespace ReadingRainbowAPI.RepositoryTests
             var noLongerFriend = CreatePerson();
             var friendsWith = new Relationships.FriendsWith();
 
-            await _personRepository.AddOrUpdatePersonAsync(person);
-            await _personRepository.AddOrUpdatePersonAsync(friendsForever);
-            await _personRepository.AddOrUpdatePersonAsync(noLongerFriend);
+            await _personRepository.AddPersonAsync(person);
+            await _personRepository.AddPersonAsync(friendsForever);
+            await _personRepository.AddPersonAsync(noLongerFriend);
 
             await _personRepository.CreateFriendRelationshipAsync(person, noLongerFriend, friendsWith);
             await _personRepository.CreateFriendRelationshipAsync(person, friendsForever, friendsWith);
@@ -219,10 +219,10 @@ namespace ReadingRainbowAPI.RepositoryTests
             var friend2 = CreatePerson();
             var notaFriend = CreatePerson();
 
-            await _personRepository.AddOrUpdatePersonAsync(person);
-            await _personRepository.AddOrUpdatePersonAsync(friend1);
-            await _personRepository.AddOrUpdatePersonAsync(friend2);
-            await _personRepository.AddOrUpdatePersonAsync(notaFriend);
+            await _personRepository.AddPersonAsync(person);
+            await _personRepository.AddPersonAsync(friend1);
+            await _personRepository.AddPersonAsync(friend2);
+            await _personRepository.AddPersonAsync(notaFriend);
 
             var friendsWith = new Relationships.FriendsWith();
 

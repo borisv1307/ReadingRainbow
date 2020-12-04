@@ -150,6 +150,34 @@ namespace ReadingRainbowAPI.DAL
                 .ResultsAsync;
         }
 
+         public virtual async Task<bool> CheckRelated<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, Expression<Func<TEntity2, bool>> query2, TRelationship relationship)
+            where TEntity2 : Neo4jEntity, new()
+            where TRelationship : Neo4jRelationship, new()
+        {
+            string name1 = query1.Parameters[0].Name;
+            TEntity entity1 = (TEntity)Activator.CreateInstance(query1.Parameters[0].Type);
+            string name2 = query2.Parameters[0].Name;
+            TEntity2 entity2 = (TEntity2)Activator.CreateInstance(query2.Parameters[0].Type);
+
+            Expression<Func<TEntity2, bool>> newQuery = PredicateRewriter.Rewrite(query2, "e");
+
+            var check = await _neoContext.Cypher
+                .Match("(" + name1 + ":" + entity1.Label + ")-[:" + relationship.Name + "]-(" + name2 + ":" + entity2.Label + ")")
+                .Where(query1)
+                .AndWhere(query2)
+                .Return(e => e.As<TEntity2>())
+                .ResultsAsync;
+
+            if (check != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public virtual async Task<IEnumerable<TEntity2>> GetAllRelated<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, TEntity2 entity2, TRelationship relationship)
             where TEntity2 : Neo4jEntity, new()
             where TRelationship : Neo4jRelationship, new()

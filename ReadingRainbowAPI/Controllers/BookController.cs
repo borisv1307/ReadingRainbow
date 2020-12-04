@@ -9,6 +9,7 @@ using AutoMapper;
 using ReadingRainbowAPI.Dto;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace ReadingRainbowAPI.Controllers
 {
@@ -19,12 +20,14 @@ namespace ReadingRainbowAPI.Controllers
     {
 
         private readonly BookRepository _bookRepository;
+        private readonly GenreRepository _genreRepository;
 
         private readonly IMapper _mapper;
  
-        public BookController(BookRepository bookRepository, IMapper mapper)
+        public BookController(BookRepository bookRepository, GenreRepository genreRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
+            _genreRepository = genreRepository;
             _mapper = mapper;
         }
         
@@ -38,7 +41,7 @@ namespace ReadingRainbowAPI.Controllers
             var people = (await _bookRepository.GetInLibraryPersonRelationshipAsync(book, new InLibrary())).ToList();
             var peopleDto = _mapper.Map<List<Person>, List<PersonDto>>(people);
 
-            return Ok(peopleDto);
+            return Ok(JsonSerializer.Serialize(peopleDto));
         }
 
         [HttpPost]
@@ -46,6 +49,11 @@ namespace ReadingRainbowAPI.Controllers
         public async Task<IActionResult> AddUpdateBookAsync(Book book)
         {
             await _bookRepository.AddOrUpdateAsync(book);
+
+            foreach(var genre in book.Genres)
+            {
+                await _genreRepository.CreateInGenreRelationshipAsync(genre, book, new Relationships.InGenre());
+            }
 
             return Ok();
         }
@@ -56,7 +64,10 @@ namespace ReadingRainbowAPI.Controllers
         {
             var book = await _bookRepository.GetBookAsync(id);
 
-            return Ok(book);
+            // Get All Genre's associated with book
+            book.Genres = (await _bookRepository.GetInGenreBookRelationshipAsync(book, new Relationships.InGenre())).ToList();
+
+            return Ok(JsonSerializer.Serialize(book));
         }
  
         [HttpGet]
@@ -65,7 +76,7 @@ namespace ReadingRainbowAPI.Controllers
         {
             var bookTitles = await _bookRepository.GetAllBooksAsync();
 
-            return Ok(bookTitles);
+            return Ok(JsonSerializer.Serialize(bookTitles));
         }
  
     }
