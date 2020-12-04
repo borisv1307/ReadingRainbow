@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ReadingRainbowAPI.DAL;
 using System.Threading.Tasks;
+using System;
+
 
 namespace ReadingRainbowAPI.Controllers
 {
@@ -25,9 +27,9 @@ namespace ReadingRainbowAPI.Controllers
         {
             var person = await _personRepository.GetPersonAsync(username);
 
-            if (person == null)
+            if (person == null || string.IsNullOrEmpty(person.HashedPassword)) 
             {
-                return Ok();
+                return Ok();  
             }
 
             if (person.HashedPassword.Equals(password))
@@ -37,7 +39,7 @@ namespace ReadingRainbowAPI.Controllers
                 return Ok(token);
             }
 
-                return Ok();
+                return Ok();         
         }
     }
 }

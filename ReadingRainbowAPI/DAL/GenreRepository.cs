@@ -2,6 +2,7 @@ using ReadingRainbowAPI.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using ReadingRainbowAPI.Relationships;
+using System.Linq;
 
 namespace ReadingRainbowAPI.DAL
 {
@@ -51,7 +52,7 @@ namespace ReadingRainbowAPI.DAL
 
         public async Task CreateInGenreRelationshipAsync(Genre genre, Book book, InGenre inGenre)
         {
-            if(!(await this.CheckRelated<Book, InGenre>(g=>g.Name == genre.Name, b=>b.Id == book.Id, inGenre)))
+            if((await this.GetRelated<Book, InGenre>(g=>g.Name == genre.Name, b=>b.Id == book.Id, inGenre)).ToList().Count == 0)
             {
                 await this.Relate<Book, InGenre>(g=>g.Name == genre.Name, b=>b.Id == book.Id, inGenre);                
             }
