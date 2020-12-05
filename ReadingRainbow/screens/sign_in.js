@@ -3,7 +3,6 @@ import { TextInput, View, Text, TouchableOpacity, Button, Alert } from 'react-na
 import { globalStyles } from '../styles/global.js';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../components/context';
-// import Users from '../model/users';
 import * as Crypto from 'expo-crypto';
 import { RetrieveToken } from '../api-functions/authentication.js';
 import * as SecureStore from 'expo-secure-store'; 
@@ -76,30 +75,9 @@ const SignIn = ({navigate}) => {
 
     const loginHandle = () => {
         console.log('------------------------------------')
-        // if ( data.username.length == 0 || data.password.length == 0 ) {
-        //     Alert.alert('Wrong Input!', 'Username or password field cannot be empty.', [
-        //         {text: 'Okay'}
-        //     ]);
-        //     return;
-        // }
-
-        // if ( foundUser.length == 0 ) {
-        //     Alert.alert('Invalid User!', 'Username or password is incorrect.', [
-        //         {text: 'Okay'}
-        //     ]);
-        //     return;
-        // }
         console.log('username: ', data.username);
         console.log('password: ', data.password);
-        // const digest2 = '';
-        // async function runCrypto() {
-        //     const digest = await Crypto.digestStringAsync(
-        //         Crypto.CryptoDigestAlgorithm.SHA256,
-        //         data.password
-        //     );
-        //     console.log('Digest: ', digest);
-        //     return digest;
-        // }
+
         (async () => {
             try {
                 const digest = await Crypto.digestStringAsync(
@@ -118,14 +96,16 @@ const SignIn = ({navigate}) => {
                 (async () => {
                     try {
                         const token = await SecureStore.getItemAsync('jwt');
-                        await SecureStore.deleteItemAsync('jwt');
+                        console.log(token); //Remove at future time
+                        if (token) {
+                            signIn(data.username);
+                        }
                     } catch (e) {
                         console.log(e);
                     }
                 })()
             )
         );
-        // signIn(returnedToken);
     }
 
     return (
