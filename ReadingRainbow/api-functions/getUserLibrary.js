@@ -1,13 +1,16 @@
 export async function GetUserProfile(iUsername) {
 
     const encodedUsername = encodeURIComponent(iUsername);
+    var token =  await SecureStore.getItemAsync('jwt');
 
       const fullurl =  `http://10.0.2.2:5000/api/person/Library/${encodedUsername}`;
     try{
         const response = await fetch(fullurl,           
             {
+                type: 'GET',
                 headers: {
-                  'Content-Type': 'application/json; charset=utf-8'
+                  'Content-Type': 'application/json; charset=utf-8',
+                  'Authorization': 'Bearer ' + token
                 },
             });
 
