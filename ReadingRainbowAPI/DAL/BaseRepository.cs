@@ -142,12 +142,17 @@ namespace ReadingRainbowAPI.DAL
 
             Expression<Func<TEntity2, bool>> newQuery = PredicateRewriter.Rewrite(query2, "e");
 
+            try{
             return await _neoContext.Cypher
                 .Match("(" + name1 + ":" + entity1.Label + ")-[:" + relationship.Name + "]-(" + name2 + ":" + entity2.Label + ")")
                 .Where(query1)
                 .AndWhere(query2)
                 .Return(e => e.As<TEntity2>())
                 .ResultsAsync;
+            } catch (Exception)
+            {
+                return new List<TEntity2>();
+            }
         }
 
         public virtual async Task<IEnumerable<TEntity2>> GetAllRelated<TEntity2, TRelationship>(Expression<Func<TEntity, bool>> query1, TEntity2 entity2, TRelationship relationship)

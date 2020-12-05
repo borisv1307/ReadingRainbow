@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using AutoMapper;
 using ReadingRainbowAPI.Mapping;
+using System.Text.Json;
 
 namespace ReadingRainbowAPI.ControllerTests
 {
@@ -93,7 +94,8 @@ namespace ReadingRainbowAPI.ControllerTests
             // Act
             var result = await personController.GetBooksAsync(person1.Name);
             var okResult = result as OkObjectResult;
-            var returnedBookList = okResult.Value as List<Book>;
+            var returnedBookjson = okResult.Value as string;
+            var returnedBookList = JsonSerializer.Deserialize<List<Book>>(returnedBookjson);
 
             // Assert
             Assert.True(okResult != null);
@@ -107,13 +109,37 @@ namespace ReadingRainbowAPI.ControllerTests
         {
             // Arrange
             var newPerson = CreatePerson();
+
+            // Setup Single base repository function to return nothing                
+            _personRepository 
+                    .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
+                    .ReturnsAsync((Person)null);
+            _personRepository
+                    .Setup(a=>a.Add(It.IsAny<Person>()))
+                    .ReturnsAsync(true);
+
+            var personController = new PersonController(_personRepository.Object, _mapper);
+
+            // Act
+            var result = await personController.AddPersonAsync(newPerson);
+            var okResult = result as OkObjectResult;
+
+            // Assert
+            Assert.True(okResult != null);
+            Assert.Equal(200, okResult.StatusCode);
+
+            Assert.Equal(bool.TrueString, okResult.Value.ToString());
+        }
+
+                [Fact]
+        public async void UpdatePersonRoute_Test()
+        {
+            // Arrange
+            var newPerson = CreatePerson();
                             
             _personRepository 
                     .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
                     .ReturnsAsync(newPerson);
-            _personRepository
-                    .Setup(a=>a.Add(It.IsAny<Person>()))
-                    .ReturnsAsync(true);
             _personRepository
                   .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
                   .ReturnsAsync(true);
@@ -121,12 +147,13 @@ namespace ReadingRainbowAPI.ControllerTests
             var personController = new PersonController(_personRepository.Object, _mapper);
 
             // Act
-            var result = await personController.AddUpdatePersonAsync(newPerson);
-            var okResult = result as OkResult;
+            var result = await personController.UpdatePersonAsync(newPerson);
+            var okResult = result as OkObjectResult;
 
             // Assert
             Assert.True(okResult != null);
             Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal(bool.TrueString, okResult.Value.ToString());
         }
 
         [Fact]
@@ -144,12 +171,11 @@ namespace ReadingRainbowAPI.ControllerTests
             // Act
             var result = await personController.FindPersonAsync(newPerson.Name);
             var okResult = result as OkObjectResult;
-            var returnedPerson = okResult.Value as PersonDto;
-            var wrongPersonType = okResult.Value as Person;
+            var returnedPersonjson = okResult.Value as string;
+            var returnedPerson = JsonSerializer.Deserialize<PersonDto>(returnedPersonjson);
 
             // Assert
             Assert.True(okResult != null);
-            Assert.True(wrongPersonType == null);
             Assert.True(returnedPerson != null);
             Assert.Equal(200, okResult.StatusCode);
         }
@@ -172,12 +198,11 @@ namespace ReadingRainbowAPI.ControllerTests
             // Act
             var result = await personController.GetAllPeopleAsync();
             var okResult = result as OkObjectResult;
-            var returnedPeople = okResult.Value as List<PersonDto>;
-            var wrongListType = okResult.Value as List<Person>;
+            var returnedPeoplejson = okResult.Value as string;
+            var returnedPeople = JsonSerializer.Deserialize<List<PersonDto>>(returnedPeoplejson);
 
             // Assert
             Assert.True(okResult != null);
-            Assert.True(wrongListType == null);
             Assert.True(returnedPeople.Count == 2);
             Assert.Equal(200, okResult.StatusCode);
            

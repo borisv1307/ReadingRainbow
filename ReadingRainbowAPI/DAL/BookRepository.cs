@@ -77,5 +77,15 @@ namespace ReadingRainbowAPI.DAL
             await this.DeleteRelationship<Person, WishList>(b=>b.Id == book.Id, p=>p.Name == person.Name, wishList);
         }
 #endregion WishList
+
+#region InGenre Relationships
+
+        public async Task<IEnumerable<Genre>> GetInGenreBookRelationshipAsync(Book book, InGenre inGenre)
+        {
+           return await this.GetAllRelated<Genre, InGenre>(b=>b.Id == book.Id, new Genre(),  inGenre);
+        }
+
+#endregion InGenre
+
     }
 }

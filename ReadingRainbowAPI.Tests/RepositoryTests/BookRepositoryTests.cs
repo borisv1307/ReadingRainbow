@@ -1,6 +1,5 @@
 using System;
 using Xunit;
-using ReadingRainbowAPI.Controllers;
 using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Models;
 using System.Collections.Generic;
@@ -159,7 +158,7 @@ namespace ReadingRainbowAPI.RepositoryTests
             await _bookRepository.AddOrUpdateAsync(newBook);
 
             var newPerson = CreatePerson();
-            await _personRepository.AddOrUpdatePersonAsync(newPerson);
+            await _personRepository.AddPersonAsync(newPerson);
 
             var inLibrary = new Relationships.InLibrary();
             
@@ -185,7 +184,7 @@ namespace ReadingRainbowAPI.RepositoryTests
             var booktostay2 = CreateBook();
             var booktogo = CreateBook();
 
-            await _personRepository.AddOrUpdatePersonAsync(person);
+            await _personRepository.AddPersonAsync(person);
             await _bookRepository.AddOrUpdateAsync(booktostay1);
             await _bookRepository.AddOrUpdateAsync(booktostay2);
             await _bookRepository.AddOrUpdateAsync(booktogo);
@@ -230,7 +229,7 @@ namespace ReadingRainbowAPI.RepositoryTests
             var book = CreateBook();
             var wishList = new Relationships.WishList();
 
-            await _personRepository.AddOrUpdatePersonAsync(person);
+            await _personRepository.AddPersonAsync(person);
             await _bookRepository.AddOrUpdateAsync(book);
             await _bookRepository.CreateWishlistRelationshipAsync(book, person, wishList);
 
