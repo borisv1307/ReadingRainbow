@@ -51,6 +51,7 @@ namespace ReadingRainbowAPI
 
             services.AddScoped<BookRepository>(); 
             services.AddScoped<PersonRepository>(); 
+            services.AddScoped<GenreRepository>(); 
             services.AddTokenAuthentication(Configuration);
             services.AddMvcCore();
         }
