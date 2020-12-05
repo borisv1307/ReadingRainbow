@@ -11,6 +11,7 @@ using Moq;
 using AutoMapper;
 using ReadingRainbowAPI.Mapping;
 using ReadingRainbowAPI.Dto;
+using System.Text.Json;
 
 
 namespace ReadingRainbowAPI.ControllerTests
@@ -18,12 +19,14 @@ namespace ReadingRainbowAPI.ControllerTests
     public class BookControllerTests
     {
         private Mock<BookRepository> _bookRepository;
+        private Mock<GenreRepository> _genreRepository;
         private IMapper _mapper;
 
         // Initalize Method used for all tests
         public BookControllerTests()
         {
             _bookRepository = new Mock<BookRepository>(new Mock<INeo4jDBContext>().Object){CallBase = true};
+            _genreRepository = new Mock<GenreRepository>(new Mock<INeo4jDBContext>().Object){CallBase = true};
 
                         // Auto Mapper Configurations
             var mapperConfig = new MapperConfiguration(mc =>
@@ -85,17 +88,16 @@ namespace ReadingRainbowAPI.ControllerTests
                 x.GetAllRelated<Person, InLibrary>(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<Person>(), It.IsAny<InLibrary>()))
                 .ReturnsAsync(personList);
 
-            var bookController = new BookController(_bookRepository.Object, _mapper);
+            var bookController = new BookController(_bookRepository.Object, _genreRepository.Object, _mapper);
 
             // Act
             var result = await bookController.GetPeopleAsync(book1.Id);
             var okResult = result as OkObjectResult;
-            var returnedPeople = okResult.Value as List<PersonDto>;
-            var wrongListType = okResult.Value as List<Person>;
+            var returnedPeoplejson = okResult.Value as string;
+            var returnedPeople = JsonSerializer.Deserialize<List<PersonDto>>(returnedPeoplejson);
 
             // Assert
             Assert.True(okResult != null);
-            Assert.True(wrongListType == null);
             Assert.True(returnedPeople.Count == 2);
             Assert.Equal(200, okResult.StatusCode);
             
@@ -117,7 +119,7 @@ namespace ReadingRainbowAPI.ControllerTests
                   .Setup(x => x.Update(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<Book>()))
                   .ReturnsAsync(true);
 
-            var bookController = new BookController(_bookRepository.Object, _mapper);
+            var bookController = new BookController(_bookRepository.Object, _genreRepository.Object, _mapper);
 
             // Act
             var result  = await bookController.AddUpdateBookAsync(newBook);
@@ -133,17 +135,28 @@ namespace ReadingRainbowAPI.ControllerTests
         {
             // Arrange
             var newBook = CreateBook();
+            var genreList = new List<Genre>()
+            {
+                new Genre() { Name = "name 1"}
+            };
             
             _bookRepository 
                 .Setup(x => x.Single(It.IsAny<Expression<Func<Book, bool>>>()))
                 .ReturnsAsync(newBook);
 
-            var bookController = new BookController(_bookRepository.Object, _mapper);
+                // this.GetAllRelated<Genre, InGenre>(b=>b.Id == book.Id, new Genre(),  inGenre);
+            _bookRepository
+                .Setup(x => 
+                x.GetAllRelated<Genre, InGenre>(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<Genre>(), It.IsAny<InGenre>()))
+                .ReturnsAsync(genreList);
+
+            var bookController = new BookController(_bookRepository.Object, _genreRepository.Object, _mapper);
 
             // Act
             var result = await bookController.FindBookAsync(newBook.Id);
             var okResult = result as OkObjectResult;
-            var returnedBook = okResult.Value as Book;
+            var returnedBookjson = okResult.Value as string;
+            var returnedBook = JsonSerializer.Deserialize<Book>(returnedBookjson);
 
             // Assert
             Assert.True(okResult != null);
@@ -166,12 +179,13 @@ namespace ReadingRainbowAPI.ControllerTests
 
             _bookRepository.Setup(x => x.All()).ReturnsAsync(bookList);
 
-            var bookController = new BookController(_bookRepository.Object, _mapper);
+            var bookController = new BookController(_bookRepository.Object, _genreRepository.Object, _mapper);
 
             // Act
             var result = await bookController.GetAllBooksAsync();
             var okResult = result as OkObjectResult;
-             var returnedBooks = okResult.Value as List<Book>;
+            var returnedBookListjson = okResult.Value as string;
+            var returnedBooks = JsonSerializer.Deserialize<List<Book>>(returnedBookListjson);
 
             // Assert
             Assert.True(okResult != null);

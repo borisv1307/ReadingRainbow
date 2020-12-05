@@ -10,16 +10,31 @@ namespace ReadingRainbowAPI.DAL
         public PersonRepository(INeo4jDBContext context) : base(context){
         }
 
-        public async Task AddOrUpdatePersonAsync(Person person)
+        public async Task<bool> UpdatePersonAsync(Person person)
+        {
+            var found = await this.Single(p => p.Name == person.Name);
+            if(found != null)
+            {
+               await Update(p => p.Name == person.Name, person);
+               return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> AddPersonAsync(Person person)
         {
             var found = await this.Single(p => p.Name == person.Name);
             if(found == null)
             {
                 await Add(person);
+                return true;
             }
             else
             {
-               await Update(p => p.Name == person.Name, person);
+                return false;
             }
         }
 

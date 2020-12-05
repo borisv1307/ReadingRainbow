@@ -20,7 +20,7 @@ namespace ReadingRainbowAPI.Models
         public string Description {get; set;}
         public string ISBN_10 {get; set;}      
         public string ISBN_13 {get; set;}   
-        public List<string> Cateogries = new List<string>();
+        public List<Genre> Genres = new List<Genre>();
 
     }   
 }

@@ -8,6 +8,7 @@ using AutoMapper;
 using ReadingRainbowAPI.Dto;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace ReadingRainbowAPI.Controllers
 {
@@ -36,16 +37,26 @@ namespace ReadingRainbowAPI.Controllers
             };
             var books = await _personRepository.GetInLibraryBookRelationshipAsync(person, new InLibrary());
 
-            return Ok(books);
+            return Ok(JsonSerializer.Serialize(books));
         }
 
         [HttpPost]
-        [Route("AddUpdatePerson")]
-        public async Task<IActionResult> AddUpdatePersonAsync(Person person)
+        [Route("UpdatePerson")]
+        public async Task<IActionResult> UpdatePersonAsync(Person person)
         {
-            await _personRepository.AddOrUpdatePersonAsync(person);
+            var success = await _personRepository.UpdatePersonAsync(person);
 
-            return Ok();
+            return Ok(success);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("AddPerson")]
+        public async Task<IActionResult> AddPersonAsync(Person person)
+        {
+            var success = await _personRepository.AddPersonAsync(person);
+
+            return Ok(success);
         }
 
         [HttpGet]
@@ -55,7 +66,7 @@ namespace ReadingRainbowAPI.Controllers
             var person = await _personRepository.GetPersonAsync(username);
             var personDto = _mapper.Map<PersonDto>(person);
 
-            return Ok(personDto);
+            return Ok(JsonSerializer.Serialize(personDto));
         }
  
         [HttpGet]
@@ -65,7 +76,7 @@ namespace ReadingRainbowAPI.Controllers
             var people = (await _personRepository.GetAllPeopleAsync()).ToList();
             var peopleDto = _mapper.Map<List<Person>, List<PersonDto>>(people);
 
-            return Ok(peopleDto);
+            return Ok(JsonSerializer.Serialize(peopleDto));
         }
  
     }
