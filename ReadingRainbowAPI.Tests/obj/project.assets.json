@@ -2170,7 +2170,7 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "8.1.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "3.1.0",
           "Microsoft.IdentityModel.Tokens": "6.8.0",
-          "Neo4j.Driver": "4.1.1",
+          "Neo4j.Driver": "4.2.0",
           "Neo4jClient": "4.0.3",
           "RSG.Promise": "3.0.1",
           "System.IdentityModel.Tokens.Jwt": "6.8.0"
@@ -7265,43 +7265,38 @@
       "Neo4j.Driver >= 4.1.1",
       "Neo4jClient >= 4.0.3",
       "ReadingRainbowAPI >= 1.0.0",
+      "System.IdentityModel.Tokens.Jwt >= 6.8.0",
       "coverlet.collector >= 1.2.0",
       "xunit >= 2.4.0",
       "xunit.runner.visualstudio >= 2.4.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\klind\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "/Users/meganbrust/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
+      "projectUniqueName": "/Users/meganbrust/Documents/GitHub/ReadingRainbow/ReadingRainbowAPI.Tests/ReadingRainbowAPI.Tests.csproj",
       "projectName": "ReadingRainbowAPI.Tests",
-      "projectPath": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
-      "packagesPath": "C:\\Users\\klind\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI.Tests\\obj\\",
+      "projectPath": "/Users/meganbrust/Documents/GitHub/ReadingRainbow/ReadingRainbowAPI.Tests/ReadingRainbowAPI.Tests.csproj",
+      "packagesPath": "/Users/meganbrust/.nuget/packages/",
+      "outputPath": "/Users/meganbrust/Documents/GitHub/ReadingRainbow/ReadingRainbowAPI.Tests/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\klind\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/meganbrust/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj": {
-              "projectPath": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj"
+            "/Users/meganbrust/Documents/GitHub/ReadingRainbow/ReadingRainbowAPI/ReadingRainbowAPI.csproj": {
+              "projectPath": "/Users/meganbrust/Documents/GitHub/ReadingRainbow/ReadingRainbowAPI/ReadingRainbowAPI.csproj"
             }
           }
         }
@@ -7335,6 +7330,10 @@
             "target": "Package",
             "version": "[4.0.3, )"
           },
+          "System.IdentityModel.Tokens.Jwt": {
+            "target": "Package",
+            "version": "[6.8.0, )"
+          },
           "coverlet.collector": {
             "target": "Package",
             "version": "[1.2.0, )"
@@ -7363,8 +7362,19 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.403\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.1.404/RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1605",
+      "level": "Error",
+      "message": "Detected package downgrade: Neo4j.Driver from 4.2.0 to 4.1.1. Reference the package directly from the project to select a different version. \n ReadingRainbowAPI.Tests -> ReadingRainbowAPI -> Neo4j.Driver (>= 4.2.0) \n ReadingRainbowAPI.Tests -> Neo4j.Driver (>= 4.1.1)",
+      "libraryId": "Neo4j.Driver",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v3.1"
+      ]
+    }
+  ]
 }

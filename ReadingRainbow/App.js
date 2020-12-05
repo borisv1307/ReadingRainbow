@@ -18,7 +18,6 @@ import Menu from "./screens/menu";
 import { Text, View, AsyncStorage} from 'react-native';
 import { AuthContext } from './components/context';
 import RootStackScreen from './screens/rootstack';
-// import AsyncStorage from '@react-native-community/async-storage';
 
 const Stack = createStackNavigator();
 
