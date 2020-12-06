@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { TextInput, View, Text, TouchableOpacity, Button, Alert } from 'react-native';
 import { globalStyles } from '../styles/global.js';
-import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../components/context';
 import * as Crypto from 'expo-crypto';
 import { RetrieveToken } from '../api-functions/authentication.js';
 import * as SecureStore from 'expo-secure-store'; 
 
-const SignIn = ({navigate}) => {
+const SignIn = ({navigation}) => {
     const [data, setData] = React.useState({
         username: '',
         password: '',
@@ -66,13 +65,6 @@ const SignIn = ({navigate}) => {
     //     }
     // }
 
-    // async function runCrypto(input) {
-    //     data.password = await Crypto.digestStringAsync(
-    //         Crypto.CryptoDigestAlgorithm.SHA256,
-    //         input
-    //     );
-    // }
-
     const loginHandle = () => {
         console.log('------------------------------------')
         console.log('username: ', data.username);
@@ -86,7 +78,7 @@ const SignIn = ({navigate}) => {
                 );
                 setData({
                     ...data,
-                    password:  data.password
+                    password: digest
                 });
             } catch (e) {
                 console.log(e);
@@ -134,12 +126,12 @@ const SignIn = ({navigate}) => {
                     onPress={() => {loginHandle()}} />
                 <TouchableOpacity
                     style={globalStyles.smallButton}
-                    onPress={() => navigate('SignUpScreen')}>
+                    onPress={() => navigation.navigate('SignUpScreen')}>
                     <Text style={globalStyles.buttonText}>Create Account</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={globalStyles.smallButton}
-                    onPress={() => navigate('ForgotPassword')} >
+                    onPress={() => navigation.navigate('ForgotPassword')} >
                     <Text style={globalStyles.buttonText}>Forgot Password</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={globalStyles.smallButton}>
