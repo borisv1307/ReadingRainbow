@@ -18,6 +18,7 @@ import Menu from "./screens/menu";
 import { Text, View, AsyncStorage} from 'react-native';
 import { AuthContext } from './components/context';
 import RootStackScreen from './screens/rootstack';
+import * as SecureStore from 'expo-secure-store'; 
 
 const Stack = createStackNavigator();
 
@@ -79,7 +80,8 @@ const App = () => {
         },
         signOut: async() => {
             try {
-              await AsyncStorage.removeItem('userToken');
+              await SecureStore.deleteItemAsync('jwt');
+              console.log('Signed Out');
             } catch(e) {
               console.log(e);
             }
@@ -123,19 +125,13 @@ const App = () => {
                 <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
                 <Stack.Screen name="Profile" component={Profile} />
                 <Stack.Screen name="Library" component={Library} />
-                {/*} <Stack.Screen name="FrLibrary" component={FrLibraryPage} /> */}
                 <Stack.Screen name="WishList" component={WishList} />
                 <Stack.Screen name="Book" component={Book} />
                 <Stack.Screen name="Search" component={Search} />
-                {/* <Stack.Screen name="Search" component={SearchPage} /> */}
-                {/* <Stack.Screen name="SearchBook" component={SearchBoPage} /> */}
                 <Stack.Screen name="Settings" component={Settings} />
                 <Stack.Screen name="Results" component={Results} />
                 <Stack.Screen name="FriendList" component={FriendList} />
-                {/* <Stack.Screen name="FriWishList" component={FriWishListPage} /> */}
                 <Stack.Screen name="Menu" component={Menu} />
-                {/* <Stack.Screen name="Preferences" component={Preferences} /> */}
-                {/* <Stack.Screen name="FrProfile" component={FrProfilePage} /> */}
             </Stack.Navigator>
             )
         :

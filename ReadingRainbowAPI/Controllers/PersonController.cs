@@ -9,6 +9,7 @@ using ReadingRainbowAPI.Dto;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System;
 
 namespace ReadingRainbowAPI.Controllers
 {
@@ -45,7 +46,7 @@ namespace ReadingRainbowAPI.Controllers
         public async Task<IActionResult> UpdatePersonAsync(Person person)
         {
             var success = await _personRepository.UpdatePersonAsync(person);
-
+            
             return Ok(success);
         }
 
@@ -54,8 +55,9 @@ namespace ReadingRainbowAPI.Controllers
         [Route("AddPerson")]
         public async Task<IActionResult> AddPersonAsync(Person person)
         {
+            Console.WriteLine($"person {person.Name}" );
             var success = await _personRepository.AddPersonAsync(person);
-
+            Console.WriteLine($"sucess {success}" );
             return Ok(success);
         }
 
