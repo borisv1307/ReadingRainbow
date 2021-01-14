@@ -39,6 +39,7 @@ export async function GetBooks(searchStr, startIndex = 0) {
     try{
         const response = await fetch(fullurl);
         const json = await response.json();
+        console.log(json);
         return json.items.map((name, index) => ReturnBook(name, index));
     } catch (err) {
         console.error(err);

@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image, View, Text, Button, TouchableOpacity, ScrollView} from 'react-native';
 import { globalStyles } from '../styles/global';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../components/context';
+import * as SecureStore from 'expo-secure-store';
 
 export default function Home() {
     const { navigate } = useNavigation();
     const { signOut } = React.useContext(AuthContext);
+    async function logToken() {
+        try {
+            const token = await SecureStore.getItemAsync('jwt');
+            console.log("At home screen token: ", token); //Remove at future time
+            // if (token) {
+            //     console.log("Token again: ", token);
+            // }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+    useEffect(() => {
+        logToken();
+    }, [])
     return (
         <View style={globalStyles.container}>
             <ScrollView>
@@ -14,6 +29,7 @@ export default function Home() {
                 <Button title="Find Books" onPress={() => navigate('Search')} />
                 <Button title="Friends" onPress={() => navigate('FriendList')} />
                 <Button title="View My Profile" onPress={() => navigate('Profile')} />
+                <Button title="Log token" onPress={() => logToken()} />
                 <View>
                     <TouchableOpacity style={globalStyles.smallButton}>
                         <Text>+</Text>

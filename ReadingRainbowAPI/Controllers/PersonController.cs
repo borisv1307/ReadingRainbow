@@ -37,7 +37,7 @@ namespace ReadingRainbowAPI.Controllers
                 Name = username
             };
             var books = await _personRepository.GetInLibraryBookRelationshipAsync(person, new InLibrary());
-
+            Console.WriteLine($"books {books}" );
             return Ok(JsonSerializer.Serialize(books));
         }
 
@@ -67,7 +67,7 @@ namespace ReadingRainbowAPI.Controllers
         {
             var person = await _personRepository.GetPersonAsync(username);
             var personDto = _mapper.Map<PersonDto>(person);
-
+            Console.WriteLine($"PersonDto {personDto}" );
             return Ok(JsonSerializer.Serialize(personDto));
         }
  
