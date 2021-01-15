@@ -20,13 +20,13 @@ export async function RetrieveToken(iUsername, iPassword) {
                 },
             });
         const token = await response.text();
-        await SecureStore.setItemAsync('jwt', token);
+        console.log("Pre-set");
+        return SecureStore.setItemAsync('jwt', token);
     } catch (e) {
         console.error(e);
     } finally {
         console.log('All tasks complete');
     }
-    return;
 }
 
 export async function CreateAccount(iUsername, iEmail, iPassword) {
@@ -50,7 +50,6 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
             });
         const account_activated = await response.text();
         await AsyncStorage.setItem('account_activated', account_activated);
-        // await AsyncStorage.setItem('account_activated', 'true');
         console.log('account_activated: ', AsyncStorage.getItem(account_activated));
     } catch (e) {
         console.error(e);

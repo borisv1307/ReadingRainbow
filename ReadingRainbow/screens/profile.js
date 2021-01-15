@@ -1,33 +1,32 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, ScrollView, ActivityIndicator } from 'react-native';
 import { globalStyles } from '../styles/global';
+import { GetUserProfile } from '../api-functions/getUserProfile';
+import { GetUserLibrary } from '../api-functions/getUserLibrary';
+import * as SecureStore from 'expo-secure-store';
 
 export default function Profile() {
+    const [ proresults, setProResults ] = useState(null);
+    // const [ libresults, setLibResults ] = useState([]);
+    
+    useEffect(() => {
+        async function checkData() {
+            const data = await GetUserProfile('april2'); //will need to replace with props
+            setProResults(data);
+        }
+        checkData();
+
+    }, [])
     return (
         <View style={globalStyles.container}>
             <Text style={globalStyles.titleText}>Paige's Profile</Text>
-            <View style={globalStyles.profileInfo}>
-                <Text>About me info!</Text>
-                {/* Commented sections are place holders. Feel free to ignore. */}
-                {/* <Text>Paige's Wishlist!</Text>
-                <Image
-                    style={{
-                        width: "100%",
-                        height: "60%"
-                    }}
-                    source={require("../assets/unnamed.jpg")} /> */}
-                <Text>Paige's Library</Text>
-                {/* Place call to database here */}
-
-                {/* <Text>Paige is reading</Text>
-                <Image
-                style={{
-                    width: "100%",
-                    height: "60%"
-                    }}
-                source={require("../assets/unnamed.jpg")} /> */}
-                {/* <Text>Paige Turner's Friends</Text> */}
-            </View>
+            {proresults ? (
+                <Text>{proresults}</Text> //still working to get these to display
+            ):(
+                <View>
+                    <ActivityIndicator size="large" color="#99ff99" />
+                </View>
+            )}
         </View>
     );
 }

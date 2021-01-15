@@ -13,6 +13,7 @@ export default function SignUp({navigation}) {
         username: '',
         password: '',
         password_confirm:'',
+        hashedPassword: '',
         check_textInputChange: false,
         isValidUser: true,
         isValidPassword: true,
@@ -41,14 +42,16 @@ export default function SignUp({navigation}) {
                     Crypto.CryptoDigestAlgorithm.SHA256,
                     data.password
                 );
-                setData({
-                    ...data,
-                    password: digest
-                });
+                console.log('Digest sign up: ', digest);
+                CreateAccount(data.username, data.email, digest);
+                // setData({
+                //     ...data,
+                //     hashedPassword: digest
+                // });
             } catch (e) {
                 console.log(e);
             }
-        })().then(CreateAccount(data.username, data.email, data.password));
+        })();
     }
 
     return (

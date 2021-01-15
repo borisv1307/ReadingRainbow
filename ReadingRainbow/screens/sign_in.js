@@ -10,6 +10,7 @@ const SignIn = ({navigation}) => {
     const [data, setData] = React.useState({
         username: '',
         password: '',
+        hashedPassword: '',
         check_textInputChange: false,
         isValidUser: true,
         isValidPassword: true,
@@ -76,28 +77,26 @@ const SignIn = ({navigation}) => {
                     Crypto.CryptoDigestAlgorithm.SHA256,
                     data.password
                 );
-                setData({
-                    ...data,
-                    password: digest
+                RetrieveToken(data.username, digest).then(() => {
+                    console.log("Pre-get")
+                    SecureStore.getItemAsync('jwt').then((token) => {
+                        console.log("Post-get")
+                        console.log("Sign In token: ", token); //Remove at future time
+                        if (token) {
+                            console.log(("Signing in..."));
+                            signIn(data.username);
+                        }
+                    });
+ 
                 });
+                // setData({
+                //     ...data,
+                //     hashedPassword: digest
+                // });
             } catch (e) {
                 console.log(e);
             }
-        })().then(    
-            RetrieveToken(data.username, data.password).then(
-                (async () => {
-                    try {
-                        const token = await SecureStore.getItemAsync('jwt');
-                        console.log(token); //Remove at future time
-                        if (token) {
-                            signIn(data.username);
-                        }
-                    } catch (e) {
-                        console.log(e);
-                    }
-                })()
-            )
-        );
+        })();
     }
 
     return (
