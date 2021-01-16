@@ -58,6 +58,22 @@ namespace ReadingRainbowAPI.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("AddBookToLibrary/{userName}")]
+        public async Task<IActionResult> AddBookToLibrary(string userName, Book book)
+        {
+            await _bookRepository.AddOrUpdateAsync(book);
+
+            foreach(var genre in book.Genres)
+            {
+                await _genreRepository.CreateInGenreRelationshipAsync(genre, book, new Relationships.InGenre());
+            }
+
+            await _bookRepository.CreateInLibraryRelationshipAsync(book, new Person() {Name = userName}, new InLibrary());
+
+            return Ok();
+        }
+
         [HttpGet]
         [Route("Book/{id}")]
         public async Task<IActionResult> FindBookAsync(string id)
