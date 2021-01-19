@@ -8,6 +8,7 @@ using ReadingRainbowAPI.Mapping;
 using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Middleware;
 using AutoMapper;
+using ReadingRainbowAPI.Shared;
 
 namespace ReadingRainbowAPI
 {
@@ -23,11 +24,10 @@ namespace ReadingRainbowAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           var neoUri = "http://localhost:7474";
-           var neoUserName = "neo4j";
-           var neoPassword = "abc123";
 
-           services.AddScoped<INeo4jDBContext, Neo4jDBContext>(n=>new Neo4jDBContext(neoUri,neoUserName, neoPassword));
+            var neoCreds = new NeoCredentials();
+
+           services.AddScoped<INeo4jDBContext, Neo4jDBContext>(n=>new Neo4jDBContext(neoCreds.NeoUri, neoCreds.NeoUserName, neoCreds.NeoPassword));
            services.AddAuthorization();
 
             // Auto Mapper Configurations
