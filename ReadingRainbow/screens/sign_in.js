@@ -10,7 +10,6 @@ const SignIn = ({navigation}) => {
     const [data, setData] = React.useState({
         username: '',
         password: '',
-        hashedPassword: '',
         check_textInputChange: false,
         isValidUser: true,
         isValidPassword: true,
@@ -84,15 +83,11 @@ const SignIn = ({navigation}) => {
                         console.log("Sign In token: ", token); //Remove at future time
                         if (token) {
                             console.log(("Signing in..."));
-                            signIn(data.username);
+                            signIn(data.username, token);
                         }
                     });
  
                 });
-                // setData({
-                //     ...data,
-                //     hashedPassword: digest
-                // });
             } catch (e) {
                 console.log(e);
             }

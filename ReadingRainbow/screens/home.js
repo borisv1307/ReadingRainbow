@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Image, View, Text, Button, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, View, Text, Button, TouchableOpacity, ScrollView, AsyncStorage} from 'react-native';
 import { globalStyles } from '../styles/global';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../components/context';
@@ -12,9 +12,6 @@ export default function Home() {
         try {
             const token = await SecureStore.getItemAsync('jwt');
             console.log("At home screen token: ", token); //Remove at future time
-            // if (token) {
-            //     console.log("Token again: ", token);
-            // }
         } catch (e) {
             console.log(e);
         }

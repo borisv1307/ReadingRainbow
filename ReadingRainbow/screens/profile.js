@@ -6,27 +6,25 @@ import { GetUserLibrary } from '../api-functions/getUserLibrary';
 import * as SecureStore from 'expo-secure-store';
 
 export default function Profile() {
-    const [ proresults, setProResults ] = useState(null);
-    // const [ libresults, setLibResults ] = useState([]);
+    const [ proResults, setProResults ] = useState([]);
+    const [ libResults, setLibResults ] = useState([]);
+    const [isLoading, setLoading] = useState(true);
     
     useEffect(() => {
-        async function checkData() {
-            const data = await GetUserProfile('april2'); //will need to replace with props
-            setProResults(data);
-        }
-        checkData();
-
+        GetUserProfile('april2').then(profile => {
+            setProResults(profile);
+            console.log(proResults);
+        });
+        GetUserLibrary('april2').then(library => {
+            setLibResults(library);
+            console.log(libResults);
+        });
+        setLoading(false);
     }, [])
+
     return (
         <View style={globalStyles.container}>
             <Text style={globalStyles.titleText}>Paige's Profile</Text>
-            {proresults ? (
-                <Text>{proresults}</Text> //still working to get these to display
-            ):(
-                <View>
-                    <ActivityIndicator size="large" color="#99ff99" />
-                </View>
-            )}
         </View>
     );
 }
