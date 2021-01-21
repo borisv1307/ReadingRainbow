@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, View, Text, TouchableOpacity, Button, Alert } from 'react-native';
+import { TextInput, View, Text, TouchableOpacity, Button, Alert, AsyncStorage } from 'react-native';
 import { globalStyles } from '../styles/global.js';
 import { AuthContext } from '../components/context';
 import * as Crypto from 'expo-crypto';
@@ -83,6 +83,7 @@ const SignIn = ({navigation}) => {
                         console.log("Sign In token: ", token); //Remove at future time
                         if (token) {
                             console.log(("Signing in..."));
+                            AsyncStorage.setItem('username', data.username);
                             signIn(data.username, token);
                         }
                     });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Button, ScrollView, ActivityIndicator, AsyncStorage } from 'react-native';
 import { globalStyles } from '../styles/global';
 import { GetUserProfile } from '../api-functions/getUserProfile';
 import { GetUserLibrary } from '../api-functions/getUserLibrary';
@@ -11,16 +11,18 @@ export default function Profile() {
     const [isLoading, setLoading] = useState(true);
     
     useEffect(() => {
-        GetUserProfile('april2').then(profile => {
-            setProResults(profile);
-            console.log(proResults);
-        });
-        GetUserLibrary('april2').then(library => {
-            setLibResults(library);
-            console.log(libResults);
-        });
-        setLoading(false);
-    }, [])
+        AsyncStorage.getItem('username').then(user=>{
+            GetUserProfile(user).then(profile => {
+                setProResults(profile);
+                console.log(proResults);
+            });
+            GetUserLibrary(user).then(library => {
+                setLibResults(library);
+                console.log(libResults);
+            });
+            setLoading(false);
+        } )
+    }, []);
 
     return (
         <View style={globalStyles.container}>

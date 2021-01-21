@@ -13,7 +13,11 @@ export async function GetUserProfile(iUsername) {
                 'Content-Type': 'application/json; charset=utf-8',
             },
         });
-        const profile = await response.json();
+        try {
+            const profile = await response.json();
+        } catch(e) {
+            console.log(e);
+        }
         console.log('person response: ', profile);
         return profile;
     });
