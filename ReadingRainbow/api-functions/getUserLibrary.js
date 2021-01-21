@@ -14,10 +14,13 @@ export async function GetUserLibrary(iUsername) {
                 'Content-Type': 'application/json; charset=utf-8',
             },
         });
-        const json = await response.json();
-        console.log('Library response: ', json);
-        //return json.map((book, index) => ReturnBook(book, index));
-        return "Hello";
+        try {
+            const library = await response.json();
+            console.log('Library response ', json);
+        } catch(e) {
+            console.log(e);
+        }
+        return library;
     });
 } 
 
