@@ -1,7 +1,9 @@
 
 export async function GetBooksFromDatabase() {
 
-    const fullurl = 'https://localhost:5001/api/book/FindfromNeo';
+    //const fullurl = 'https://localhost:5001/api/book/FindfromNeo';
+
+    config = await fetch("./config.json/api/book/FindfromNeo");
 
     // create full request URL by joining parts of the string with the base request
     try{

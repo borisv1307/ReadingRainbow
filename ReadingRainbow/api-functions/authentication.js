@@ -7,7 +7,9 @@ export async function RetrieveToken(iUsername, iPassword) {
     const encodedUsername = encodeURIComponent(iUsername);
     const encodedPassword = encodeURIComponent(iPassword);
    
-    const fullurl = `http://10.0.2.2:5000/api/token?username=${encodedUsername}&password=${encodedPassword}`;
+    //const fullurl = `http://10.0.2.2:5000/api/token?username=${encodedUsername}&password=${encodedPassword}`;
+
+    config = await fetch("./config.json/api/token?username=${encodedUsername}&password=${encodedPassword}");
 
     try{
 
@@ -33,7 +35,9 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
 
     const vBody = JSON.stringify({ Name: iUsername, Email: iEmail, HashedPassword: iPassword });
     console.log(vBody);
-    const fullurl = `http://10.0.2.2:5000/api/person/AddPerson`;
+    //const fullurl = `http://10.0.2.2:5000/api/person/AddPerson`;
+
+    config = await fetch("./config.json/api/person/AddPerson");
 
     try{
 

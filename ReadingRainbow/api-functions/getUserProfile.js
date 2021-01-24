@@ -2,7 +2,10 @@ import * as SecureStore from 'expo-secure-store';
 
 export async function GetUserProfile(iUsername){
     const encodedUsername = encodeURIComponent(iUsername);
-    const fullurl =  `http://10.0.2.2:5000/api/person/Person/${encodedUsername}`;
+    //const fullurl =  `http://10.0.2.2:5000/api/person/Person/${encodedUsername}`;
+
+    
+    config = await fetch("./config.json/api/person/Library/${encodedUsername}");
 
     SecureStore.getItemAsync('jwt').then(async (token) => {
         const response = await fetch(fullurl,
