@@ -1,4 +1,5 @@
-{
-    "APIService": "https://localhost:5001",
-    "APIUserService": "http://10.0.2.2:5000"
-}
+
+    {
+        "APIService" : "https://localhost:5001",
+        "APIUserService" : "http://10.0.2.2:5000"
+    }
