@@ -19,7 +19,7 @@ export default function Search() {
                 title='Search!'
                 onPress={() => GetBooks(text).then(r=>setResults(r)) } />
             <ScrollView>
-                {results.map(book => <Text style={globalStyles.item} key={book.Index}> {book.Title} </Text>)}
+                {results.map(book => <Text style={globalStyles.item} key={book.Id}> {book.Title} </Text>)}
             </ScrollView>
         </View>
     );

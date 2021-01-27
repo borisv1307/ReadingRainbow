@@ -7,22 +7,22 @@ export async function GetUserProfile(iUsername) {
     const APIUserService = ConfigurationInfo.APIUserService;
     const fullurl =  APIUserService + `/api/person/Person/${encodedUsername}`;
 
-
-    SecureStore.getItemAsync('jwt').then(async (token) => {
-        const response = await fetch(fullurl,
-        {
-            headers: {
-                            
-                'Authorization': 'Bearer ' + token,
-                'Content-Type': 'application/json; charset=utf-8',
-            },
-        });
-        try {
+    try {
+        return SecureStore.getItemAsync('jwt').then(async (token) => {
+            const response = await fetch(fullurl,
+            {
+                headers: {
+                                
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
+            });
             const profile = await response.json();
-        } catch(e) {
-            console.log(e);
-        }
-        console.log('person response: ', profile);
-        return profile;
-    });
+            return profile;
+        });
+    } catch(e) {
+        console.log(e);
+    } finally {
+        console.log('All tasks complete');
+    }
 }
