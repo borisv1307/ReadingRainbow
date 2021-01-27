@@ -30,6 +30,19 @@ namespace ReadingRainbowAPI
            services.AddScoped<INeo4jDBContext, Neo4jDBContext>(n=>new Neo4jDBContext(neoCreds.NeoUri, neoCreds.NeoUserName, neoCreds.NeoPassword));
            services.AddAuthorization();
 
+            //This is new code added for swagger as part of configuration 1
+            services.AddControllers();
+              services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1",
+                    new Microsoft.OpenApi.Models.OpenApiInfo
+                    {
+                        Title = "Swagger Demo API",
+                        Description = "Demo API for showing swagger",
+                        Version = "v1"
+                    });
+            });
+
             // Auto Mapper Configurations
             var mapperConfig = new MapperConfiguration(mc =>
             {
@@ -49,6 +62,7 @@ namespace ReadingRainbowAPI
                     });
             });
 
+
             services.AddScoped<BookRepository>(); 
             services.AddScoped<PersonRepository>(); 
             services.AddScoped<GenreRepository>(); 
@@ -61,7 +75,7 @@ namespace ReadingRainbowAPI
         {
             app.UseCors("AllowAll"); // Add this line here or inside if (env.IsDevelopment()) block
 
-
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -71,11 +85,22 @@ namespace ReadingRainbowAPI
 
             app.UseAuthentication();  
             app.UseAuthorization(); 
-            
+
+                        // This code is added to for the configuaration 
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger Demp API");
+                options.RoutePrefix = string.Empty;
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+
+
         }
     }
 }
