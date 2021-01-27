@@ -1,10 +1,14 @@
 import * as SecureStore from 'expo-secure-store';
+import ConfigurationInfo from '../config.json';
+
 export async function GetUserLibrary(iUsername) {
 
     const encodedUsername = encodeURIComponent(iUsername);
     console.log('encoded username: ', encodedUsername);
 
-    const fullurl =  `http://10.0.2.2:5000/api/person/Library/${encodedUsername}`;
+    const APIUserService = ConfigurationInfo.APIUserService;
+    const fullurl =  APIUserService + `/api/person/Library/${encodedUsername}`;
+
     try{
         return SecureStore.getItemAsync('jwt').then(async (token) => {
             const response = await fetch(fullurl,
@@ -18,7 +22,7 @@ export async function GetUserLibrary(iUsername) {
             return library;
         });
     } catch(e) {
-        console.error(e);
+        console.log(e);
     } finally {
         console.log('All tasks complete');
     }
