@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, ScrollView, ActivityIndicator, AsyncStorage, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, ActivityIndicator, AsyncStorage, FlatList, TouchableOpacity } from 'react-native';
 import { globalStyles } from '../styles/global';
 import { GetUserProfile } from '../api-functions/getUserProfile';
 import { GetUserLibrary } from '../api-functions/getUserLibrary';
 import { useNavigation } from '@react-navigation/native';
+import { GetBooks } from '../api-functions/getbooks';
 
 export default function Profile() {
     const { navigate } = useNavigation();
@@ -20,16 +21,23 @@ export default function Profile() {
     return (
         <View style={globalStyles.container}>
             <Text style={globalStyles.titleText}>Your Profile</Text>
-            
+            <Text style={globalStyles.profileInfo}>Your Library</Text>
             { (proResults && libResults) ? 
                 <ScrollView>
-                    {libResults.map(book => 
-                        <TouchableOpacity key={book.Id} onPress={() => navigate('Book')}>
-                            <Text style={globalStyles.item}> 
-                                {book.Title} 
-                            </Text>
-                        </TouchableOpacity>
-                    )}
+                    <FlatList
+                        horizontal = {true}
+                        showsHorizontalScrollIndicator={true}
+                        data={libResults}
+                        keyExtractor={({id}, index) => id}
+                        renderItem={({item}) => (
+                            <TouchableOpacity onPress={() => navigate('Book')}>
+                                <Image 
+                                    source={{uri: item.Thumbnail}}
+                                    style={{width: 128, height: 205}}
+                                />
+                            </TouchableOpacity>
+                        )}>
+                    </FlatList>
                 </ScrollView>
                 : 
                 <ActivityIndicator/>
