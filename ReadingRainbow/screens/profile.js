@@ -4,7 +4,6 @@ import { globalStyles } from '../styles/global';
 import { GetUserProfile } from '../api-functions/getUserProfile';
 import { GetUserLibrary } from '../api-functions/getUserLibrary';
 import { useNavigation } from '@react-navigation/native';
-import { GetBooks } from '../api-functions/getbooks';
 
 export default function Profile() {
     const { navigate } = useNavigation();
@@ -30,7 +29,14 @@ export default function Profile() {
                         data={libResults}
                         keyExtractor={({id}, index) => id}
                         renderItem={({item}) => (
-                            <TouchableOpacity onPress={() => navigate('Book')}>
+                            <TouchableOpacity onPress={() => navigate('Book', {
+                                title: item.Title,
+                                author: item.Author,
+                                thumbnail: item.Thumbnail,
+                                pubDate: item.PublishedDate,
+                                pageCount: item.NumberPages,
+                                description: item.Description,
+                            })}>
                                 <Image 
                                     source={{uri: item.Thumbnail}}
                                     style={{width: 128, height: 205}}
