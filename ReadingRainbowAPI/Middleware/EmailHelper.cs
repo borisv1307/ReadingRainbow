@@ -66,8 +66,8 @@ namespace ReadingRainbowAPI.Middleware
 
                     client.Connect(SmtpServer, SmtpPortNumber, false);  
                     client.Authenticate(  
-                        "k.fallos@gmail.com",   // Gmail name 
-                        "obywpkbfovczumpr"  //gmail password
+                        _emailUser,   // Gmail name 
+                        _emailSecret  //gmail password
                         );  
                    await client.SendAsync(mimeMessage);  
                     Console.WriteLine("The mail has been sent successfully !!");  
