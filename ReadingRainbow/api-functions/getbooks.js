@@ -33,7 +33,6 @@ export async function GetBooks(searchStr, startIndex = 0) {
     const baseurl = 'https://www.googleapis.com/books/v1/volumes';
     const mykey = 'AIzaSyCY-Xy_wHFKlBpZfEHI1kthE-t9KeU0LHo';
 
-    // create full request URL by joining parts of the string with the base request
     let fullurl = [baseurl, '?q=', searchStr, '&startIndex=', CheckInt(startIndex), '&key=', mykey].join('');
     
     try{

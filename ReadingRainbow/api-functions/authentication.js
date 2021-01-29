@@ -22,7 +22,6 @@ export async function RetrieveToken(iUsername, iPassword) {
                 },
             });
         const token = await response.text();
-        console.log('Pre-set');
         return SecureStore.setItemAsync('jwt', token);
     } catch (e) {
         console.error(e);
