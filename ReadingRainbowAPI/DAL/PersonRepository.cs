@@ -29,6 +29,8 @@ namespace ReadingRainbowAPI.DAL
             var found = await this.Single(p => p.Name == person.Name);
             if(found == null)
             {
+                // Each person that is added, their email will be default not be confirmed
+                person.EmailConfirmed = "False";
                 await Add(person);
                 return true;
             }
@@ -46,6 +48,12 @@ namespace ReadingRainbowAPI.DAL
         public async Task<Person> GetPersonAsync(string personName)
         {
             return await this.Single(p=>p.Name == personName);
+        }
+
+        
+        public async Task<Person> GetPersonByEmailAsync(string email)
+        {
+            return await this.Single(p=>p.Email == email);
         }
 
         public async Task<IEnumerable<Person>> GetPeopleWhereAsync(string profile)

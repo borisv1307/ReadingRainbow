@@ -6,7 +6,7 @@ namespace ReadingRainbowAPI.Models
         {
             Label = "Person";
         }
-
+        
         public string Name {get; set;}
         public string Profile {get; set;}
         public string Portrait {get; set;}
@@ -14,5 +14,10 @@ namespace ReadingRainbowAPI.Models
         public string Email {get; set;}
 
         public string HashedPassword {get; set;}
+
+        public string EmailConfirmed {get; set;}
+
+        public string Token {get; set;}
     }
+
 }
