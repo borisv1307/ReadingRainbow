@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.DAL;
+using ReadingRainbowAPI.Middleware;
 using ReadingRainbowAPI.Relationships;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System;
+using System.Text.RegularExpressions;
 
 namespace ReadingRainbowAPI.Controllers
 {
@@ -22,11 +24,14 @@ namespace ReadingRainbowAPI.Controllers
         private readonly PersonRepository _personRepository;
 
         private readonly IMapper _mapper;
+
+        private readonly IEmailHelper _emailHelper;
  
-        public PersonController(PersonRepository personRepository, IMapper mapper)
+        public PersonController(PersonRepository personRepository, IMapper mapper, IEmailHelper emailHelper)
         {
             _personRepository = personRepository;
             _mapper = mapper;
+            _emailHelper = emailHelper;
         }
         
         [HttpGet]
@@ -50,17 +55,6 @@ namespace ReadingRainbowAPI.Controllers
             return Ok(success);
         }
 
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("AddPerson")]
-        public async Task<IActionResult> AddPersonAsync(Person person)
-        {
-            Console.WriteLine($"person {person.Name}" );
-            var success = await _personRepository.AddPersonAsync(person);
-            Console.WriteLine($"sucess {success}" );
-            return Ok(success);
-        }
-
         [HttpGet]
         [Route("Person/{username}")]
         public async Task<IActionResult> FindPersonAsync(string username)
@@ -69,6 +63,74 @@ namespace ReadingRainbowAPI.Controllers
             var personDto = _mapper.Map<PersonDto>(person);
             Console.WriteLine($"PersonDto {personDto}" );
             return Ok(JsonSerializer.Serialize(personDto));
+        }
+
+        
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("AddPerson")]
+        public async Task<IActionResult> AddPersonAsync(Person person)
+        {
+            Console.WriteLine($"person {person.Name}" );
+
+            if (!CheckEmailAddress(person.Email))
+            {
+                return Ok("Email in incorrect format");
+            }
+
+            var success = await _personRepository.AddPersonAsync(person);
+
+            if (success)
+            {
+                // If user was added, generate token
+                var token = TokenClass.CreateToken();
+                person.Token = SanitizeToken(token);
+                await UpdatePersonAsync(person);
+
+                // var AppBaseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
+                //  var callbackUrl = $"{AppBaseUrl}//{token}//{person.Name}";
+                // var callbackUrl = Url.Action("ConfirmEmail", "Email", new { token, name = person.Name });
+                var callbackUrl = "https://localhost:5001/api/email/AddPerson/" + token + "/" + person.Name;
+                var confirmationLink = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+    
+                bool emailResponse = await _emailHelper.SendEmail(person.Name, person.Email, confirmationLink);
+             
+                if (emailResponse)
+                {
+                    Console.WriteLine($"Valid Email Address {person.Email}");
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid Email Address {person.Email}");
+                    return Ok($"Invalid Email Address {person.Email}");
+                }
+            }
+
+            Console.WriteLine($"sucess {success}" );
+            return Ok(success);
+        }
+
+        private string SanitizeToken(string token)
+        {
+            var newToken = token.Replace("/","");
+            newToken = newToken.Replace("\\","");
+
+            return newToken;
+        }
+
+        private bool CheckEmailAddress(string email)
+        {
+            string emailRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+            
+            Regex re = new Regex(emailRegex);
+            if (!re.IsMatch(email))
+            {
+                Console.WriteLine($"Invalid Email Address {email}");
+                return false;
+            }
+            
+            return true;
         }
  
         [HttpGet]
