@@ -20,8 +20,19 @@ export default function Profile() {
     return (
         <View style={globalStyles.container}>
             <Text style={globalStyles.titleText}>Your Profile</Text>
+            { (proResults) ?
+                <View>
+                    <Image 
+                        source={{uri: proResults.Profile}}
+                        style={{width: 128, height: 205}}
+                    />
+                    <Text>Email: {proResults.Email}</Text>
+                </View>
+            :
+                <ActivityIndicator color="black"/>
+            }
             <Text style={globalStyles.profileInfo}>Your Library</Text>
-            { (proResults && libResults) ? 
+            { (libResults) ? 
                 <ScrollView>
                     <FlatList
                         horizontal = {true}
@@ -46,7 +57,7 @@ export default function Profile() {
                     </FlatList>
                 </ScrollView>
                 : 
-                <ActivityIndicator/>
+                <ActivityIndicator color="black"/>
             }
         </View>
     );
