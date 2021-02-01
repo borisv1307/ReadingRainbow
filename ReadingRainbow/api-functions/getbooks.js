@@ -57,7 +57,7 @@ export async function GetBooks(searchStr, startIndex = 0) {
     Thumbnail : ReturnImage(name.volumeInfo.imageLinks, 'thumbnail'), 
     SmallThumbnail : ReturnImage(name.volumeInfo.imageLinks, 'smallThumbnail'), 
     PublishDate : name.volumeInfo.publishedDate,
-    NumberPages : ReturnInteger(name.volumeInfo.pageCount),
+    NumberPages : name.volumeInfo.pageCount,
     Description : ReturnText(name.volumeInfo.description),
     ISBN_10 : ReturnISBN(name.volumeInfo.industryIdentifiers, 'ISBN_10'), 
     ISBN_13: ReturnISBN(name.volumeInfo.industryIdentifiers, 'ISBN_13'),
