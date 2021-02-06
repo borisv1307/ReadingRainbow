@@ -1,18 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;  
+using ReadingRainbowAPI.Models;
+using System.Net;
  
 namespace ReadingRainbowAPI.Middleware
 {
     public interface IEmailHelper
     {
         Task<bool> SendEmail(string userName, string userEmail, string confirmationLink);
-
+        Task<string> GenerateEmailLink(Person person, string callBackUrl);
+        Task<string> SanitizeToken(string token);
     }
 
     public class EmailHelper : IEmailHelper
@@ -25,6 +26,7 @@ namespace ReadingRainbowAPI.Middleware
             _emailSecret = config.GetSection("Email").GetSection("secret").Value;  
             _emailUser = config.GetSection("Email").GetSection("User").Value;  
         }
+        
         public async Task<bool> SendEmail(string userName, string userEmail, string confirmationLink)
         {
             try  
@@ -74,11 +76,6 @@ namespace ReadingRainbowAPI.Middleware
                    await client.DisconnectAsync(true);  
                 }  
 
-                        using (var client = new SmtpClient())
-        {
-
-        }
-
             }  
             catch (Exception ex)  
             {  
@@ -87,5 +84,25 @@ namespace ReadingRainbowAPI.Middleware
             }    
             return true;
         }
+
+        public async Task<string> GenerateEmailLink(Person person, string callBackUrl)
+        {
+            if (string.IsNullOrEmpty(callBackUrl))
+            {
+                callBackUrl = "https://localhost:5001/api/email/AddPerson";
+            }
+
+            callBackUrl = callBackUrl + "/"+ person.Token + "/" + person.Name;
+            return $"Please confirm your account by clicking this link: <a href='{callBackUrl}'>link</a>";
+        }
+
+        public async Task<string> SanitizeToken(string token)
+        {
+            var newToken = token.Replace("/","");
+            newToken = newToken.Replace("\\","");
+
+            return newToken;
+        }
+
     }
 }

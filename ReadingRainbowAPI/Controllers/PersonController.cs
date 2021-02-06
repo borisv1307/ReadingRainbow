@@ -47,7 +47,7 @@ namespace ReadingRainbowAPI.Controllers
         }
 
         [HttpPost]
-        [Route("UpdatePerson")]
+        [Route("UpdateProfile")]
         public async Task<IActionResult> UpdatePersonAsync(Person person)
         {
             var success = await _personRepository.UpdatePersonAsync(person);
@@ -78,22 +78,34 @@ namespace ReadingRainbowAPI.Controllers
                 return Ok("Email in incorrect format");
             }
 
+            // Make sure Email Address Does not below to anyone else
+            var inUse = await _personRepository.GetPersonByEmailAsync(person.Email);
+            if (inUse != null)
+            {
+                return Ok("Email Address alreaady in Use, select distinct email address");
+            }
+
             var success = await _personRepository.AddPersonAsync(person);
 
             if (success)
             {
-                // If user was added, generate token
                 var token = TokenClass.CreateToken();
-                person.Token = SanitizeToken(token);
+                person.Token = await _emailHelper.SanitizeToken(token);
                 await UpdatePersonAsync(person);
 
-                // var AppBaseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                var callBackUrl = String.Empty;
+            
+                try
+                {
+                    callBackUrl = Url.Action("ConfirmEmail", "Email");
+                    Console.WriteLine($"We got here with a url value of {callBackUrl}");
+                } 
+                catch (Exception ex)
+                { 
+                    Console.WriteLine($"Exception occured when generating link for email {ex}");
+                }
 
-                //  var callbackUrl = $"{AppBaseUrl}//{token}//{person.Name}";
-                // var callbackUrl = Url.Action("ConfirmEmail", "Email", new { token, name = person.Name });
-                var callbackUrl = "https://localhost:5001/api/email/AddPerson/" + token + "/" + person.Name;
-                var confirmationLink = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
-    
+                var confirmationLink = await _emailHelper.GenerateEmailLink(person, callBackUrl);
                 bool emailResponse = await _emailHelper.SendEmail(person.Name, person.Email, confirmationLink);
              
                 if (emailResponse)
@@ -109,14 +121,6 @@ namespace ReadingRainbowAPI.Controllers
 
             Console.WriteLine($"sucess {success}" );
             return Ok(success);
-        }
-
-        private string SanitizeToken(string token)
-        {
-            var newToken = token.Replace("/","");
-            newToken = newToken.Replace("\\","");
-
-            return newToken;
         }
 
         private bool CheckEmailAddress(string email)
