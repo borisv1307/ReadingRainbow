@@ -120,12 +120,12 @@ const SignIn = ({navigation}) => {
                     title="Sign In"
                     onPress={() => {loginHandle()}} />
                 <TouchableOpacity
-                    style={globalStyles.smallButton}
+                    style={globalStyles.item}
                     onPress={() => navigation.navigate('SignUpScreen')}>
                     <Text style={globalStyles.buttonText}>Create Account</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={globalStyles.smallButton}
+                    style={globalStyles.item}
                     onPress={() => navigation.navigate('ForgotPassword')} >
                     <Text style={globalStyles.buttonText}>Forgot Password</Text>
                 </TouchableOpacity>
