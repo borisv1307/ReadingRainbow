@@ -135,6 +135,8 @@ namespace ReadingRainbowAPI.ControllerTests
         [Fact]
         public async void AddPersonRoute_Test()
         {
+            var linkString = $"Please confirm your account by clicking this link: <a href='https://localhost:5001/api/email/AddPerson'>link</a>";
+
             // Arrange
             var newPerson = CreatePerson();
 
@@ -151,6 +153,9 @@ namespace ReadingRainbowAPI.ControllerTests
             _emailHelper
                     .Setup(e=>e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                     .ReturnsAsync(true);
+            _emailHelper
+                    .Setup(e=>e.GenerateEmailLink(It.IsAny<Person>(), It.IsAny<string>()))
+                    .ReturnsAsync(linkString);
 
             var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
 
