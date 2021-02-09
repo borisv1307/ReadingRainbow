@@ -562,5 +562,117 @@ namespace ReadingRainbowAPI.ControllerTests
             // Since Book already had genres associated more should not have been added
             Assert.True(bookGenres.Count == 0);
         }
+
+        [Fact]
+        public async void RemoveBookFromLibraryRoute_Test()
+        {   
+            // Arrange
+            var genre1 = CreateGenre();
+            var remBook = CreateBook(new List<Genre>() {
+                genre1
+            });
+            var person = CreatePerson();
+
+            var library = new List<Book>();
+            var bookGenres = new List<Genre>();
+
+
+            _bookRepository
+            .Setup(x => 
+                x.Relate<Person, InLibrary>(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<InLibrary>()))
+                .ReturnsAsync(true)
+                .Callback<Expression<Func<Book, bool>>, Expression<Func<Person, bool>>, InLibrary>(
+                    (exp1, exp2, inLibrary) => { library.Remove(remBook); }
+                );
+
+            _genreRepository 
+            .Setup(x => 
+                x.GetRelated<Book, InGenre>(It.IsAny<Expression<Func<Genre, bool>>>(), It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<InGenre>()))
+                .ReturnsAsync(new List<Book>());
+
+            _genreRepository
+            .Setup(x => 
+                x.Relate<Book, InGenre>(It.IsAny<Expression<Func<Genre, bool>>>(), It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<InGenre>()))
+                .ReturnsAsync(true)
+                .Callback<Expression<Func<Genre, bool>>, Expression<Func<Book, bool>>, InGenre>(
+                    (exp1, exp2, inLibrary) => { bookGenres.Remove(genre1); }
+                );
+         
+            SetupMockBookRepo(RemoveBook());
+
+            var bookController = new BookController(_bookRepository.Object, _genreRepository.Object, _mapper);
+
+            // Act
+            var result = await bookController.RemoveBookFromLibrary(person.Name, newBook);
+            var okResult = result as OkResult;
+
+            // Assert
+            Assert.True(okResult == null);
+            Assert.Equal(200, okResult.StatusCode);
+
+            // Verify Correct functions were called / correct callbacks were performed
+            Assert.True(library.Count == 0);
+            Assert.True(library.Where(b=>b.Title == newBook.Title).ToList().Count == 0);
+
+            Assert.True(bookGenres.Count == 0);
+            Assert.True(bookGenres.Where(b=>b.Description == genre1.Description).ToList().Count == 0);
+            
+        }
+
+                [Fact]
+        public async void RemoveBookFromWishListRoute_Test()
+        {   
+            // Arrange
+            var genre1 = CreateGenre();
+            var remBook = CreateBook(new List<Genre>() {
+                genre1
+            });
+            var person = CreatePerson();
+
+            var wishList = new List<Book>();
+            var bookGenres = new List<Genre>();
+
+
+            _bookRepository
+            .Setup(x => 
+                x.Relate<Person, WishList>(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<WishList>()))
+                .ReturnsAsync(true)
+                .Callback<Expression<Func<Book, bool>>, Expression<Func<Person, bool>>, WishList>(
+                    (exp1, exp2, wishList) => { wishList.Remove(remBook); }
+                );
+
+            _genreRepository 
+            .Setup(x => 
+                x.GetRelated<Book, InGenre>(It.IsAny<Expression<Func<Genre, bool>>>(), It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<InGenre>()))
+                .ReturnsAsync(new List<Book>());
+
+            _genreRepository
+            .Setup(x => 
+                x.Relate<Book, InGenre>(It.IsAny<Expression<Func<Genre, bool>>>(), It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<InGenre>()))
+                .ReturnsAsync(true)
+                .Callback<Expression<Func<Genre, bool>>, Expression<Func<Book, bool>>, InGenre>(
+                    (exp1, exp2, wishList) => { bookGenres.Remove(genre1); }
+                );
+         
+            SetupMockBookRepo(RemoveBook());
+
+            var bookController = new BookController(_bookRepository.Object, _genreRepository.Object, _mapper);
+
+            // Act
+            var result = await bookController.RemoveBookFromWishList(person.Name, newBook);
+            var okResult = result as OkResult;
+
+            // Assert
+            Assert.True(okResult == null);
+            Assert.Equal(200, okResult.StatusCode);
+
+            // Verify Correct functions were called / correct callbacks were performed
+            Assert.True(wishList.Count == 0);
+            Assert.True(wishList.Where(b=>b.Title == newBook.Title).ToList().Count == 0);
+
+            Assert.True(bookGenres.Count == 0);
+            Assert.True(bookGenres.Where(b=>b.Description == genre1.Description).ToList().Count == 0);
+            
+        }
     }
 }
