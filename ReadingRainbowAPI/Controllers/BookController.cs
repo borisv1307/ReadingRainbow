@@ -74,6 +74,22 @@ namespace ReadingRainbowAPI.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("AddBooksToWishList/{userName}")]
+        public async Task<IActionResult> AddBooksToWishList(string userName, Book book)
+        {
+            await _bookRepository.AddOrUpdateAsync(book);
+
+            foreach(var genre in book.Genres)
+            {
+                await _genreRepository.CreateInGenreRelationshipAsync(genre, book, new Relationships.InGenre());
+            }
+            
+            await _bookRepository.CreateWishlistRelationshipAsync(book, new Person() {Name = userName}, new WishList());
+
+            return Ok();
+        }
+
         [HttpGet]
         [Route("Book/{id}")]
         public async Task<IActionResult> FindBookAsync(string id)
