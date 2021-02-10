@@ -184,7 +184,7 @@ namespace ReadingRainbowAPI.RepositoryTests
             await _bookRepository.CreateInLibraryRelationshipAsync(newBook2, newPerson, inLibrary);
 
             //Act
-            var returnedBook = (await _recommendationRepository.GetJaccardWishList(newPerson));
+            var returnedBook = (await _recommendationRepository.GetJaccardWishList(p => p.Name == newPerson.Name));
             //Assert
             Assert.True(newBook3 == returnedBook);
             //Cleanup
@@ -231,7 +231,7 @@ namespace ReadingRainbowAPI.RepositoryTests
             await _bookRepository.CreateWishlistRelationshipAsync(newBook2, newPerson, wishList);
 
             //Act
-            var returnedBook = (await _recommendationRepository.GetJaccardLibrary(newPerson));
+            var returnedBook = (await _recommendationRepository.GetJaccardLibrary(p=>p.Name == newPerson.Name));
             //Assert
             Assert.True(newBook3 == returnedBook);
             //Cleanup
