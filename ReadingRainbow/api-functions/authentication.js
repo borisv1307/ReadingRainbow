@@ -33,14 +33,11 @@ export async function RetrieveToken(iUsername, iPassword) {
 export async function CreateAccount(iUsername, iEmail, iPassword) {
 
     const vBody = JSON.stringify({ Name: iUsername, Email: iEmail, HashedPassword: iPassword });
-    console.log(vBody);
-
     const APIUserService = ConfigurationInfo.APIUserService ; 
     const fullurl = APIUserService + `/api/person/AddPerson`;
+    console.log(vBody);
 
-
-/*     try{
-
+    try{
         const response = await fetch(fullurl,           
             {
                 mode: 'cors',
@@ -53,13 +50,14 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
                 body: vBody,
             });
         const account_activated = await response.text();
+        console.log('resposnse.text', account_activated);
         await AsyncStorage.setItem('account_activated', account_activated);
         console.log('account_activated: ', AsyncStorage.getItem(account_activated));
     } catch (e) {
         console.error(e);
     } finally {
         console.log('All tasks complete');
-    } */
+    }
     return;
 }
 

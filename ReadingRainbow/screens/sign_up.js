@@ -54,7 +54,7 @@ export default function SignUp({navigation}) {
             } catch (e) {
                 console.log(e);
             }
-        })();
+        })().then(navigation.navigate('SignInScreen')); //cloudinary upload, then sign in
     }
 
     return (
@@ -82,7 +82,7 @@ export default function SignUp({navigation}) {
                     onChangeText={(text) => setData({...data, password_confirm: text})}/>            
                 <Button
                     title='SUBMIT'
-                    onPress={() => {signUpHandle().then(navigation.navigate('SignIn'))}} />
+                    onPress={() => {signUpHandle()}} />
             </ScrollView>
         </View>
     );
