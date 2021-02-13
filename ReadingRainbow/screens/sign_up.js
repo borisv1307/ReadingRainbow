@@ -28,6 +28,14 @@ export default function SignUp({navigation}) {
         console.log('password: ', data.password);
         console.log('password_confirm: ', data.password_confirm);
         
+        if (!data.password || !data.password_confirm) {
+            Alert.alert(
+                "Invalid Data",
+                "Password or password confirmation is blank"
+            );
+            return;
+        }
+        
         if (data.password !== data.password_confirm) {
             Alert.alert(
                 "Invalid Data",
@@ -42,12 +50,7 @@ export default function SignUp({navigation}) {
                     Crypto.CryptoDigestAlgorithm.SHA256,
                     data.password
                 );
-                console.log('Digest sign up: ', digest);
                 CreateAccount(data.username, data.email, digest);
-                // setData({
-                //     ...data,
-                //     hashedPassword: digest
-                // });
             } catch (e) {
                 console.log(e);
             }
@@ -77,7 +80,9 @@ export default function SignUp({navigation}) {
                     style={globalStyles.input}
                     secureTextEntry={true}
                     onChangeText={(text) => setData({...data, password_confirm: text})}/>            
-                <Button title='SUBMIT' onPress={() => {signUpHandle()}} />
+                <Button
+                    title='SUBMIT'
+                    onPress={() => {signUpHandle().then(navigation.navigate('SignIn'))}} />
             </ScrollView>
         </View>
     );

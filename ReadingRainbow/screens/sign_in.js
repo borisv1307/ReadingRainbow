@@ -77,9 +77,7 @@ const SignIn = ({navigation}) => {
                     data.password
                 );
                 RetrieveToken(data.username, digest).then(() => {
-                    console.log("Pre-get")
                     SecureStore.getItemAsync('jwt').then((token) => {
-                        console.log("Post-get")
                         console.log("Sign In token: ", token); //Remove at future time
                         if (token) {
                             console.log(("Signing in..."));

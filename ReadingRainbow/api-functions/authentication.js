@@ -39,7 +39,7 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
     const fullurl = APIUserService + `/api/person/AddPerson`;
 
 
-    try{
+/*     try{
 
         const response = await fetch(fullurl,           
             {
@@ -59,6 +59,34 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
         console.error(e);
     } finally {
         console.log('All tasks complete');
-    }
+    } */
     return;
 }
+
+export async function ReSendEmail(iUsername, iPassword) {
+
+    console.log(JSON.stringify({ username: iUsername, password: iPassword })); //Test purposes only
+    const encodedUsername = encodeURIComponent(iUsername);
+    const encodedPassword = encodeURIComponent(iPassword);
+
+    const APIUserService = ConfigurationInfo.APIUserService ; 
+    const fullurl = APIUserService + `/api/token/ReSendEmail?username=${encodedUsername}&email=${encodedPassword}`;
+
+    try{
+
+        const response = await fetch(fullurl,           
+            {
+                mode: 'cors',
+                headers: {
+                  'Access-Control-Allow-Origin':'*',
+                  'Content-Type': 'application/json;charset=utf-8'
+                },
+            });
+        const oResponse = await response.text();
+        return oResponse;
+    } catch (e) {
+        console.error(e);
+    } finally {
+        console.log('All tasks complete');
+    }
+ }
