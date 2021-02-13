@@ -146,6 +146,55 @@ namespace ReadingRainbowAPI.Controllers
 
             return Ok(JsonSerializer.Serialize(peopleDto));
         }
+
+        [HttpPost]
+        [Route("RequestFriend")]
+        public async Task<IActionResult> RequestFriend(string userName, string friendName)
+        {
+            return Ok("Not Implemented");
+        }
+
+        [HttpGet]
+        [Route("GetFriends/{username}")]
+        public async Task<IActionResult> GetFriends(string userName)
+        {
+            return Ok("Not Implemented");
+        }
+
+        [HttpGet]
+        [Route("GetFriendRequests/{username}")]
+        public async Task<IActionResult> GetFriendRequests(string userName)
+        {
+            return Ok("Not Implemented");
+        }
+
+        [HttpGet]
+        [Route("GetRequestedFriends/{username}")]
+        public async Task<IActionResult> GetRequestedFriends(string userName)
+        {
+            return Ok("Not Implemented");
+        }
+
+        [HttpPost]
+        [Route("ConfirmFriendRequest")]
+        public async Task<IActionResult> ConfirmFriendRequest(string userName, string friendName)
+        {
+            return Ok("Not Implemented");
+        }
+
+        [HttpPost]
+        [Route("RejectFriendRequest")]
+        public async Task<IActionResult> RejectFriendRequest(string userName, string friendName)
+        {
+            return Ok("Not Implemented");
+        }
+
+        [HttpPost]
+        [Route("RemoveFriend")]
+        public async Task<IActionResult> RemoveFriend(string userName, string friendName)
+        {
+            return Ok("Not Implemented");
+        }
  
     }
 }

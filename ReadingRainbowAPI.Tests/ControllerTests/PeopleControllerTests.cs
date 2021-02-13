@@ -247,5 +247,17 @@ namespace ReadingRainbowAPI.ControllerTests
            
         }
 
+        // request friend
+
+        // request friend already friends
+
+        // request friend that friend has already requested
+
+        // Accept friend Request
+
+        // Reject friend request
+
+        // Remove friend
+
     }
 }
