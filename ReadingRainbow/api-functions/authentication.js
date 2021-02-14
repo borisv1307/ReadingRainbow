@@ -1,5 +1,4 @@
 import * as SecureStore from 'expo-secure-store';
-import { AsyncStorage } from 'react-native';
 import ConfigurationInfo from '../config.json'; 
 
 export async function RetrieveToken(iUsername, iPassword) {
@@ -49,10 +48,10 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
                 },
                 body: vBody,
             });
-        const account_created = await response.text();
+        const strResponse = await response.text();
+        var account_created = (strResponse == 'true');
         console.log('resposnse.text', account_created);
         return account_created;
-        // await AsyncStorage.setItem('account_created', account_created);
     } catch (e) {
         console.error(e);
     } finally {

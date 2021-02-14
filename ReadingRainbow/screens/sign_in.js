@@ -83,6 +83,12 @@ const SignIn = ({navigation}) => {
                             console.log(("Signing in..."));
                             AsyncStorage.setItem('username', data.username);
                             signIn(data.username, token);
+                        } else {
+                            Alert.alert(
+                                "Sign In Failure",
+                                "We are having trouble signing you in. Have you confirmed your email address yet?"
+                            )
+                            return;
                         }
                     });
  

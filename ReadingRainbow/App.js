@@ -17,7 +17,7 @@ import Menu from "./screens/menu";
 import { View, AsyncStorage, ActivityIndicator} from 'react-native';
 import { AuthContext } from './components/context';
 import RootStackScreen from './screens/rootstack';
-import UploadPic from './screens/uploadPic';
+import UploadPic from './screens/upload_pic';
 import * as SecureStore from 'expo-secure-store'; 
 
 const Stack = createStackNavigator();
