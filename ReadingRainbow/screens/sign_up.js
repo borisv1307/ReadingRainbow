@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, TextInput, View, Text, Alert } from 'react-native';
+import { Button, TextInput, View, Text, Alert, AsyncStorage } from 'react-native';
 import { globalStyles } from '../styles/global';
 import { AuthContext } from '../components/context';
 import { ScrollView } from 'react-native-gesture-handler';
-import { CreateAccount } from '../api-functions/authentication.js';
+import { CreateAccount, ReSendEmail } from '../api-functions/authentication.js';
 import * as Crypto from 'expo-crypto';
 
 export default function SignUp({navigation}) {
@@ -50,11 +50,21 @@ export default function SignUp({navigation}) {
                     Crypto.CryptoDigestAlgorithm.SHA256,
                     data.password
                 );
-                CreateAccount(data.username, data.email, digest);
+                CreateAccount(data.username, data.email, digest).then((account_created) => {
+                    if (account_created.toLowerCase == 'true') {
+                        console.log('account_activated', account_created)
+                        ReSendEmail(data.username, data.password);
+                    } else {
+                        Alert.alert(
+                            "Account Creation Failed",
+                            "Please try again"
+                        ); 
+                    }
+                }).then(navigation.navigate('SignInScreen'));
             } catch (e) {
                 console.log(e);
             }
-        })().then(navigation.navigate('SignInScreen')); //cloudinary upload, then sign in
+        })();
     }
 
     return (

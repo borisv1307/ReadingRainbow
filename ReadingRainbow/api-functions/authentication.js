@@ -49,10 +49,10 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
                 },
                 body: vBody,
             });
-        const account_activated = await response.text();
-        console.log('resposnse.text', account_activated);
-        await AsyncStorage.setItem('account_activated', account_activated);
-        console.log('account_activated: ', AsyncStorage.getItem(account_activated));
+        const account_created = await response.text();
+        console.log('resposnse.text', account_created);
+        return account_created;
+        // await AsyncStorage.setItem('account_created', account_created);
     } catch (e) {
         console.error(e);
     } finally {
@@ -81,6 +81,7 @@ export async function ReSendEmail(iUsername, iPassword) {
                 },
             });
         const oResponse = await response.text();
+        console.log('oResponse: ', oResponse);
         return oResponse;
     } catch (e) {
         console.error(e);
