@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.AspNetCore.Identity;
+using ReadingRainbowAPI.Models;
+using System;
 using ReadingRainbowAPI.Mapping;
 using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Middleware;
@@ -25,7 +27,12 @@ namespace ReadingRainbowAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
-            var neoCreds = new NeoCredentials();
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", false, true)
+                .Build();
+
+            var neoCreds = new NeoCredentials(config);
 
            services.AddScoped<INeo4jDBContext, Neo4jDBContext>(n=>new Neo4jDBContext(neoCreds.NeoUri, neoCreds.NeoUserName, neoCreds.NeoPassword));
            services.AddAuthorization();
@@ -49,11 +56,14 @@ namespace ReadingRainbowAPI
                     });
             });
 
+            services.AddScoped<IEmailHelper, EmailHelper>(e=>new EmailHelper(config));
             services.AddScoped<BookRepository>(); 
             services.AddScoped<PersonRepository>(); 
             services.AddScoped<GenreRepository>(); 
+
             services.AddTokenAuthentication(Configuration);
             services.AddMvcCore();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

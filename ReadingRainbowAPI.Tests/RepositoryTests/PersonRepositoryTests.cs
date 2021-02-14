@@ -34,8 +34,11 @@ namespace ReadingRainbowAPI.RepositoryTests
             return new Person(){
                 Name = $"newPerson{personId}",
                 Profile =$"This is new person number {personId}",
-                Portrait = "Https://PortraitLink",
-                HashedPassword = $"{personId}"
+                Portrait = @"Https://PortraitLink",
+                HashedPassword = $"{personId}",
+                EmailConfirmed = "True",
+                Email = $"{personId}@email.com"
+
             };
         }
 
@@ -140,7 +143,9 @@ namespace ReadingRainbowAPI.RepositoryTests
 
             // Act
             await _personRepository.CreateFriendRelationshipAsync(person1, person2, friendsWith);
-            var friends = await _personRepository.GetFriendsWithRelationshipAsync(person1, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(person2, person1, friendsWith);
+
+            var friends = await _personRepository.GetConfirmedFriendsWithRelationshipAsync(person1, friendsWith);
 
             // Assert
             Assert.True(friends.Count() == 1);
@@ -163,7 +168,7 @@ namespace ReadingRainbowAPI.RepositoryTests
             await _personRepository.AddPersonAsync(person2);
 
             // Act
-            var friends = await _personRepository.GetFriendsWithRelationshipAsync(person1, new Relationships.FriendsWith());
+            var friends = await _personRepository.GetConfirmedFriendsWithRelationshipAsync(person1, new Relationships.FriendsWith());
 
             // Assert
             Assert.True(friends.Count() == 0);
@@ -188,11 +193,13 @@ namespace ReadingRainbowAPI.RepositoryTests
 
             await _personRepository.CreateFriendRelationshipAsync(person, noLongerFriend, friendsWith);
             await _personRepository.CreateFriendRelationshipAsync(person, friendsForever, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(noLongerFriend, person, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(friendsForever, person, friendsWith);
 
             // Act
-            var everyoneIsFriends = await _personRepository.GetFriendsWithRelationshipAsync(person, friendsWith);
+            var everyoneIsFriends = await _personRepository.GetConfirmedFriendsWithRelationshipAsync(person, friendsWith);
             await _personRepository.DeleteFriendsWithRelationshipAsync(person, noLongerFriend, friendsWith);
-            var someoneIsLeftout = await _personRepository.GetFriendsWithRelationshipAsync(person, friendsWith);
+            var someoneIsLeftout = await _personRepository.GetConfirmedFriendsWithRelationshipAsync(person, friendsWith);
 
             // Assert
             Assert.True(everyoneIsFriends.Where(f=> f.Name == friendsForever.Name).ToList().Count == 1);
@@ -227,11 +234,13 @@ namespace ReadingRainbowAPI.RepositoryTests
             var friendsWith = new Relationships.FriendsWith();
 
             await _personRepository.CreateFriendRelationshipAsync(person, friend1, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(friend1, person, friendsWith);
             await _personRepository.CreateFriendRelationshipAsync(person, friend2, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(friend2, person, friendsWith);
             await _personRepository.CreateFriendRelationshipAsync(friend1, notaFriend, friendsWith);
 
             // Act
-            var personsFriends = await _personRepository.GetFriendsWithRelationshipAsync(person, friendsWith);
+            var personsFriends = await _personRepository.GetConfirmedFriendsWithRelationshipAsync(person, friendsWith);
 
             // Assert
             Assert.True(personsFriends.Where(f=> f.Name == friend1.Name).ToList().Count == 1);
@@ -247,6 +256,117 @@ namespace ReadingRainbowAPI.RepositoryTests
             await _personRepository.DeletePersonAsync(friend1);
             await _personRepository.DeletePersonAsync(friend2);
             await _personRepository.DeletePersonAsync(notaFriend);
+        }
+
+        // Get requested friends (person already has some friends)
+        [Fact]
+        public async void GetRequestedFriendsAsync_Test()
+        {
+            // Arrange 
+            var person = CreatePerson();
+            var friend1 = CreatePerson();
+            var friend2 = CreatePerson();
+            var requestedFriend = CreatePerson();
+
+            await _personRepository.AddPersonAsync(person);
+            await _personRepository.AddPersonAsync(friend1);
+            await _personRepository.AddPersonAsync(friend2);
+            await _personRepository.AddPersonAsync(requestedFriend);
+
+            var friendsWith = new Relationships.FriendsWith();
+
+            await _personRepository.CreateFriendRelationshipAsync(person, friend1, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(friend1, person, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(person, friend2, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(friend2, person, friendsWith);
+
+            // Only one-way relationship
+            await _personRepository.CreateFriendRelationshipAsync(person, requestedFriend, friendsWith);
+
+            // Act
+            var personsRequestedFriends = await _personRepository.GetRequestedFriends(person, friendsWith);
+
+            // Assert
+            Assert.True(personsRequestedFriends.Where(f=> f.Name == requestedFriend.Name).ToArray().Length  == 1);
+            Assert.True(personsRequestedFriends.ToArray().Length == 1);
+
+            // Clean Up
+            await _personRepository.DeleteFriendsWithRelationshipAsync(person, friend1, friendsWith);
+            await _personRepository.DeleteFriendsWithRelationshipAsync(person, friend2, friendsWith);
+            await _personRepository.DeleteFriendsWithRelationshipAsync(person, requestedFriend, friendsWith);
+            await _personRepository.DeletePersonAsync(person);
+            await _personRepository.DeletePersonAsync(friend1);
+            await _personRepository.DeletePersonAsync(friend2);
+            await _personRepository.DeletePersonAsync(requestedFriend);
+        }
+
+        [Fact]
+        public async void GetFriendRequestsHasFriends_Async()
+        {
+            // Arrange 
+            var person = CreatePerson();
+            var friend1 = CreatePerson();
+            var friend2 = CreatePerson();
+            var requestingFriend = CreatePerson();
+
+            await _personRepository.AddPersonAsync(person);
+            await _personRepository.AddPersonAsync(friend1);
+            await _personRepository.AddPersonAsync(friend2);
+            await _personRepository.AddPersonAsync(requestingFriend);
+
+            var friendsWith = new Relationships.FriendsWith();
+
+            await _personRepository.CreateFriendRelationshipAsync(person, friend1, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(friend1, person, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(person, friend2, friendsWith);
+            await _personRepository.CreateFriendRelationshipAsync(friend2, person, friendsWith);
+
+            // Only one-way relationship
+            await _personRepository.CreateFriendRelationshipAsync(requestingFriend, person, friendsWith);
+
+            // Act
+            var friendRequests = await _personRepository.GetFriendRequests(person, friendsWith);
+
+            // Assert
+            Assert.True(friendRequests.Where(f=> f.Name == requestingFriend.Name).ToArray().Length  == 1);
+            Assert.True(friendRequests.ToArray().Length == 1);
+
+            // Clean Up
+            await _personRepository.DeleteFriendsWithRelationshipAsync(person, friend1, friendsWith);
+            await _personRepository.DeleteFriendsWithRelationshipAsync(person, friend2, friendsWith);
+            await _personRepository.DeleteFriendsWithRelationshipAsync(requestingFriend, person, friendsWith);
+            await _personRepository.DeletePersonAsync(person);
+            await _personRepository.DeletePersonAsync(friend1);
+            await _personRepository.DeletePersonAsync(friend2);
+            await _personRepository.DeletePersonAsync(requestingFriend);
+        }
+
+        [Fact]
+        public async void GetFriendRequestsNoFriends_Async()
+        {
+            // Arrange 
+            var person = CreatePerson();
+            var requestingFriend = CreatePerson();
+
+            await _personRepository.AddPersonAsync(person);
+            await _personRepository.AddPersonAsync(requestingFriend);
+
+            var friendsWith = new Relationships.FriendsWith();
+
+            // Only one-way relationship
+            await _personRepository.CreateFriendRelationshipAsync(requestingFriend, person, friendsWith);
+
+            // Act
+            var friendRequests = await _personRepository.GetFriendRequests(person, friendsWith);
+
+            // Assert
+            Assert.True(friendRequests.Where(f=> f.Name == requestingFriend.Name).ToArray().Length  == 1);
+            Assert.True(friendRequests.ToArray().Length == 1);
+
+            // Clean Up
+            await _personRepository.DeleteFriendsWithRelationshipAsync(requestingFriend, person, friendsWith);
+            await _personRepository.DeletePersonAsync(person);
+            await _personRepository.DeletePersonAsync(requestingFriend);
         }
 
     
