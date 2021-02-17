@@ -73,16 +73,16 @@ namespace ReadingRainbowAPI.Controllers
         {
             Console.WriteLine($"person {person.Name}" );
 
-            if (!CheckEmailAddress(person.Email))
-            {
-                return Ok("Email in incorrect format");
-            }
+            // if (!CheckEmailAddress(person.Email))
+            // {
+            //     return Ok("Email in incorrect format");
+            // }
 
             // Make sure Email Address Does not below to anyone else
             var inUse = await _personRepository.GetPersonByEmailAsync(person.Email);
             if (inUse != null)
             {
-                return Ok("Email Address alreaady in Use, select distinct email address");
+                return Ok("Email Address already in Use, select distinct email address");
             }
 
             var success = await _personRepository.AddPersonAsync(person);
@@ -119,7 +119,7 @@ namespace ReadingRainbowAPI.Controllers
                 }
             }
 
-            Console.WriteLine($"sucess {success}" );
+            Console.WriteLine($"success {success}" );
             return Ok(success);
         }
 

@@ -21,18 +21,21 @@ export default function Home() {
             console.log(e);
         }
     };
-    // useEffect(() => {
-    //     AsyncStorage.getItem('username').then(user=>{
-    //         GetUserProfile(user).then(profile => {
-    //             setProResults(profile);
-    //             console.log(proResults);
-    //         });
-    //         GetUserLibrary(user).then(library => {
-    //             setLibResults(library);
-    //             console.log(libResults);
-    //         });
-    //     } )
-    // }, [])
+
+    useEffect(() => {
+        AsyncStorage.getItem('username').then(user => {
+            GetUserProfile(user).then(profile => setProResults(profile));
+            GetUserLibrary(user).then(library => setLibResults(library));
+        }).then(() => {
+            if (!proResults.Profile) {
+                navigate('UploadPic');
+            } else {
+                return;
+            }
+        });
+
+    }, []);
+
     return (
         <View style={globalStyles.container}>
             <ScrollView>

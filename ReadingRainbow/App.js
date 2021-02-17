@@ -17,6 +17,7 @@ import Menu from "./screens/menu";
 import { View, AsyncStorage, ActivityIndicator} from 'react-native';
 import { AuthContext } from './components/context';
 import RootStackScreen from './screens/rootstack';
+import UploadPic from './screens/upload_pic';
 import * as SecureStore from 'expo-secure-store'; 
 
 const Stack = createStackNavigator();
@@ -102,7 +103,7 @@ if ( loginState.isLoading ) {
         <AuthContext.Provider value={authContext}>
             <NavigationContainer>
                 { (loginState.userToken) ? (
-                    <Stack.Navigator initialRouteName="Home">
+                    <Stack.Navigator initialRouteName="Home" headerMode="screen">
                         <Stack.Screen name="SignIn" component={SignIn} />
                         <Stack.Screen name="Home" component={Home} />
                         <Stack.Screen name="SignUp" component={SignUp} />
@@ -115,6 +116,7 @@ if ( loginState.isLoading ) {
                         <Stack.Screen name="Settings" component={Settings} />
                         <Stack.Screen name="FriendList" component={FriendList} />
                         <Stack.Screen name="Menu" component={Menu} />
+                        <Stack.Screen name="UploadPic" component={UploadPic} />
                     </Stack.Navigator>
                 )
                 :
