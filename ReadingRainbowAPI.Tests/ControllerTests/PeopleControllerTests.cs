@@ -155,7 +155,7 @@ namespace ReadingRainbowAPI.ControllerTests
                     .ReturnsAsync(true);
             _emailHelper
                     .Setup(e=>e.GenerateEmailLink(It.IsAny<Person>(), It.IsAny<string>()))
-                    .ReturnsAsync(linkString);
+                    .Returns(linkString);
 
             var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
 
@@ -246,18 +246,6 @@ namespace ReadingRainbowAPI.ControllerTests
             Assert.Equal(200, okResult.StatusCode);
            
         }
-
-        // request friend
-
-        // request friend already friends
-
-        // request friend that friend has already requested
-
-        // Accept friend Request
-
-        // Reject friend request
-
-        // Remove friend
 
     }
 }

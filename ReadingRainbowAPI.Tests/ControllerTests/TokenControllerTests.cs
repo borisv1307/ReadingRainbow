@@ -112,7 +112,7 @@ namespace ReadingRainbowAPI.ControllerTests
                     .ReturnsAsync(true);
             _emailHelper
                     .Setup(e=>e.GenerateEmailLink(It.IsAny<Person>(), It.IsAny<string>()))
-                    .ReturnsAsync(linkString);
+                    .Returns(linkString);
 
             var tokenController = new TokenController(_config, _personRepository.Object, _emailHelper.Object); 
 

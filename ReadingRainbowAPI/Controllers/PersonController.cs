@@ -73,10 +73,10 @@ namespace ReadingRainbowAPI.Controllers
         {
             Console.WriteLine($"person {person.Name}" );
 
-            if (!CheckEmailAddress(person.Email))
-            {
-                return Ok("Email in incorrect format");
-            }
+           // if (!CheckEmailAddress(person.Email))
+           // {
+           //     return Ok("Email in incorrect format");
+           // }
 
             // Make sure Email Address Does not below to anyone else
             var inUse = await _personRepository.GetPersonByEmailAsync(person.Email);
@@ -89,8 +89,8 @@ namespace ReadingRainbowAPI.Controllers
 
             if (success)
             {
-                var token = TokenClass.CreateToken();
-                person.Token = await _emailHelper.SanitizeToken(token);
+                //var token = TokenClass.CreateToken();
+                person.Token = TokenClass.CreateToken();
                 await UpdatePersonAsync(person);
 
                 var callBackUrl = String.Empty;
@@ -105,7 +105,7 @@ namespace ReadingRainbowAPI.Controllers
                     Console.WriteLine($"Exception occured when generating link for email {ex}");
                 }
 
-                var confirmationLink = await _emailHelper.GenerateEmailLink(person, callBackUrl);
+                var confirmationLink = _emailHelper.GenerateEmailLink(person, callBackUrl);
                 bool emailResponse = await _emailHelper.SendEmail(person.Name, person.Email, confirmationLink);
              
                 if (emailResponse)
@@ -146,55 +146,5 @@ namespace ReadingRainbowAPI.Controllers
 
             return Ok(JsonSerializer.Serialize(peopleDto));
         }
-
-        [HttpPost]
-        [Route("RequestFriend")]
-        public async Task<IActionResult> RequestFriend(string userName, string friendName)
-        {
-            return Ok("Not Implemented");
-        }
-
-        [HttpGet]
-        [Route("GetFriends/{username}")]
-        public async Task<IActionResult> GetFriends(string userName)
-        {
-            return Ok("Not Implemented");
-        }
-
-        [HttpGet]
-        [Route("GetFriendRequests/{username}")]
-        public async Task<IActionResult> GetFriendRequests(string userName)
-        {
-            return Ok("Not Implemented");
-        }
-
-        [HttpGet]
-        [Route("GetRequestedFriends/{username}")]
-        public async Task<IActionResult> GetRequestedFriends(string userName)
-        {
-            return Ok("Not Implemented");
-        }
-
-        [HttpPost]
-        [Route("ConfirmFriendRequest")]
-        public async Task<IActionResult> ConfirmFriendRequest(string userName, string friendName)
-        {
-            return Ok("Not Implemented");
-        }
-
-        [HttpPost]
-        [Route("RejectFriendRequest")]
-        public async Task<IActionResult> RejectFriendRequest(string userName, string friendName)
-        {
-            return Ok("Not Implemented");
-        }
-
-        [HttpPost]
-        [Route("RemoveFriend")]
-        public async Task<IActionResult> RemoveFriend(string userName, string friendName)
-        {
-            return Ok("Not Implemented");
-        }
- 
     }
 }
