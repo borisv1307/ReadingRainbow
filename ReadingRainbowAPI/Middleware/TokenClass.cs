@@ -18,11 +18,11 @@ namespace ReadingRainbowAPI.Middleware
 
         public static bool CompareToken(string sentToken, string userToken)
         {
-            var data = Convert.FromBase64String(sentToken);
-            DateTime when = DateTime.FromBinary(BitConverter.ToInt64(data, 0));
-            if (when < DateTime.UtcNow.AddHours(-24)) {
-                return false;
-            }
+           // var data = Convert.FromBase64String(sentToken);
+           // DateTime when = DateTime.FromBinary(BitConverter.ToInt64(data, 0));
+           // if (when < DateTime.UtcNow.AddHours(-24)) {
+           //     return false;
+           // }
 
             if (userToken == sentToken)
             {
