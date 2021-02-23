@@ -48,8 +48,13 @@ namespace ReadingRainbowAPI.DAL
 
         public virtual async Task<TEntity> Single(Expression<Func<TEntity, bool>> query)
         {
-            IEnumerable<TEntity> results = await Where(query);
-            return results.FirstOrDefault();
+            try{
+                IEnumerable<TEntity> results = await Where(query);
+                return results.FirstOrDefault();
+            }catch (Exception)
+            {}
+
+            return null;
         }
 
         // Adds Entity to table

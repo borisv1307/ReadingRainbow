@@ -79,82 +79,9 @@ namespace ReadingRainbowAPI.DAL
             await this.Relate<Person, FriendsWith>(p1=>p1.Name == person.Name, p2=>p2.Name == friend.Name, friendsWith);
         }
 
-        public async Task<IEnumerable<Person>> GetConfirmedFriendsWithRelationshipAsync(Person person, FriendsWith friendsWith)
-        {
-            // Get list of all requests that have <- r -> because they are confirmed both ways
-            return await this.GetDualRelated(p1=>p1.Name == person.Name, friendsWith);
-        }
+#endregion FriendsWith
 
-        public async Task<IEnumerable<Person>> GetFriendRequests(Person person, FriendsWith friendsWith)
-        {
-            // Get list of all requests coming in for person <- r - but not - r ->
-            return await this.GetLeftRelated(p1=>p1.Name == person.Name);
-        }
-
-        public async Task<IEnumerable<Person>> GetRequestedFriends(Person person, FriendsWith friendsWith)
-        {
-            // Get list of all requests going out from person - r -> but not <- r -
-            return await this.GetRightRelated(p1=>p1.Name == person.Name);
-        }
-        
-        public async Task DeleteFriendsWithRelationshipAsync(Person person1, Person person2, FriendsWith friendsWith)
-        {
-            await this.DeleteRelationship<Person, FriendsWith>(p1=>p1.Name == person1.Name, p2=>p2.Name == person2.Name, friendsWith);
-        }
-
-        public virtual async Task<IEnumerable<Person>> GetDualRelated<FriendsWith>(Expression<Func<Person, bool>> query, FriendsWith relationship)
-        {
-            try{
-            return  await _neoContext.Cypher
-                .Match("(p1:Person)-[:FRIENDS_WITH]->(p2:Person)")
-                .Where("(p2:Person)-[:FRIENDS_WITH]->(p1:Person)") 
-                .AndWhere(query)
-                .Return<Person>("p2")
-                .ResultsAsync;
-           } catch (Exception ex)
-           {
-                Console.WriteLine($"exception occured {ex}");
-                return new List<Person>();
-           }
-        }
-
-        public virtual async Task<IEnumerable<Person>> GetRightRelated(Expression<Func<Person, bool>> query1)
-        {
-            try{
-                        return await _neoContext.Cypher
-                            .Match("(p1:Person)-[:FRIENDS_WITH]->(p2:Person)")
-                            .Where("NOT((p2:Person)-[:FRIENDS_WITH]->(p1:Person))")
-                            .AndWhere(query1)
-                            .Return<Person>("p2")
-                            .ResultsAsync;
-            } catch (Exception)
-            {
-              return new List<Person>();
-            }
-
-        }
-
-        
-        public virtual async Task<IEnumerable<Person>> GetLeftRelated(Expression<Func<Person, bool>> query1)
-        {
-
-            try{
-            return await _neoContext.Cypher
-                .Match("(p2:Person)-[:FRIENDS_WITH]->(p1:Person)")
-                .Where("NOT((p1:Person)-[:FRIENDS_WITH]->(p2:Person))")
-                .AndWhere(query1)
-                .Return<Person>("p2")
-                .ResultsAsync;
-            } catch (Exception)
-            {
-                return new List<Person>();
-            }
-        }
-
-
-        #endregion FriendsWith
-
-        #region InLibrary
+#region InLibrary
 
         public async Task<IEnumerable<Book>> GetInLibraryBookRelationshipAsync(Person person, InLibrary inLibrary)
         {

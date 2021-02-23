@@ -383,14 +383,14 @@ namespace ReadingRainbowAPI.ControllerTests
             });
             var person = CreatePerson();
 
-            var wishList = new List<Book>();
+            var wishListList = new List<Book>();
 
             _bookRepository
             .Setup(x => 
                 x.Relate<Person, WishList>(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<WishList>()))
                 .ReturnsAsync(true)
                 .Callback<Expression<Func<Book, bool>>, Expression<Func<Person, bool>>, WishList>(
-                    (exp1, exp2, WishList) => { wishList.Add(newBook); }
+                    (exp1, exp2, WishList) => { wishListList.Add(newBook); }
                 );
 
             _genreRepository
@@ -411,8 +411,8 @@ namespace ReadingRainbowAPI.ControllerTests
             Assert.Equal(200, okResult.StatusCode);
 
             // Verify Correct functions were called / correct callbacks were performed
-            Assert.True(wishList.Count == 1);
-            Assert.True(wishList.Where(b=>b.Title == newBook.Title).ToList().Count == 1);
+            Assert.True(wishListList.Count == 1);
+            Assert.True(wishListList.Where(b=>b.Title == newBook.Title).ToList().Count == 1);
             
         }
 

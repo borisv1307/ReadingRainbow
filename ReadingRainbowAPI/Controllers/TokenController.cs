@@ -61,8 +61,8 @@ namespace ReadingRainbowAPI.Controllers
                 return Ok();  
             }
 
-            var token = TokenClass.CreateToken();
-            person.Token = await _emailHelper.SanitizeToken(token);
+           // var token = TokenClass.CreateToken();
+            person.Token = TokenClass.CreateToken();
             await _personRepository.UpdatePersonAsync(person);
 
             var callBackUrl = String.Empty;
@@ -77,7 +77,7 @@ namespace ReadingRainbowAPI.Controllers
                 Console.WriteLine($"Exception occured when generating link for email {ex}");
             }
 
-            var confirmationLink = await _emailHelper.GenerateEmailLink(person, callBackUrl);       
+            var confirmationLink = _emailHelper.GenerateEmailLink(person, callBackUrl);       
             bool emailResponse = await _emailHelper.SendEmail(person.Name, person.Email, confirmationLink);
              
             if (emailResponse)

@@ -4,7 +4,7 @@ using ReadingRainbowAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using ReadingRainbowAPI.DAL;
-using System;
+using System.Net;
 using ReadingRainbowAPI.Middleware;
  
 namespace ReadingRainbowAPI.Controllers
@@ -25,11 +25,15 @@ namespace ReadingRainbowAPI.Controllers
         [Route("AddPerson/{token}/{name}")]
         public async Task<IActionResult> ConfirmEmail(string token, string name)
         {
-            var user = await _personRepository.GetPersonAsync(name);
+
+            var decodedUserName = WebUtility.UrlDecode(name);
+
+            var user = await _personRepository.GetPersonAsync(decodedUserName);
             if (user == null)
                 return View("~/Views/Error.cshtml");
 
-            if (TokenClass.CompareToken(token, user.Token))
+            var decodedToken = WebUtility.UrlDecode(token);
+            if (TokenClass.CompareToken(decodedToken, user.Token))
             {
                 user.EmailConfirmed = "True";
                 await _personRepository.UpdatePersonAsync(user);
