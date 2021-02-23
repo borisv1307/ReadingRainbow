@@ -7,7 +7,7 @@ import ForgotPassword from './forgot_password';
 const RootStack = createStackNavigator();
 
 const RootStackScreen = () => (
-    <RootStack.Navigator headerMode='screen'>
+    <RootStack.Navigator headerMode="screen">
         <RootStack.Screen name="SignInScreen" component={SignIn}/>
         <RootStack.Screen name="SignUpScreen" component={SignUp}/>
         <RootStack.Screen name="ForgotPassword" component={ForgotPassword}/>
