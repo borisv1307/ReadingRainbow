@@ -3,6 +3,7 @@ import { View, Text, Button, Image, ScrollView, ActivityIndicator, AsyncStorage,
 import { globalStyles } from '../styles/global';
 import { GetUserProfile } from '../api-functions/getUserProfile';
 import { useNavigation } from '@react-navigation/native';
+import { UpdateUserProfile } from '../api-functions/updateUserProfile';
 
 export default function UploadPic() {
     const { navigate } = useNavigation();
@@ -15,15 +16,24 @@ export default function UploadPic() {
         });
     }, []);
 
+    const profilePicHandle = (image) => {
+        setProResults(proResults => ({
+            ...proResults,
+            Portrait: image,
+            Profile: "No Data Available"
+        }));
+        console.log('upload pic proresults', proResults);
+        UpdateUserProfile(proResults);
+    }
+
     return (
         <View style={globalStyles.container}>
             <Text style={globalStyles.titleText}>Choose Your Profile Picture!</Text>
             <Button
-                title='Upload My Own Picture'
-                onPress={()=>UploadPicture()}/>
+                title='Upload My Own Picture'/>
             <Button
                 title='Use Default Picture'
-                onPress={(defaultProfilePicture)=>setProResults({...proResults, Profile: defaultProfilePicture})}/>
+                onPress={()=>profilePicHandle(defaultProfilePicture)}/>
         </View>
     );
 }

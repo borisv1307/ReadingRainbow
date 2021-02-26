@@ -3,7 +3,6 @@ import ConfigurationInfo from '../config.json';
 
 export async function GetUserProfile(iUsername) {
     const encodedUsername = encodeURIComponent(iUsername);
-
     const APIUserService = ConfigurationInfo.APIUserService;
     const fullurl =  APIUserService + `/api/person/Person/${encodedUsername}`;
 
@@ -18,11 +17,30 @@ export async function GetUserProfile(iUsername) {
                 },
             });
             const profile = await response.json();
-            return profile;
+            return ReturnProfile(profile);
         });
     } catch(e) {
         console.log(e);
     } finally {
         console.log('All tasks complete');
+    }
+}
+
+function ReturnProfile(info) {
+    console.log(info);
+    var profile = {
+        Email : CheckForNull(info.Email),
+        Name : CheckForNull(info.Name),
+        Portrait : CheckForNull(info.Portrait),
+        Profile : CheckForNull(info.Profile),
+    }
+        return profile;
+}
+
+function CheckForNull(field) {
+    if (field == null) {
+      return 'No data found';
+    } else {
+      return field;
     }
 }

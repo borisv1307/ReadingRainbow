@@ -4,8 +4,6 @@ import ConfigurationInfo from '../config.json';
 export async function GetUserLibrary(iUsername) {
 
     const encodedUsername = encodeURIComponent(iUsername);
-    console.log('encoded username: ', encodedUsername);
-
     const APIUserService = ConfigurationInfo.APIUserService;
     const fullurl =  APIUserService + `/api/person/Library/${encodedUsername}`;
 

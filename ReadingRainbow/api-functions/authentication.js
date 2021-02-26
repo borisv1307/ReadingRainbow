@@ -21,7 +21,11 @@ export async function RetrieveToken(iUsername, iPassword) {
                 },
             });
         const token = await response.text();
-        return SecureStore.setItemAsync('jwt', token);
+        if (token == 'Confirm Email Address') {
+            return SecureStore.deleteItemAsync('jwt');
+        } else {
+            return SecureStore.setItemAsync('jwt', token);
+        }
     } catch (e) {
         console.error(e);
     } finally {
@@ -34,6 +38,7 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
     const vBody = JSON.stringify({ Name: iUsername, Email: iEmail, HashedPassword: iPassword });
     const APIUserService = ConfigurationInfo.APIUserService ; 
     const fullurl = APIUserService + `/api/person/AddPerson`;
+    var account_created = false;
     console.log(vBody);
 
     try{
@@ -49,7 +54,7 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
                 body: vBody,
             });
         const strResponse = await response.text();
-        var account_created = (strResponse == 'true');
+        account_created = (strResponse == 'true');
         console.log('resposnse.text', account_created);
         return account_created;
     } catch (e) {
@@ -57,7 +62,7 @@ export async function CreateAccount(iUsername, iEmail, iPassword) {
     } finally {
         console.log('All tasks complete');
     }
-    return;
+    return account_created;
 }
 
 export async function ReSendEmail(iUsername, iPassword) {
