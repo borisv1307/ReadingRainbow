@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator, AsyncStorage, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, ActivityIndicator, AsyncStorage, FlatList, TouchableOpacity, Button } from 'react-native';
 import { globalStyles } from '../styles/global';
 import { GetUserProfile } from '../api-functions/getUserProfile';
 import { GetUserLibrary } from '../api-functions/getUserLibrary';
@@ -23,10 +23,13 @@ export default function Profile() {
             { (proResults) ?
                 <View>
                     <Image 
-                        source={{uri: proResults.Profile}}
-                        style={{width: 128, height: 205}}
+                        source={{uri: proResults.Portrait}}
+                        style={{width: 220, height: 220}}
                     />
                     <Text>Email: {proResults.Email}</Text>
+                    <Button
+                        title='Change Picture'
+                        onPress={() => {navigate('UploadPic')}} />
                 </View>
             :
                 <ActivityIndicator color="black"/>
