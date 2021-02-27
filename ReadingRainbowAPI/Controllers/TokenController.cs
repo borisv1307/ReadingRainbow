@@ -17,12 +17,14 @@ namespace ReadingRainbowAPI.Controllers
         private IConfiguration _config;
         private PersonRepository _personRepository;
         private IEmailHelper _emailHelper;
+        private readonly ITokenClass _tokenClass;
 
-        public TokenController(IConfiguration config, PersonRepository personRepository, IEmailHelper emailHelper)
+        public TokenController(IConfiguration config, PersonRepository personRepository, IEmailHelper emailHelper, ITokenClass tokenClass)
         {
             _config = config;
             _personRepository = personRepository;
             _emailHelper = emailHelper;
+            _tokenClass = tokenClass;
         }
 
         [HttpGet]
@@ -62,7 +64,8 @@ namespace ReadingRainbowAPI.Controllers
             }
 
            // var token = TokenClass.CreateToken();
-            person.Token = TokenClass.CreateToken();
+            person.Token = _tokenClass.CreateToken();
+            person.TokenDate = DateTime.UtcNow.ToShortDateString();
             await _personRepository.UpdatePersonAsync(person);
 
             var callBackUrl = String.Empty;

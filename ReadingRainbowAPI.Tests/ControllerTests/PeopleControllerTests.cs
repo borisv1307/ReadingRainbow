@@ -26,6 +26,7 @@ namespace ReadingRainbowAPI.ControllerTests
         private IMapper _mapper;
 
         private Mock<IEmailHelper> _emailHelper;
+        private Mock<ITokenClass> _tokenClass;
 
         
 
@@ -43,6 +44,7 @@ namespace ReadingRainbowAPI.ControllerTests
             _mapper = mapperConfig.CreateMapper();
 
             _emailHelper = new Mock<IEmailHelper>();
+            _tokenClass = new Mock<ITokenClass>();
 
         }
 
@@ -97,7 +99,7 @@ namespace ReadingRainbowAPI.ControllerTests
                 x.GetAllRelated<Book, InLibrary>(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Book>(), It.IsAny<InLibrary>()))
                 .ReturnsAsync(bookList);
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.GetBooksAsync(person1.Name);
@@ -119,7 +121,7 @@ namespace ReadingRainbowAPI.ControllerTests
             var newPerson = CreatePerson();
             newPerson.Email = "Wrongemailformat";
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.AddPersonAsync(newPerson);
@@ -156,8 +158,11 @@ namespace ReadingRainbowAPI.ControllerTests
             _emailHelper
                     .Setup(e=>e.GenerateEmailLink(It.IsAny<Person>(), It.IsAny<string>()))
                     .Returns(linkString);
+            _tokenClass
+                    .Setup(t=>t.CreateToken())
+                    .Returns("abcdefghitj");
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.AddPersonAsync(newPerson);
@@ -183,7 +188,7 @@ namespace ReadingRainbowAPI.ControllerTests
                   .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
                   .ReturnsAsync(true);
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.UpdatePersonAsync(newPerson);
@@ -205,7 +210,7 @@ namespace ReadingRainbowAPI.ControllerTests
                 .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
                 .ReturnsAsync(newPerson);
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.FindPersonAsync(newPerson.Name);
@@ -232,7 +237,7 @@ namespace ReadingRainbowAPI.ControllerTests
 
             _personRepository.Setup(x => x.All()).ReturnsAsync(personList);
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.GetAllPeopleAsync();

@@ -17,6 +17,8 @@ namespace ReadingRainbowAPI.ControllerTests
         private Mock<IEmailHelper> _emailHelper;
         private Mock<PersonRepository> _personRepository;
 
+        private Mock<ITokenClass> _tokenClass;
+
         private IConfiguration _config;
         private Person _newPerson;  
 
@@ -32,6 +34,8 @@ namespace ReadingRainbowAPI.ControllerTests
                     .Build();
 
             _emailHelper = new Mock<IEmailHelper>();
+
+            _tokenClass = new Mock<ITokenClass>();
                                         
             _personRepository 
                     .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
@@ -59,7 +63,7 @@ namespace ReadingRainbowAPI.ControllerTests
         public async void GetTokenValidUser_Test()
         {   
             // Arrange
-            var tokenController = new TokenController(_config, _personRepository.Object, _emailHelper.Object); 
+            var tokenController = new TokenController(_config, _personRepository.Object, _emailHelper.Object, _tokenClass.Object); 
 
             // Act
             var result = await tokenController.GetRandomToken(_newPerson.Name, _newPerson.HashedPassword);
@@ -77,7 +81,7 @@ namespace ReadingRainbowAPI.ControllerTests
         public async void GetTokenInValidUser_Test()
         {
             // Arrange 
-            var tokenController = new TokenController(_config, _personRepository.Object, _emailHelper.Object); 
+            var tokenController = new TokenController(_config, _personRepository.Object, _emailHelper.Object, _tokenClass.Object); 
 
             // Act
             var result = await tokenController.GetRandomToken("RandomName", "RandomPassword");
@@ -113,8 +117,11 @@ namespace ReadingRainbowAPI.ControllerTests
             _emailHelper
                     .Setup(e=>e.GenerateEmailLink(It.IsAny<Person>(), It.IsAny<string>()))
                     .Returns(linkString);
+            _tokenClass
+                    .Setup(t=>t.CreateToken())
+                    .Returns("abcdefghitj");
 
-            var tokenController = new TokenController(_config, _personRepository.Object, _emailHelper.Object); 
+            var tokenController = new TokenController(_config, _personRepository.Object, _emailHelper.Object, _tokenClass.Object); 
 
             // Act
             var result = await tokenController.ResendEmail(newPerson.Name, newPerson.HashedPassword);
