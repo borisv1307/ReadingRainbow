@@ -92,7 +92,6 @@ namespace ReadingRainbowAPI.Controllers
 
             if (success)
             {
-                //var token = TokenClass.CreateToken();
                 person.Token = _tokenClass.CreateToken();
                 person.TokenDate = DateTime.UtcNow.ToShortDateString();
                 await UpdatePersonAsync(person);

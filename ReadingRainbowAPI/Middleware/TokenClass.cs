@@ -33,21 +33,8 @@ namespace ReadingRainbowAPI.Middleware
                 .Replace("/", "-")
                 .Replace("+", "_")
                 .Replace("=", "");
-            TryByteConvert(keyStr, "Final Token");
 
             return keyStr;
-        }
-
-        private static string SanitizeKey(string key)
-        {
-            return key
-            .Replace("+","");
-            //.Replace("/","")
-            //.Replace("?","")
-            //.Replace("#","")
-            //.Replace("[","")
-            //.Replace("]","")
-            //.Replace("@","");
         }
 
         public bool CompareToken(string sentToken, string userToken)
@@ -71,21 +58,6 @@ namespace ReadingRainbowAPI.Middleware
             catch (Exception ex)
             {
                 Console.WriteLine($"Error Checking token date: {ex} with date value {tokenDate}");
-                return false;
-            }
-
-            return true;
-        }
-
-        private static bool TryByteConvert(string str, string step)
-        {
-            try{
-                var data = Convert.FromBase64String(str);
-                Console.WriteLine($"Raw Data at step {step} converted just fine from value {str}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error  at step {step} converting raw data: {ex} with from value {str}");
                 return false;
             }
 

@@ -63,7 +63,6 @@ namespace ReadingRainbowAPI.Controllers
                 return Ok();  
             }
 
-           // var token = TokenClass.CreateToken();
             person.Token = _tokenClass.CreateToken();
             person.TokenDate = DateTime.UtcNow.ToShortDateString();
             await _personRepository.UpdatePersonAsync(person);
