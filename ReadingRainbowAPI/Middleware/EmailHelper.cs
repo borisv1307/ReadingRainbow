@@ -5,6 +5,7 @@ using MimeKit;
 using Microsoft.Extensions.Configuration;  
 using ReadingRainbowAPI.Models;
 using System.Net;
+using System.Web;
  
 namespace ReadingRainbowAPI.Middleware
 {
@@ -12,7 +13,7 @@ namespace ReadingRainbowAPI.Middleware
     {
         Task<bool> SendEmail(string userName, string userEmail, string confirmationLink);
         string GenerateEmailLink(Person person, string callBackUrl);
-        //Task<string> SanitizeToken(string token);
+      
     }
 
     public class EmailHelper : IEmailHelper
@@ -91,17 +92,9 @@ namespace ReadingRainbowAPI.Middleware
                 callBackUrl = "https://localhost:5001/api/email/AddPerson";
             }
 
-            callBackUrl = callBackUrl + "/"+ WebUtility.UrlEncode(person.Token) + "/" + WebUtility.UrlEncode(person.Name);
-            return $"Please confirm your account by clicking this link: <a href='{callBackUrl}'>link</a>";
+            callBackUrl = callBackUrl + "/" + HttpUtility.UrlEncode(person.Token) + "/" + HttpUtility.UrlEncode(person.Name);
+            
+            return ($"Please confirm your account by clicking this link: <a href='{callBackUrl}'>link</a>");
         }
-
-       // public async Task<string> SanitizeToken(string token)
-       // {
-       //     var newToken = token.Replace("/","");
-       //     newToken = newToken.Replace("\\","");
-
-       //     return newToken;
-       // }
-
-    }
+   }
 }

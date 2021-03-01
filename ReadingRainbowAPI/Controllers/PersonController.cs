@@ -26,12 +26,15 @@ namespace ReadingRainbowAPI.Controllers
         private readonly IMapper _mapper;
 
         private readonly IEmailHelper _emailHelper;
+
+        private readonly ITokenClass _tokenClass;
  
-        public PersonController(PersonRepository personRepository, IMapper mapper, IEmailHelper emailHelper)
+        public PersonController(PersonRepository personRepository, IMapper mapper, IEmailHelper emailHelper, ITokenClass tokenClass)
         {
             _personRepository = personRepository;
             _mapper = mapper;
             _emailHelper = emailHelper;
+            _tokenClass = tokenClass;
         }
         
         [HttpGet]
@@ -73,10 +76,10 @@ namespace ReadingRainbowAPI.Controllers
         {
             Console.WriteLine($"person {person.Name}" );
 
-            // if (!CheckEmailAddress(person.Email))
-            // {
-            //     return Ok("Email in incorrect format");
-            // }
+            if (!CheckEmailAddress(person.Email))
+            {
+                return Ok("Email in incorrect format");
+            }
 
             // Make sure Email Address Does not below to anyone else
             var inUse = await _personRepository.GetPersonByEmailAsync(person.Email);
@@ -89,8 +92,8 @@ namespace ReadingRainbowAPI.Controllers
 
             if (success)
             {
-                //var token = TokenClass.CreateToken();
-                person.Token = TokenClass.CreateToken();
+                person.Token = _tokenClass.CreateToken();
+                person.TokenDate = DateTime.UtcNow.ToShortDateString();
                 await UpdatePersonAsync(person);
 
                 var callBackUrl = String.Empty;
@@ -124,9 +127,9 @@ namespace ReadingRainbowAPI.Controllers
         }
 
         private bool CheckEmailAddress(string email)
-        {
-            string emailRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
-            
+        {          
+            string emailRegex = @"^(.+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+      
             Regex re = new Regex(emailRegex);
             if (!re.IsMatch(email))
             {

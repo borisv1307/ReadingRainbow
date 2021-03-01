@@ -27,7 +27,8 @@ namespace ReadingRainbowAPI.ControllerTests
 
         private IMapper _mapper;
 
-        private Mock<IEmailHelper> _emailHelper;      
+        private Mock<IEmailHelper> _emailHelper;  
+        private Mock<ITokenClass> _tokenClass;   
 
         // Initalize Method used for all tests
         public FriendControllerTests()
@@ -45,6 +46,7 @@ namespace ReadingRainbowAPI.ControllerTests
             _mapper = mapperConfig.CreateMapper();
 
             _emailHelper = new Mock<IEmailHelper>();
+            _tokenClass = new Mock<ITokenClass>();
 
         }
    
@@ -92,7 +94,7 @@ namespace ReadingRainbowAPI.ControllerTests
                     (exp1, exp2, friendsWith) => { requestedFriends.Add(friend); }
                 );
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
             var friendController = new FriendController(_personRepository.Object, _friendRepository.Object, _mapper);
 
             // Act
@@ -129,7 +131,7 @@ namespace ReadingRainbowAPI.ControllerTests
                     It.IsAny<FriendsWith>()))
                 .ReturnsAsync(listOfFriends);
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
             var friendController = new FriendController(_personRepository.Object, _friendRepository.Object, _mapper);
 
 
@@ -173,7 +175,7 @@ namespace ReadingRainbowAPI.ControllerTests
                     (exp1, exp2, requestedFriends) => { acceptedFriends.Add(friend); }
                 );
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
             var friendController = new FriendController(_personRepository.Object, _friendRepository.Object, _mapper);
 
             // Act
@@ -211,7 +213,7 @@ namespace ReadingRainbowAPI.ControllerTests
 
             // public async Task DeleteFriendsWithRelationshipAsync(Person person1, Person person2)
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
             var friendController = new FriendController(_personRepository.Object, _friendRepository.Object, _mapper);
 
             // Act
@@ -247,7 +249,7 @@ namespace ReadingRainbowAPI.ControllerTests
                     It.IsAny<Person>()))
                 .Verifiable();
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
             var friendController = new FriendController(_personRepository.Object, _friendRepository.Object, _mapper);
 
             // Act
@@ -286,7 +288,7 @@ namespace ReadingRainbowAPI.ControllerTests
                     It.IsAny<FriendsWith>()))
                 .ReturnsAsync(listOfFriends);
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
             var friendController = new FriendController(_personRepository.Object, _friendRepository.Object, _mapper);
 
 
@@ -328,7 +330,7 @@ namespace ReadingRainbowAPI.ControllerTests
                     It.IsAny<FriendsWith>()))
                 .ReturnsAsync(listOfFriends);
 
-            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
             var friendController = new FriendController(_personRepository.Object, _friendRepository.Object, _mapper);
 
 
