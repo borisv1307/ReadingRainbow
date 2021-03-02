@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, TextInput, View, Text, Alert } from 'react-native';
+import { Button, TextInput, View, Text, Alert, AsyncStorage } from 'react-native';
 import { globalStyles } from '../styles/global';
 import { AuthContext } from '../components/context';
 import { ScrollView } from 'react-native-gesture-handler';
-import { CreateAccount } from '../api-functions/authentication.js';
+import { CreateAccount, ReSendEmail } from '../api-functions/authentication.js';
 import * as Crypto from 'expo-crypto';
 
 export default function SignUp({navigation}) {
@@ -28,6 +28,14 @@ export default function SignUp({navigation}) {
         console.log('password: ', data.password);
         console.log('password_confirm: ', data.password_confirm);
         
+        if (!data.password || !data.password_confirm) {
+            Alert.alert(
+                "Invalid Data",
+                "Password or password confirmation is blank"
+            );
+            return;
+        }
+        
         if (data.password !== data.password_confirm) {
             Alert.alert(
                 "Invalid Data",
@@ -42,12 +50,20 @@ export default function SignUp({navigation}) {
                     Crypto.CryptoDigestAlgorithm.SHA256,
                     data.password
                 );
-                console.log('Digest sign up: ', digest);
-                CreateAccount(data.username, data.email, digest);
-                // setData({
-                //     ...data,
-                //     hashedPassword: digest
-                // });
+                CreateAccount(data.username, data.email, digest).then((account_created) => {
+                    if (account_created) {
+                        Alert.alert(
+                            "Account Creation Successful",
+                            "Please confirm your email by clicking the link sent to the email address you provided."
+                        );
+                    } else {
+                        Alert.alert(
+                            "Account Creation Failed",
+                            "Please try again"
+                        ); 
+                    }
+                    navigation.navigate('SignInScreen');
+                });
             } catch (e) {
                 console.log(e);
             }
@@ -77,7 +93,9 @@ export default function SignUp({navigation}) {
                     style={globalStyles.input}
                     secureTextEntry={true}
                     onChangeText={(text) => setData({...data, password_confirm: text})}/>            
-                <Button title='SUBMIT' onPress={() => {signUpHandle()}} />
+                <Button
+                    title='SUBMIT'
+                    onPress={() => {signUpHandle()}} />
             </ScrollView>
         </View>
     );

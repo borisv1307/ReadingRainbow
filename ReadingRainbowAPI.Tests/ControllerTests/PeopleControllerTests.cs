@@ -5,6 +5,7 @@ using ReadingRainbowAPI.DAL;
 using ReadingRainbowAPI.Models;
 using ReadingRainbowAPI.Relationships;
 using ReadingRainbowAPI.Dto;
+using ReadingRainbowAPI.Middleware;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using Moq;
 using AutoMapper;
 using ReadingRainbowAPI.Mapping;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace ReadingRainbowAPI.ControllerTests
 {
@@ -20,9 +22,11 @@ namespace ReadingRainbowAPI.ControllerTests
     {
 
         private Mock<PersonRepository> _personRepository;
-        private BookRepository _bookRepository;
 
         private IMapper _mapper;
+
+        private Mock<IEmailHelper> _emailHelper;
+        private Mock<ITokenClass> _tokenClass;
 
         
 
@@ -38,6 +42,10 @@ namespace ReadingRainbowAPI.ControllerTests
             });
 
             _mapper = mapperConfig.CreateMapper();
+
+            _emailHelper = new Mock<IEmailHelper>();
+            _tokenClass = new Mock<ITokenClass>();
+
         }
 
         private Book CreateBook()
@@ -66,7 +74,9 @@ namespace ReadingRainbowAPI.ControllerTests
                 Name = $"newPerson{personId}",
                 Profile =$"This is new person number {personId}",
                 Portrait = "Https://PortaitLink",
-                HashedPassword = $"{personId}"
+                HashedPassword = $"{personId}",
+                Email = "k.lindseth@hotmail.com",
+                EmailConfirmed = "False"
 
             };
         }
@@ -89,7 +99,7 @@ namespace ReadingRainbowAPI.ControllerTests
                 x.GetAllRelated<Book, InLibrary>(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Book>(), It.IsAny<InLibrary>()))
                 .ReturnsAsync(bookList);
 
-            var personController = new PersonController(_personRepository.Object, _mapper);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.GetBooksAsync(person1.Name);
@@ -104,9 +114,31 @@ namespace ReadingRainbowAPI.ControllerTests
 
        }
 
+         [Fact]
+        public async void AddPersonRouteInvalidEmailFormat_Test()
+        {
+            // Arrange
+            var newPerson = CreatePerson();
+            newPerson.Email = "Wrongemailformat";
+
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
+
+            // Act
+            var result = await personController.AddPersonAsync(newPerson);
+            var okResult = result as OkObjectResult;
+
+            // Assert
+            Assert.True(okResult != null);
+            Assert.Equal(200, okResult.StatusCode);
+
+            Assert.Equal("Email in incorrect format", okResult.Value.ToString());
+        }
+
         [Fact]
         public async void AddPersonRoute_Test()
         {
+            var linkString = $"Please confirm your account by clicking this link: <a href='https://localhost:5001/api/email/AddPerson'>link</a>";
+
             // Arrange
             var newPerson = CreatePerson();
 
@@ -117,8 +149,20 @@ namespace ReadingRainbowAPI.ControllerTests
             _personRepository
                     .Setup(a=>a.Add(It.IsAny<Person>()))
                     .ReturnsAsync(true);
+            _personRepository
+                  .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
+                  .ReturnsAsync(true);
+            _emailHelper
+                    .Setup(e=>e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .ReturnsAsync(true);
+            _emailHelper
+                    .Setup(e=>e.GenerateEmailLink(It.IsAny<Person>(), It.IsAny<string>()))
+                    .Returns(linkString);
+            _tokenClass
+                    .Setup(t=>t.CreateToken())
+                    .Returns("abcdefghitj");
 
-            var personController = new PersonController(_personRepository.Object, _mapper);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.AddPersonAsync(newPerson);
@@ -131,7 +175,7 @@ namespace ReadingRainbowAPI.ControllerTests
             Assert.Equal(bool.TrueString, okResult.Value.ToString());
         }
 
-                [Fact]
+        [Fact]
         public async void UpdatePersonRoute_Test()
         {
             // Arrange
@@ -144,7 +188,7 @@ namespace ReadingRainbowAPI.ControllerTests
                   .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
                   .ReturnsAsync(true);
 
-            var personController = new PersonController(_personRepository.Object, _mapper);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.UpdatePersonAsync(newPerson);
@@ -166,7 +210,7 @@ namespace ReadingRainbowAPI.ControllerTests
                 .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
                 .ReturnsAsync(newPerson);
 
-            var personController = new PersonController(_personRepository.Object, _mapper);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.FindPersonAsync(newPerson.Name);
@@ -193,7 +237,7 @@ namespace ReadingRainbowAPI.ControllerTests
 
             _personRepository.Setup(x => x.All()).ReturnsAsync(personList);
 
-            var personController = new PersonController(_personRepository.Object, _mapper);
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
 
             // Act
             var result = await personController.GetAllPeopleAsync();

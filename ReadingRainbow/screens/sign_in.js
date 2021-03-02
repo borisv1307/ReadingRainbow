@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, View, Text, TouchableOpacity, Button, Alert } from 'react-native';
+import { TextInput, View, Text, TouchableOpacity, Button, Alert, AsyncStorage } from 'react-native';
 import { globalStyles } from '../styles/global.js';
 import { AuthContext } from '../components/context';
 import * as Crypto from 'expo-crypto';
@@ -10,7 +10,6 @@ const SignIn = ({navigation}) => {
     const [data, setData] = React.useState({
         username: '',
         password: '',
-        hashedPassword: '',
         check_textInputChange: false,
         isValidUser: true,
         isValidPassword: true,
@@ -78,21 +77,22 @@ const SignIn = ({navigation}) => {
                     data.password
                 );
                 RetrieveToken(data.username, digest).then(() => {
-                    console.log("Pre-get")
                     SecureStore.getItemAsync('jwt').then((token) => {
-                        console.log("Post-get")
                         console.log("Sign In token: ", token); //Remove at future time
                         if (token) {
                             console.log(("Signing in..."));
-                            signIn(data.username);
+                            AsyncStorage.setItem('username', data.username);
+                            signIn(data.username, token);
+                        } else {
+                            Alert.alert(
+                                "Sign In Failure",
+                                "We are having trouble signing you in. Have you confirmed your email address yet?"
+                            )
+                            return;
                         }
                     });
  
                 });
-                // setData({
-                //     ...data,
-                //     hashedPassword: digest
-                // });
             } catch (e) {
                 console.log(e);
             }
@@ -124,12 +124,12 @@ const SignIn = ({navigation}) => {
                     title="Sign In"
                     onPress={() => {loginHandle()}} />
                 <TouchableOpacity
-                    style={globalStyles.smallButton}
+                    style={globalStyles.item}
                     onPress={() => navigation.navigate('SignUpScreen')}>
                     <Text style={globalStyles.buttonText}>Create Account</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={globalStyles.smallButton}
+                    style={globalStyles.item}
                     onPress={() => navigation.navigate('ForgotPassword')} >
                     <Text style={globalStyles.buttonText}>Forgot Password</Text>
                 </TouchableOpacity>

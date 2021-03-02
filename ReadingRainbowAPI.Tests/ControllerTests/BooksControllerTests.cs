@@ -383,14 +383,14 @@ namespace ReadingRainbowAPI.ControllerTests
             });
             var person = CreatePerson();
 
-            var wishList = new List<Book>();
+            var wishListList = new List<Book>();
 
             _bookRepository
             .Setup(x => 
                 x.Relate<Person, WishList>(It.IsAny<Expression<Func<Book, bool>>>(), It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<WishList>()))
                 .ReturnsAsync(true)
                 .Callback<Expression<Func<Book, bool>>, Expression<Func<Person, bool>>, WishList>(
-                    (exp1, exp2, WishList) => { wishList.Add(newBook); }
+                    (exp1, exp2, WishList) => { wishListList.Add(newBook); }
                 );
 
             _genreRepository
@@ -411,8 +411,8 @@ namespace ReadingRainbowAPI.ControllerTests
             Assert.Equal(200, okResult.StatusCode);
 
             // Verify Correct functions were called / correct callbacks were performed
-            Assert.True(wishList.Count == 1);
-            Assert.True(wishList.Where(b=>b.Title == newBook.Title).ToList().Count == 1);
+            Assert.True(wishListList.Count == 1);
+            Assert.True(wishListList.Where(b=>b.Title == newBook.Title).ToList().Count == 1);
             
         }
 
@@ -501,6 +501,7 @@ namespace ReadingRainbowAPI.ControllerTests
             var person = CreatePerson();
 
             var inWishList = new List<Book>();
+
             var bookGenres = new List<Genre>();
 
 
@@ -513,6 +514,7 @@ namespace ReadingRainbowAPI.ControllerTests
                 .ReturnsAsync(true)
                 .Callback<Expression<Func<Book, bool>>, Expression<Func<Person, bool>>, WishList>(
                     (exp1, exp2, WishList) => { inWishList.Add(newBook); }
+
                 );
 
             _bookRepository
@@ -558,6 +560,7 @@ namespace ReadingRainbowAPI.ControllerTests
             // Verify Correct functions were called / correct callbacks were performed
             Assert.True(inWishList.Count != 0);
             Assert.True(inWishList.Where(b=>b.Title == newBook.Title).ToList().Count != 0);
+
 
             // Since Book already had genres associated more should not have been added
             Assert.True(bookGenres.Count == 0);

@@ -1,7 +1,9 @@
+import ConfigurationInfo from '../config.json'; 
 
 export async function GetBooksFromDatabase() {
 
-    const fullurl = 'https://localhost:5001/api/book/FindfromNeo';
+    const APIService = ConfigurationInfo.APIService;
+    const fullurl = APIService + '/api/book/FindfromNeo';
 
     // create full request URL by joining parts of the string with the base request
     try{

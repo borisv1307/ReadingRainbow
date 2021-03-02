@@ -13,16 +13,11 @@ public class NeoCredentials : IDisposable
     public readonly string NeoPassword;
     public readonly string NeoUri;
 
-        public NeoCredentials()
+        public NeoCredentials(IConfiguration config)
         {
-            var config = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", false, true)
-            .Build();
-
-        NeoUserName = config.GetSection("NeO4jConnectionSettings").GetValue<string>("NeoUserName");
-        NeoPassword = config.GetSection("NeO4jConnectionSettings").GetValue<string>("NeoPW");
-        NeoUri = config.GetSection("NeO4jConnectionSettings").GetValue<string>("NeoURI");
+            NeoUserName = config.GetSection("NeO4jConnectionSettings").GetValue<string>("NeoUserName");
+            NeoPassword = config.GetSection("NeO4jConnectionSettings").GetValue<string>("NeoPW");
+            NeoUri = config.GetSection("NeO4jConnectionSettings").GetValue<string>("NeoURI");
 
         }
 
