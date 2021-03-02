@@ -90,6 +90,38 @@ namespace ReadingRainbowAPI.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("RemoveBookFromLibrary/{userName}")]
+        public async Task<IActionResult> RemoveBookFromLibrary(string userName, Book book)
+        {
+            await _bookRepository.DeleteBookAsync(book);
+
+            foreach(var genre in book.Genres)
+            {
+                await _genreRepository.DeleteInGenreRelationshipAsync(genre, book, new Relationships.InGenre());
+            }
+
+            await _bookRepository.DeleteInLibraryRelationshipAsync(book, new Person() {Name = userName}, new InLibrary());
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("RemoveBookFromWishList/{userName}")]
+        public async Task<IActionResult> RemoveBookFromWishList(string userName, Book book)
+        {
+            await _bookRepository.DeleteBookAsync(book);
+
+            foreach(var genre in book.Genres)
+            {
+                await _genreRepository.DeleteInGenreRelationshipAsync(genre, book, new Relationships.InGenre());
+            }
+
+            await _bookRepository.DeleteWishListRelationshipAsync(book, new Person() {Name = userName}, new WishList());
+
+            return Ok();
+        }
+
         [HttpGet]
         [Route("Book/{id}")]
         public async Task<IActionResult> FindBookAsync(string id)

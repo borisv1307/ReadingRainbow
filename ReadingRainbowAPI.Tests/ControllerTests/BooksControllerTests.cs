@@ -500,7 +500,8 @@ namespace ReadingRainbowAPI.ControllerTests
             });
             var person = CreatePerson();
 
-            var wishListList = new List<Book>();
+            var inWishList = new List<Book>();
+
             var bookGenres = new List<Genre>();
 
 
@@ -512,7 +513,8 @@ namespace ReadingRainbowAPI.ControllerTests
                     It.IsAny<WishList>()))
                 .ReturnsAsync(true)
                 .Callback<Expression<Func<Book, bool>>, Expression<Func<Person, bool>>, WishList>(
-                    (exp1, exp2, wishList) => { wishListList.Add(newBook); }
+                    (exp1, exp2, WishList) => { inWishList.Add(newBook); }
+
                 );
 
             _bookRepository
@@ -540,7 +542,7 @@ namespace ReadingRainbowAPI.ControllerTests
                     It.IsAny<InGenre>()))
                 .ReturnsAsync(true)
                 .Callback<Expression<Func<Genre, bool>>, Expression<Func<Book, bool>>, InGenre>(
-                    (exp1, exp2, wishList) => { bookGenres.Add(genre1); }
+                    (exp1, exp2, WishList) => { bookGenres.Add(genre1); }
                 );
          
             SetupMockBookRepo(newBook);
@@ -556,11 +558,13 @@ namespace ReadingRainbowAPI.ControllerTests
             Assert.Equal(200, okResult.StatusCode);
 
             // Verify Correct functions were called / correct callbacks were performed
-            Assert.True(wishListList.Count == 0);
-            Assert.True(wishListList.Where(b=>b.Title == newBook.Title).ToList().Count == 0);
+            Assert.True(inWishList.Count != 0);
+            Assert.True(inWishList.Where(b=>b.Title == newBook.Title).ToList().Count != 0);
+
 
             // Since Book already had genres associated more should not have been added
             Assert.True(bookGenres.Count == 0);
         }
+
     }
 }
