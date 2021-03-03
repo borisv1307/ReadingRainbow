@@ -19,8 +19,7 @@ export default function UploadPic() {
     const profilePicHandle = (image) => {
         setProResults(proResults => ({
             ...proResults,
-            Portrait: image,
-            Profile: "No Data Available"
+            Portrait: image
         }));
         console.log('upload pic proresults', proResults);
         UpdateUserProfile(proResults);

@@ -18,7 +18,9 @@ import { View, AsyncStorage, ActivityIndicator} from 'react-native';
 import { AuthContext } from './components/context';
 import RootStackScreen from './screens/rootstack';
 import UploadPic from './screens/upload_pic';
+import FindFriends from './screens/find_friends';
 import * as SecureStore from 'expo-secure-store'; 
+import FriendProfile from './screens/friend_profile';
 
 const Stack = createStackNavigator();
 
@@ -117,6 +119,8 @@ if ( loginState.isLoading ) {
                         <Stack.Screen name="FriendList" component={FriendList} />
                         <Stack.Screen name="Menu" component={Menu} />
                         <Stack.Screen name="UploadPic" component={UploadPic} />
+                        <Stack.Screen name="FindFriends" component={FindFriends} />
+                        <Stack.Screen name="FriendProfile" component={FriendProfile} />
                     </Stack.Navigator>
                 )
                 :
