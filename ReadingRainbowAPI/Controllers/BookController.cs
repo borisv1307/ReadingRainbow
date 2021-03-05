@@ -94,12 +94,6 @@ namespace ReadingRainbowAPI.Controllers
         [Route("RemoveBookFromLibrary/{userName}")]
         public async Task<IActionResult> RemoveBookFromLibrary(string userName, Book book)
         {
-            await _bookRepository.DeleteBookAsync(book);
-
-            foreach(var genre in book.Genres)
-            {
-                await _genreRepository.DeleteInGenreRelationshipAsync(genre, book, new Relationships.InGenre());
-            }
 
             await _bookRepository.DeleteInLibraryRelationshipAsync(book, new Person() {Name = userName}, new InLibrary());
 
@@ -110,13 +104,7 @@ namespace ReadingRainbowAPI.Controllers
         [Route("RemoveBookFromWishList/{userName}")]
         public async Task<IActionResult> RemoveBookFromWishList(string userName, Book book)
         {
-            await _bookRepository.DeleteBookAsync(book);
-
-            foreach(var genre in book.Genres)
-            {
-                await _genreRepository.DeleteInGenreRelationshipAsync(genre, book, new Relationships.InGenre());
-            }
-
+            
             await _bookRepository.DeleteWishListRelationshipAsync(book, new Person() {Name = userName}, new WishList());
 
             return Ok();
