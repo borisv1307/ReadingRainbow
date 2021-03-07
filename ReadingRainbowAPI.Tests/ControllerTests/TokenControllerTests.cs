@@ -54,7 +54,8 @@ namespace ReadingRainbowAPI.ControllerTests
                 Portrait = "Https://PortaitLink",
                 Email = "abc@google.com",
                 HashedPassword = $"{personId}",
-                EmailConfirmed = "True"
+                EmailConfirmed = "True",
+                ChangePassword = "False"
 
             };
         }
@@ -93,6 +94,42 @@ namespace ReadingRainbowAPI.ControllerTests
         }
 
         [Fact]
+        public async void GetTokenResetPassword_Test()
+        {
+            // Arrange 
+            var tokenController = new TokenController(_config, _personRepository.Object, _emailHelper.Object, _tokenClass.Object); 
+            _newPerson.ChangePassword = "True";
+
+            // Act
+            var result = await tokenController.GetRandomToken(_newPerson.Name, _newPerson.HashedPassword);
+            var okResult = result as OkObjectResult;
+            var returnedMessage = okResult.Value as string;
+
+            // Assert
+            Assert.True(okResult != null);
+            Assert.True(returnedMessage == "User must change password");
+            Assert.Equal(200, okResult.StatusCode);
+        }
+
+        [Fact]
+        public async void GetTokenValidateEmail_Test()
+        {
+            // Arrange 
+            var tokenController = new TokenController(_config, _personRepository.Object, _emailHelper.Object, _tokenClass.Object); 
+            _newPerson.EmailConfirmed = "False";
+
+            // Act
+            var result = await tokenController.GetRandomToken(_newPerson.Name, _newPerson.HashedPassword);
+            var okResult = result as OkObjectResult;
+            var returnedMessage = okResult.Value as string;
+
+            // Assert
+            Assert.True(okResult != null);
+            Assert.True(returnedMessage == "Confirm Email Address");
+            Assert.Equal(200, okResult.StatusCode);
+        }
+
+        [Fact]
         public async void ReSendEmail_Test()
         {
             var linkString = $"Please confirm your account by clicking this link: <a href='https://localhost:5001/api/email/AddPerson'>link</a>";
@@ -112,10 +149,10 @@ namespace ReadingRainbowAPI.ControllerTests
                   .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
                   .ReturnsAsync(true);
             _emailHelper
-                    .Setup(e=>e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .Setup(e=>e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                     .ReturnsAsync(true);
             _emailHelper
-                    .Setup(e=>e.GenerateEmailLink(It.IsAny<Person>(), It.IsAny<string>()))
+                    .Setup(e=>e.ConfirmationLinkBody(It.IsAny<Person>(), It.IsAny<string>()))
                     .Returns(linkString);
             _tokenClass
                     .Setup(t=>t.CreateToken())

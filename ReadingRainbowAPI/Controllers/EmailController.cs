@@ -44,7 +44,7 @@ namespace ReadingRainbowAPI.Controllers
 
             Console.WriteLine($"User Compare Token is {user.Token} should match decoded token {decodedToken}");
 
-            if (_tokenClass.CompareToken(decodedToken, user.Token) && _tokenClass.CheckDate(user.TokenDate))
+            if (_tokenClass.CompareToken(decodedToken, user.Token) && _tokenClass.CheckTokenDate(user.TokenDate))
             {
                 user.EmailConfirmed = "True";
                 await _personRepository.UpdatePersonAsync(user);

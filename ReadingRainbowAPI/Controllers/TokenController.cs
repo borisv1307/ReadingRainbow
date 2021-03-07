@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using ReadingRainbowAPI.DAL;
 using System.Threading.Tasks;
 using ReadingRainbowAPI.Middleware;
+using Microsoft.AspNetCore.Authorization;
 using System;
 
 
@@ -11,6 +12,7 @@ namespace ReadingRainbowAPI.Controllers
 {
     
     [Route("api/token")]
+    [Authorize]
     [ApiController]
     public class TokenController : ControllerBase
     {
@@ -27,6 +29,7 @@ namespace ReadingRainbowAPI.Controllers
             _tokenClass = tokenClass;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult> GetRandomToken(string username, string password)
         {
@@ -42,6 +45,12 @@ namespace ReadingRainbowAPI.Controllers
                 return Ok("Confirm Email Address");
             }
 
+            if (person.ChangePassword.ToLower() == "true")
+            {
+                // 60 min time limit from when the email was sent
+                return Ok("User must change password");
+            }
+
             if (person.HashedPassword.Equals(password))
             {
                 var jwt = new JwtService(_config);
@@ -49,7 +58,7 @@ namespace ReadingRainbowAPI.Controllers
                 return Ok(token);
             }
 
-                return Ok();         
+            return Ok();         
         }
         
         [HttpPost]
@@ -79,8 +88,9 @@ namespace ReadingRainbowAPI.Controllers
                 Console.WriteLine($"Exception occured when generating link for email {ex}");
             }
 
-            var confirmationLink = _emailHelper.GenerateEmailLink(person, callBackUrl);       
-            bool emailResponse = await _emailHelper.SendEmail(person.Name, person.Email, confirmationLink);
+            var confirmationLink = _emailHelper.ConfirmationLinkBody(person, callBackUrl);       
+            bool emailResponse = await _emailHelper.SendEmail(person.Name, person.Email, 
+                confirmationLink, _emailHelper.ConfirmationLinkSubject());
              
             if (emailResponse)
             {

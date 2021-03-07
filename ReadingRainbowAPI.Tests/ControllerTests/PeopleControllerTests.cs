@@ -59,7 +59,7 @@ namespace ReadingRainbowAPI.ControllerTests
                 Title =$"Test Book Title {bookIdExt}",
                 PublishDate  = DateTime.Now.ToShortDateString(),
                 NumberPages  = $"{bookIdExt}",
-                Description  = "Test Book Description",
+                Description  = "Test Book Description"
             };
 
         }
@@ -76,7 +76,8 @@ namespace ReadingRainbowAPI.ControllerTests
                 Portrait = "Https://PortaitLink",
                 HashedPassword = $"{personId}",
                 Email = "k.lindseth@hotmail.com",
-                EmailConfirmed = "False"
+                EmailConfirmed = "False",
+                ChangePassword = "False"
 
             };
         }
@@ -153,10 +154,10 @@ namespace ReadingRainbowAPI.ControllerTests
                   .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
                   .ReturnsAsync(true);
             _emailHelper
-                    .Setup(e=>e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .Setup(e=>e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                     .ReturnsAsync(true);
             _emailHelper
-                    .Setup(e=>e.GenerateEmailLink(It.IsAny<Person>(), It.IsAny<string>()))
+                    .Setup(e=>e.ConfirmationLinkBody(It.IsAny<Person>(), It.IsAny<string>()))
                     .Returns(linkString);
             _tokenClass
                     .Setup(t=>t.CreateToken())
@@ -250,6 +251,77 @@ namespace ReadingRainbowAPI.ControllerTests
             Assert.True(returnedPeople.Count == 2);
             Assert.Equal(200, okResult.StatusCode);
            
+        }
+
+        [Fact]
+        public async void ChangePasswordRoute_Test()
+        {
+            // Arrange
+            var person = CreatePerson();
+            var newPassword = "changedpassword";
+                            
+            _personRepository 
+                    .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
+                    .ReturnsAsync(person);
+            _personRepository
+                  .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
+                  .ReturnsAsync(true);
+
+            _emailHelper
+                .Setup(e=>e.ChangePasswordBody(It.IsAny<Person>()))
+                .Returns("change password body of email");
+            _emailHelper
+                .Setup(e=>e.ChangePasswordSubject())
+                .Returns("change password subject of email");
+            _emailHelper
+                .Setup(e=>e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
+
+            // Act
+            var result = await personController.ChangePassword(person.Name, newPassword, person.HashedPassword);
+            var okResult = result as OkObjectResult;
+
+            // Assert
+            Assert.True(okResult != null);
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal(bool.TrueString, okResult.Value.ToString());
+        }
+
+        [Fact]
+        public async void ResetPasswordRoute_Test()
+        {
+            // Arrange
+            var person = CreatePerson();
+                            
+            _personRepository 
+                    .Setup(x => x.Single(It.IsAny<Expression<Func<Person, bool>>>()))
+                    .ReturnsAsync(person);
+            _personRepository
+                  .Setup(x => x.Update(It.IsAny<Expression<Func<Person, bool>>>(), It.IsAny<Person>()))
+                  .ReturnsAsync(true);
+
+            _emailHelper
+                .Setup(e=>e.ResetPasswordBody(It.IsAny<Person>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns("reset password body of email");
+            _emailHelper
+                .Setup(e=>e.ResetPasswordSubject())
+                .Returns("reset password subject of email");
+            _emailHelper
+                .Setup(e=>e.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+
+            var personController = new PersonController(_personRepository.Object, _mapper, _emailHelper.Object, _tokenClass.Object);
+
+            // Act
+            var result = await personController.ResetPassword(person);
+            var okResult = result as OkObjectResult;
+
+            // Assert
+            Assert.True(okResult != null);
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal(bool.TrueString, okResult.Value.ToString());
         }
 
     }
