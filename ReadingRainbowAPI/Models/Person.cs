@@ -18,7 +18,12 @@ namespace ReadingRainbowAPI.Models
         public string EmailConfirmed {get; set;}
 
         public string Token {get; set;}
+
         public string TokenDate{get; set;}
+
+        public string ChangePassword {get; set;}
+
+        public string PasswordExpiration {get; set;}
     }
 
 }

@@ -11,8 +11,13 @@ namespace ReadingRainbowAPI.Middleware
 {
     public interface IEmailHelper
     {
-        Task<bool> SendEmail(string userName, string userEmail, string confirmationLink);
-        string GenerateEmailLink(Person person, string callBackUrl);
+        Task<bool> SendEmail(string userName, string userEmail, string body, string subject);
+        string ConfirmationLinkBody(Person person, string callBackUrl);
+        string ConfirmationLinkSubject();
+        string ResetPasswordSubject();
+        string ResetPasswordBody(Person person, string passwordText, string expirateDateText);
+        string ChangePasswordSubject();
+        string ChangePasswordBody(Person person);
       
     }
 
@@ -27,7 +32,7 @@ namespace ReadingRainbowAPI.Middleware
             _emailUser = config.GetSection("Email").GetSection("User").Value;  
         }
         
-        public async Task<bool> SendEmail(string userName, string userEmail, string confirmationLink)
+        public async Task<bool> SendEmail(string userName, string userEmail, string body, string subject)
         {
             try  
             {  
@@ -37,8 +42,8 @@ namespace ReadingRainbowAPI.Middleware
                 //To Address    
                 string ToAddress = userEmail;  
                 string ToAdressTitle = userName;  
-                string Subject = "Confirm your email for access to Complete Reading Rainbow Sign up"; 
-                string BodyContent = confirmationLink;  
+                string Subject = subject; 
+                string BodyContent = body;  
   
                 //Smtp Server    
                 string SmtpServer = "smtp.gmail.com";
@@ -81,11 +86,12 @@ namespace ReadingRainbowAPI.Middleware
             {  
                 Console.WriteLine($"Exception {ex} occured when sending Email");  
                 return false;
-            }    
+            }  
+
             return true;
         }
 
-        public string GenerateEmailLink(Person person, string callBackUrl)
+        public string ConfirmationLinkBody(Person person, string callBackUrl)
         {
             if (string.IsNullOrEmpty(callBackUrl))
             {
@@ -94,7 +100,36 @@ namespace ReadingRainbowAPI.Middleware
 
             callBackUrl = callBackUrl + "/" + HttpUtility.UrlEncode(person.Token) + "/" + HttpUtility.UrlEncode(person.Name);
             
-            return ($"Please confirm your account by clicking this link: <a href='{callBackUrl}'>link</a>");
+            return ($"Please confirm your account by clicking this link: <a href='{callBackUrl}'>Email Confirmation Link</a>");
         }
-   }
+
+        public string ConfirmationLinkSubject()
+        {
+            return "Confirm your email for access to Complete Reading Rainbow Sign up";
+        }
+
+        public string ResetPasswordSubject()
+        {
+            return "Reading Rainbow Reset Password Request";
+        }
+        
+        public string ResetPasswordBody(Person person, string passwordText, string expirateDateText)
+        {
+            var resetStr = $"User's {person.Name} temporary password has been set to {passwordText}. \n" +
+                $"You have {expirateDateText} hours to log into the Reading Rainbow Application using this password. \n" +
+                "You will be required to change this password right after login.";
+            
+            return resetStr;
+        }
+
+        public string ChangePasswordSubject()
+        {
+            return "Password Change for Reading Rainbow Application";
+        }
+
+        public string ChangePasswordBody(Person person)
+        {
+            return $"User {person.Name} has just changed the password on the reading rainbow account";
+        }
+    }
 }
