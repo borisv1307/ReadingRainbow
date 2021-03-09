@@ -12,12 +12,12 @@ import WishList from "./screens/wishlist";
 import Book from "./screens/book";
 import Search from "./screens/search";
 import Settings from "./screens/settings";
-import Results from "./screens/results";
 import FriendList from "./screens/friend_list";
 import Menu from "./screens/menu";
-import { Text, View, AsyncStorage} from 'react-native';
+import { View, AsyncStorage, ActivityIndicator} from 'react-native';
 import { AuthContext } from './components/context';
 import RootStackScreen from './screens/rootstack';
+import UploadPic from './screens/upload_pic';
 import * as SecureStore from 'expo-secure-store'; 
 
 const Stack = createStackNavigator();
@@ -65,18 +65,12 @@ const App = () => {
     const [loginState, dispatch] = React.useReducer(loginReducer, initialLoginState);
 
     const authContext = React.useMemo(() => ({
-        signIn: async(foundUser) => {
+        signIn: async(userName, token) => {
             
-            const userToken = String(foundUser[0].userToken);
-            const userName = foundUser[0].username;
-            
-            try {
-              await AsyncStorage.setItem('userToken', userToken);
-            } catch(e) {
-              console.log(e);
-            }
-            
-            dispatch({ type: 'LOGIN', id: userName, token: userToken });
+            console.log(token);
+            console.log(userName);
+                     
+            dispatch({ type: 'LOGIN', id: userName, token: token });
         },
         signOut: async() => {
             try {
@@ -91,53 +85,44 @@ const App = () => {
           },
         }), []);
   
-        useEffect(() => {
-            setTimeout(async() => {
-              let userToken;
-              userToken = null;
-              try {
-                userToken = await AsyncStorage.getItem('userToken');
-              } catch(e) {
-                console.log(e);
-              }
-              dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
-            }, 1000);
-        }, []);
+    useEffect(() => {
+        SecureStore.getItemAsync('jwt').then(jwt => {
+            dispatch({type: 'RETRIEVE_TOKEN', token: jwt});
+        })
+    }, []);
 
-  if ( loginState.isLoading ) {
-    return(
-      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <Text>
-          Loading...
-        </Text>
-      </View>
+if ( loginState.isLoading ) {
+    return (
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+            <ActivityIndicator color="black"/>
+        </View>
     );
-  }
+}
 
-  return (
-    <AuthContext.Provider value={authContext}>
-        <NavigationContainer>
-            { loginState.userToken !== null ? (
-            <Stack.Navigator initialRouteName="Home">
-                <Stack.Screen name="SignIn" component={SignIn} />
-                <Stack.Screen name="Home" component={Home} />
-                <Stack.Screen name="SignUp" component={SignUp} />
-                <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-                <Stack.Screen name="Profile" component={Profile} />
-                <Stack.Screen name="Library" component={Library} />
-                <Stack.Screen name="WishList" component={WishList} />
-                <Stack.Screen name="Book" component={Book} />
-                <Stack.Screen name="Search" component={Search} />
-                <Stack.Screen name="Settings" component={Settings} />
-                <Stack.Screen name="Results" component={Results} />
-                <Stack.Screen name="FriendList" component={FriendList} />
-                <Stack.Screen name="Menu" component={Menu} />
-            </Stack.Navigator>
-            )
-        :
-            <RootStackScreen/>
-        }
-        </NavigationContainer>
+    return (
+        <AuthContext.Provider value={authContext}>
+            <NavigationContainer>
+                { (loginState.userToken) ? (
+                    <Stack.Navigator initialRouteName="Home" headerMode="screen">
+                        <Stack.Screen name="SignIn" component={SignIn} />
+                        <Stack.Screen name="Home" component={Home} />
+                        <Stack.Screen name="SignUp" component={SignUp} />
+                        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+                        <Stack.Screen name="Profile" component={Profile} />
+                        <Stack.Screen name="Library" component={Library} />
+                        <Stack.Screen name="WishList" component={WishList} />
+                        <Stack.Screen name="Book" component={Book} />
+                        <Stack.Screen name="Search" component={Search} />
+                        <Stack.Screen name="Settings" component={Settings} />
+                        <Stack.Screen name="FriendList" component={FriendList} />
+                        <Stack.Screen name="Menu" component={Menu} />
+                        <Stack.Screen name="UploadPic" component={UploadPic} />
+                    </Stack.Navigator>
+                )
+                :
+                    <RootStackScreen/>
+                }
+            </NavigationContainer>
     </AuthContext.Provider>
   );
 }

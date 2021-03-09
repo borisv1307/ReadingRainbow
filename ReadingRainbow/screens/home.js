@@ -1,27 +1,41 @@
-import React, { useEffect } from 'react';
-import { Image, View, Text, Button, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, View, Text, Button, TouchableOpacity, ScrollView, AsyncStorage, ActivityIndicator} from 'react-native';
 import { globalStyles } from '../styles/global';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../components/context';
+import { GetUserProfile } from '../api-functions/getUserProfile';
+import { GetUserLibrary } from '../api-functions/getUserLibrary';
 import * as SecureStore from 'expo-secure-store';
 
 export default function Home() {
+    const [ proResults, setProResults ] = useState({});
+    const [ libResults, setLibResults ] = useState([]);
+    const [ isLoading, setIsLoading ] = useState(true);
     const { navigate } = useNavigation();
     const { signOut } = React.useContext(AuthContext);
     async function logToken() {
         try {
             const token = await SecureStore.getItemAsync('jwt');
             console.log("At home screen token: ", token); //Remove at future time
-            // if (token) {
-            //     console.log("Token again: ", token);
-            // }
         } catch (e) {
             console.log(e);
         }
     };
+
     useEffect(() => {
-        logToken();
-    }, [])
+        AsyncStorage.getItem('username').then(user => {
+            GetUserProfile(user).then(profile => setProResults(profile));
+            GetUserLibrary(user).then(library => setLibResults(library));
+        }).then(() => {
+            if (!proResults.Profile) {
+                navigate('UploadPic');
+            } else {
+                return;
+            }
+        });
+
+    }, []);
+
     return (
         <View style={globalStyles.container}>
             <ScrollView>

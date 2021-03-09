@@ -33,7 +33,6 @@ export async function GetBooks(searchStr, startIndex = 0) {
     const baseurl = 'https://www.googleapis.com/books/v1/volumes';
     const mykey = 'AIzaSyCY-Xy_wHFKlBpZfEHI1kthE-t9KeU0LHo';
 
-    // create full request URL by joining parts of the string with the base request
     let fullurl = [baseurl, '?q=', searchStr, '&startIndex=', CheckInt(startIndex), '&key=', mykey].join('');
     
     try{
@@ -52,14 +51,14 @@ export async function GetBooks(searchStr, startIndex = 0) {
  {
   var book = {
     Index : name.id,
-    BookInformationLink: name.selfLink,
-    Title : name.volumeInfo.title,
-    Authors : name.volumeInfo.authors,
+    BookInformationLink: ReturnText(name.selfLink),
+    Title : ReturnText(name.volumeInfo.title),
+    Authors : ReturnText(name.volumeInfo.authors),
     Thumbnail : ReturnImage(name.volumeInfo.imageLinks, 'thumbnail'), 
     SmallThumbnail : ReturnImage(name.volumeInfo.imageLinks, 'smallThumbnail'), 
     PublishDate : name.volumeInfo.publishedDate,
     NumberPages : name.volumeInfo.pageCount,
-    Description : name.volumeInfo.description,
+    Description : ReturnText(name.volumeInfo.description),
     ISBN_10 : ReturnISBN(name.volumeInfo.industryIdentifiers, 'ISBN_10'), 
     ISBN_13: ReturnISBN(name.volumeInfo.industryIdentifiers, 'ISBN_13'),
     ISBN_Other: ReturnISBN(name.volumeInfo.industryIdentifiers, 'OTHER'),
@@ -69,15 +68,23 @@ export async function GetBooks(searchStr, startIndex = 0) {
     return book;
  }
 
+ function ReturnText(text) {
+   if (text == null) {
+     return 'No text found';
+   } else {
+     return text;
+   }
+ }
+
  function ReturnImage(image, type)
  {
    if (image == null)
    {
-     return "No Image Found";
+     return 'No Image Found';
    }
    else
    {
-      if (type == "smallThumbnail")
+      if (type == 'smallThumbnail')
         return image.smallThumbnail;
       else
         return image.thumbnail;
@@ -101,7 +108,7 @@ export async function GetBooks(searchStr, startIndex = 0) {
  {
    if (ISBNArray == null)
   {
-      return "No ISBN Found"
+      return 'No ISBN Found'
   }
 
   var ISBNId;

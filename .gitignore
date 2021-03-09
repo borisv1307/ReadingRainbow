@@ -1,5 +1,5 @@
 ReadingRainbow/node_modules/**/*
-.expo/*
+/ReadingRainbow/.expo/*
 npm-debug.*
 *.jks
 *.p8
@@ -11,6 +11,9 @@ web-build/
 /ReadingRainbowAPI.Tests/bin/*
 /ReadingRainbowAPI/bin/*
 /ReadingRainbowAPI/obj/*
+/ReadingRainbowAPI/appsettings.json
+/ReadingRainbowAPI/ReadingRainbowAPI.csproj
+/Neo4jDB.csv
 /.vs/*
 
 # macOS
