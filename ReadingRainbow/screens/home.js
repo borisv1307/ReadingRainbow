@@ -10,7 +10,6 @@ import * as SecureStore from 'expo-secure-store';
 export default function Home() {
     const [ proResults, setProResults ] = useState({});
     const [ libResults, setLibResults ] = useState([]);
-    const [ isLoading, setIsLoading ] = useState(true);
     const { navigate } = useNavigation();
     const { signOut } = React.useContext(AuthContext);
     async function logToken() {

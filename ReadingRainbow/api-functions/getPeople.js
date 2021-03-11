@@ -25,7 +25,6 @@ export async function GetPeople() {
 }
 
 function ReturnProfile(info) {
-    console.log('made it: ', info);
     var profile = {
         Email : CheckForNull(info.Email),
         Name : CheckForNull(info.Name),

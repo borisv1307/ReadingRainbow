@@ -8,6 +8,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 export default function FindFriends() {
     const { navigate } = useNavigation('');
     const [ people, setPeopleResults ] = useState();
+    const [ ID, setID ] = useState(0);
 
     useEffect(() => {
         GetPeople().then(r => setPeopleResults(r));
@@ -18,8 +19,16 @@ export default function FindFriends() {
             <Text style={globalStyles.titleText}>Find Friends</Text>
             {(people) ?
                 <ScrollView> 
-                    {people.map(person => 
-                        <TouchableOpacity> 
+                    {people.map((person, index) => 
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => navigate('FriendProfile', {
+                                Email: person.Email,
+                                Name: person.Name,
+                                Portrait: person.Portrait,
+                                Profile: person.Profile,
+                            })}
+                        > 
                             <Text style={globalStyles.item} key={person.Name}> {person.Name} </Text>
                         </TouchableOpacity>
                     )}
@@ -27,8 +36,6 @@ export default function FindFriends() {
             :
                 <ActivityIndicator color="black"/>
             }
-            <Button
-                title = 'AddFriend'/>
         </View>
         
     );

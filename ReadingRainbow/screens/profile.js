@@ -42,15 +42,18 @@ export default function Profile() {
                         showsHorizontalScrollIndicator={true}
                         data={libResults}
                         keyExtractor={({id}, index) => id}
-                        renderItem={({item}) => (
-                            <TouchableOpacity onPress={() => navigate('Book', {
-                                title: item.Title,
-                                author: item.Author,
-                                thumbnail: item.Thumbnail,
-                                pubDate: item.PublishedDate,
-                                pageCount: item.NumberPages,
-                                description: item.Description,
-                            })}>
+                        renderItem={(item, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                onPress={() => navigate('Book', {
+                                    title: item.Title,
+                                    author: item.Author,
+                                    thumbnail: item.Thumbnail,
+                                    pubDate: item.PublishedDate,
+                                    pageCount: item.NumberPages,
+                                    description: item.Description,
+                                })
+                            }>
                                 <Image 
                                     source={{uri: item.Thumbnail}}
                                     style={{width: 128, height: 205}}

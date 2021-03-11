@@ -4,11 +4,13 @@ import { globalStyles } from '../styles/global';
 import { GetUserProfile } from '../api-functions/getUserProfile';
 import { GetUserLibrary } from '../api-functions/getUserLibrary';
 import { useNavigation } from '@react-navigation/native';
+import { addFriendRequest } from '../api-functions/addFriendRequest';
 
-export default function FriendProfile() {
-    const { navigate } = useNavigation();
+export default function FriendProfile({route}) {
+    const { Email, Name, Portrait, Profile } = route.params;
     const [ proResults, setProResults ] = useState({});
     const [ libResults, setLibResults ] = useState([]);
+    const { navigate } = useNavigation();
     
     useEffect(() => {
         AsyncStorage.getItem('username').then(user => {
@@ -17,51 +19,29 @@ export default function FriendProfile() {
         });
     }, []);
 
+    async function FriendRequestHandler() {
+        try {
+            AsyncStorage.getItem('username').then(user => {
+                addFriendRequest(user, Name);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
     return (
         <View style={globalStyles.container}>
-            <Text style={globalStyles.titleText}>Friend Profile</Text>
-            { (proResults) ?
-                <View>
-                    <Image 
-                        source={{uri: proResults.Portrait}}
-                        style={{width: 220, height: 220}}
-                    />
-                    <Text>Email: {proResults.Email}</Text>
-                    <Button
-                        title='Change Picture'
-                        onPress={() => {navigate('UploadPic')}} />
-                </View>
-            :
-                <ActivityIndicator color="black"/>
-            }
-            <Text style={globalStyles.profileInfo}>Your Library</Text>
-            { (libResults) ? 
-                <ScrollView>
-                    <FlatList
-                        horizontal = {true}
-                        showsHorizontalScrollIndicator={true}
-                        data={libResults}
-                        keyExtractor={({id}, index) => id}
-                        renderItem={({item}) => (
-                            <TouchableOpacity onPress={() => navigate('Book', {
-                                title: item.Title,
-                                author: item.Author,
-                                thumbnail: item.Thumbnail,
-                                pubDate: item.PublishedDate,
-                                pageCount: item.NumberPages,
-                                description: item.Description,
-                            })}>
-                                <Image 
-                                    source={{uri: item.Thumbnail}}
-                                    style={{width: 128, height: 205}}
-                                />
-                            </TouchableOpacity>
-                        )}>
-                    </FlatList>
-                </ScrollView>
-                : 
-                <ActivityIndicator color="black"/>
-            }
+            <Text style={globalStyles.titleText}>{Name}'s Profile</Text>
+            <ScrollView>
+                <Image 
+                    source={{uri: Portrait}}
+                    style={{width: 220, height: 220}}/>
+                <Text>Email: {Email}</Text>
+                <Text>{Profile}</Text>
+            </ScrollView>
+            <Button
+                title = 'Request Friend'
+                onPress={() => FriendRequestHandler()}/>
         </View>
     );
 }

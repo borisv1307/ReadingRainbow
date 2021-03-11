@@ -2,26 +2,29 @@ import * as SecureStore from 'expo-secure-store';
 import ConfigurationInfo from '../config.json'; 
 
 export async function addFriendRequest(iUser, iFriend) {
+    const encodedUsername = encodeURIComponent(iUser);
+    const encodedFriend = encodeURIComponent(iFriend);
     const APIUserService = ConfigurationInfo.APIUserService;
-    const fullurl =  APIUserService + `/api/friends/RequestFriend`;
+    const fullurl =  APIUserService + `/api/friend/RequestFriend?userName=${encodedUsername}&friendName=${encodedFriend}`;
+    console.log(fullurl);
     
     try {
         return SecureStore.getItemAsync('jwt').then(async (token) => {
             const response = await fetch(fullurl,
             {
                 method: 'POST',
-                headers: {
-                                
+                headers: {      
                     'Authorization': 'Bearer ' + token,
                     'Content-Type': 'application/json; charset=utf-8',
-                },
-                body: JSON.stringify(iUser, iFriend)
+                }
             });
             const request_sent = await response.json();
+            console.log('Request Sent: ', request_sent);
             return request_sent;
         });
     } catch(e) {
         console.log(e);
+        throw error;
     } finally {
         console.log('All tasks complete');
     }
