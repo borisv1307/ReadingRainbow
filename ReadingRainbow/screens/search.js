@@ -21,15 +21,18 @@ export default function Search() {
                 title='Search!'
                 onPress={() => GetBooks(text).then(r=>setResults(r)) } />
             <ScrollView>
-                {results.map(book => 
-                    <TouchableOpacity onPress={() => navigate('Book', {
-                        title: book.Title,
-                        author: book.Author,
-                        thumbnail: book.Thumbnail,
-                        pubDate: book.PublishedDate,
-                        pageCount: book.NumberPages,
-                        description: book.Description,
-                    })}>
+                {results.map((book, index) => 
+                    <TouchableOpacity
+                        key={index} 
+                        onPress={() => navigate('Book', {
+                            title: book.Title,
+                            author: book.Author,
+                            thumbnail: book.Thumbnail,
+                            pubDate: book.PublishedDate,
+                            pageCount: book.NumberPages,
+                            description: book.Description,
+                        })}
+                    >
                         <Text style={globalStyles.item} key={book.Index}> {book.Title} </Text>
                     </TouchableOpacity>
                 )}   
