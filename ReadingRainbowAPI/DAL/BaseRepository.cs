@@ -193,6 +193,93 @@ namespace ReadingRainbowAPI.DAL
 
             return true;
         }
+        
+        public virtual async Task<IEnumerable<PopularityResult>> GetPopularWishList()
+        {
+            return await _neoContext.Cypher
+            .Match("(person:Person)-[r:WISH_LISTS]->(book:Book)")
+            .With("book, COUNT(r) AS popularity")
+            .Return((book, popularity) => new PopularityResult
+            {
+                Book = book.As<Book>(),
+                Popularity = popularity.As<int>()
+            })
+            .OrderByDescending(nameof(PopularityResult.Popularity))
+            .Limit(10)
+            .ResultsAsync;
+        }
 
+        public virtual async Task<IEnumerable<PopularityResult>> GetPopularLibrary()
+        {
+            return await _neoContext.Cypher
+            .Match("(person:Person)-[r:IN_LIBRARY]->(book:Book)")
+            .With("book, COUNT(r) AS popularity")
+            .Return((book, popularity) => new PopularityResult
+            {
+                Book = book.As<Book>(),
+                Popularity = popularity.As<int>()
+            })
+            .OrderByDescending(nameof(PopularityResult.Popularity))
+            .Limit(10)
+            .ResultsAsync;
+        }
+
+        public virtual async Task<IEnumerable<JaccardRec>> GetJaccardLibrary(Expression<Func<Person, bool>> query)
+        {
+            string name1 = query.Parameters[0].Name;
+
+            return await _neoContext.Cypher
+            .OptionalMatch("(p1:Person)-[IN_LIBRARY]->(b:Book)<-[IN_LIBRARY]-(p2:Person)")
+            .Where((Person p1) => p1.Name == "+ name1 +")
+            .With("p1, p2, COUNT(b) AS intersection, COLLECT(b) AS i")
+            .Match("(p1)-[IN_LIBRARY]->(b1:Book)")
+            .With("p1, p2, intersection, i, COLLECT(b1) AS w1")
+            .Match("(p2)-[:IN_LIBRARY]->(b2:Book)")
+            .With("p1, p2, intersection, i, w1, COLLECT(b2) AS w2")
+            .With("p1, p2, intersection, w1, w2")
+            .With("p1, p2, intersection, [y IN w2 WHERE NOT y IN w1] AS unique, w1+[x IN w2 WHERE NOT x IN w1] AS union, w1, w2")
+            .Match("(p1)-[:WISH_LISTS]->(b3:Book)")
+            .With("p1, p2, intersection, unique, union, w1, w2, COLLECT(b3) AS l1")
+            .With("p1, p2, intersection, unique, union, w1, w2, [z IN unique WHERE NOT z in l1] AS bookList")
+            .With("p1, p2, intersection, unique, union, w1, w2, l1, bookList, ((1.0*intersection/SIZE(union))) AS jaccardIndex")
+            .Where("jaccard > 0.2")
+            .Return((jaccardIndex, bookList) => new JaccardRec
+            {
+                JaccardIndex = jaccardIndex.As<double>(),
+                BookList = bookList.As<BookList>()
+            })
+            .OrderByDescending(nameof(JaccardRec.JaccardIndex))
+            .Limit(10)
+            .ResultsAsync;
+        }
+        
+        public virtual async Task<IEnumerable<JaccardRec>> GetJaccardWishList(Expression<Func<Person, bool>> query)
+        {
+            string name1 = query.Parameters[0].Name;
+
+            return await _neoContext.Cypher
+            .OptionalMatch("(p1:Person)-[WISH_LISTS]->(b:Book)<-[WISH_LISTS]-(p2:Person)")
+            .Where((Person p1) => p1.Name == "+ name1 +")
+            .With("p1, p2, COUNT(b) AS intersection, COLLECT(b) AS i")
+            .Match("(p1)-[WISH_LISTS]->(b1:Book)")
+            .With("p1, p2, intersection, i, COLLECT(b1) AS w1")
+            .Match("(p2)-[:WISH_LISTS]->(b2:Book)")
+            .With("p1, p2, intersection, i, w1, COLLECT(b2) AS w2")
+            .With("p1, p2, intersection, w1, w2")
+            .With("p1, p2, intersection, [y IN w2 WHERE NOT y IN w1] AS unique, w1+[x IN w2 WHERE NOT x IN w1] AS union, w1, w2")
+            .Match("(p1)-[:IN_LIBRARY]->(b3:Book)")
+            .With("p1, p2, intersection, unique, union, w1, w2, COLLECT(b3) AS l1")
+            .With("p1, p2, intersection, unique, union, w1, w2, [z IN unique WHERE NOT z in l1] AS bookList")
+            .With("p1, p2, intersection, unique, union, w1, w2, l1, bookList, ((1.0*intersection/SIZE(union))) AS jaccardIndex")
+            .Where("jaccard > 0.2")
+            .Return((jaccardIndex, bookList) => new JaccardRec
+            {
+                JaccardIndex = jaccardIndex.As<double>(),
+                BookList = bookList.As<BookList>()
+            })
+            .OrderByDescending(nameof(JaccardRec.JaccardIndex))
+            .Limit(10)
+            .ResultsAsync;
+        }
     }
 }

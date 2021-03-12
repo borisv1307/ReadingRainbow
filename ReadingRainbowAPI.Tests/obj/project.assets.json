@@ -7551,23 +7551,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\klind\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\Mendy Liang\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
+      "projectUniqueName": "c:\\Users\\Mendy Liang\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
       "projectName": "ReadingRainbowAPI.Tests",
-      "projectPath": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
-      "packagesPath": "C:\\Users\\klind\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI.Tests\\obj\\",
+      "projectPath": "c:\\Users\\Mendy Liang\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI.Tests\\ReadingRainbowAPI.Tests.csproj",
+      "packagesPath": "C:\\Users\\Mendy Liang\\.nuget\\packages\\",
+      "outputPath": "c:\\Users\\Mendy Liang\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI.Tests\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\klind\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Mendy Liang\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -7579,9 +7575,10 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj": {
-              "projectPath": "c:\\Users\\klind\\SE691\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj"
+            "c:\\Users\\Mendy Liang\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj": {
+              "projectPath": "c:\\Users\\Mendy Liang\\source\\repos\\ReadingRainbow\\ReadingRainbowAPI\\ReadingRainbowAPI.csproj"
             }
           }
         }
@@ -7594,6 +7591,7 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "dependencies": {
           "AutoMapper": {
             "target": "Package",
@@ -7647,7 +7645,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.403\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }
