@@ -34,7 +34,7 @@ namespace ReadingRainbowAPI
 
             var neoCreds = new NeoCredentials(config);
 
-           services.AddScoped<INeo4jDBContext, Neo4jDBContext>(n=>new Neo4jDBContext(neoCreds.NeoUri, neoCreds.NeoUserName, neoCreds.NeoPassword));
+           services.AddSingleton<INeo4jDBContext, Neo4jDBContext>(n=>new Neo4jDBContext(neoCreds.NeoUri, neoCreds.NeoUserName, neoCreds.NeoPassword));
            services.AddAuthorization();
 
             // Auto Mapper Configurations
@@ -57,9 +57,11 @@ namespace ReadingRainbowAPI
             });
 
             services.AddScoped<IEmailHelper, EmailHelper>(e=>new EmailHelper(config));
+            services.AddScoped<ITokenClass, TokenClass>(t=>new TokenClass(config));
             services.AddScoped<BookRepository>(); 
             services.AddScoped<PersonRepository>(); 
             services.AddScoped<GenreRepository>(); 
+            services.AddScoped<FriendRepository>(); 
 
             services.AddTokenAuthentication(Configuration);
             services.AddMvcCore();

@@ -2,6 +2,8 @@ using ReadingRainbowAPI.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using ReadingRainbowAPI.Relationships;
+using System.Linq.Expressions;
+using System;
 
 namespace ReadingRainbowAPI.DAL
 {
@@ -71,20 +73,10 @@ namespace ReadingRainbowAPI.DAL
         }
 
 #region FriendsWith
-        public async Task CreateFriendRelationshipAsync(Person person1, Person person2, FriendsWith friendsWith)
+        public async Task CreateFriendRelationshipAsync(Person person, Person friend, FriendsWith friendsWith)
         {
-            await this.Relate<Person, FriendsWith>(p1=>p1.Name == person1.Name, p2=>p2.Name == person2.Name, friendsWith);
-        }
-
-        public async Task<IEnumerable<Person>> GetFriendsWithRelationshipAsync(Person person, FriendsWith friendsWith)
-        {
-            return await this.GetAllRelated(p=>p.Name == person.Name, new Person(), friendsWith);
-        }
-
-        
-        public async Task DeleteFriendsWithRelationshipAsync(Person person1, Person person2, FriendsWith friendsWith)
-        {
-            await this.DeleteRelationship<Person, FriendsWith>(p1=>p1.Name == person1.Name, p2=>p2.Name == person2.Name, friendsWith);
+            // Creates relationship person1 -> person2
+            await this.Relate<Person, FriendsWith>(p1=>p1.Name == person.Name, p2=>p2.Name == friend.Name, friendsWith);
         }
 
 #endregion FriendsWith

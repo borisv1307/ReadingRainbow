@@ -10,7 +10,6 @@ import * as SecureStore from 'expo-secure-store';
 export default function Home() {
     const [ proResults, setProResults ] = useState({});
     const [ libResults, setLibResults ] = useState([]);
-    const [ isLoading, setIsLoading ] = useState(true);
     const { navigate } = useNavigation();
     const { signOut } = React.useContext(AuthContext);
     async function logToken() {
@@ -21,26 +20,35 @@ export default function Home() {
             console.log(e);
         }
     };
-    // useEffect(() => {
-    //     AsyncStorage.getItem('username').then(user=>{
-    //         GetUserProfile(user).then(profile => {
-    //             setProResults(profile);
-    //             console.log(proResults);
-    //         });
-    //         GetUserLibrary(user).then(library => {
-    //             setLibResults(library);
-    //             console.log(libResults);
-    //         });
-    //     } )
-    // }, [])
+
+    useEffect(() => {
+        AsyncStorage.getItem('username').then(user => {
+            GetUserProfile(user).then(profile => setProResults(profile));
+            GetUserLibrary(user).then(library => setLibResults(library));
+        });
+
+    }, []);
+
     return (
         <View style={globalStyles.container}>
             <ScrollView>
                 <Text style={globalStyles.titleText}>Welcome, Paige!</Text>
+                { (!proResults.Portrait) ?
+                    <View>
+                        <Text>You're profile is incomplete!</Text>
+                        <Button
+                            title="Upload Profile Picture"
+                            color="red"
+                            onPress={() => {navigate('UploadPic')}}/>
+                    </View>
+                :
+                    null
+                }
                 <Button title="Find Books" onPress={() => navigate('Search')} />
                 <Button title="Friends" onPress={() => navigate('FriendList')} />
                 <Button title="View My Profile" onPress={() => navigate('Profile')} />
                 <Button title="Log token" onPress={() => logToken()} />
+                <Button title="Find Friends" onPress={() => navigate('FindFriends')}/>
                 <View>
                     <TouchableOpacity style={globalStyles.smallButton}>
                         <Text>+</Text>

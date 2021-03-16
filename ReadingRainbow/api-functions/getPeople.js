@@ -1,23 +1,21 @@
 import * as SecureStore from 'expo-secure-store';
 import ConfigurationInfo from '../config.json'; 
 
-export async function GetUserProfile(iUsername) {
-    const encodedUsername = encodeURIComponent(iUsername);
+export async function GetPeople() {
     const APIUserService = ConfigurationInfo.APIUserService;
-    const fullurl =  APIUserService + `/api/person/Person/${encodedUsername}`;
+    const fullurl =  APIUserService + `/api/person/People`;
 
     try {
         return SecureStore.getItemAsync('jwt').then(async (token) => {
             const response = await fetch(fullurl,
             {
-                headers: {
-                                
+                headers: {          
                     'Authorization': 'Bearer ' + token,
                     'Content-Type': 'application/json; charset=utf-8',
                 },
             });
-            const profile = await response.json();
-            return ReturnProfile(profile);
+            const people = await response.json();
+            return people.map(person => ReturnProfile(person));
         });
     } catch(e) {
         console.log(e);
@@ -27,19 +25,18 @@ export async function GetUserProfile(iUsername) {
 }
 
 function ReturnProfile(info) {
-    console.log(info);
     var profile = {
         Email : CheckForNull(info.Email),
         Name : CheckForNull(info.Name),
         Portrait : CheckForNull(info.Portrait),
         Profile : CheckForNull(info.Profile),
     }
-        return profile;
+    return profile;
 }
 
 function CheckForNull(field) {
     if (field == null) {
-      return 'No data found';
+      return 'No Data Available';
     } else {
       return field;
     }

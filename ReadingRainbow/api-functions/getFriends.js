@@ -1,10 +1,10 @@
 import * as SecureStore from 'expo-secure-store';
 import ConfigurationInfo from '../config.json'; 
 
-export async function GetUserProfile(iUsername) {
+export async function GetFriends(iUsername) {
     const encodedUsername = encodeURIComponent(iUsername);
     const APIUserService = ConfigurationInfo.APIUserService;
-    const fullurl =  APIUserService + `/api/person/Person/${encodedUsername}`;
+    const fullurl =  APIUserService + `/api/friends/GetFriends/${encodedUsername}`;
 
     try {
         return SecureStore.getItemAsync('jwt').then(async (token) => {
@@ -16,8 +16,8 @@ export async function GetUserProfile(iUsername) {
                     'Content-Type': 'application/json; charset=utf-8',
                 },
             });
-            const profile = await response.json();
-            return ReturnProfile(profile);
+            const friends = await response.json();
+            return friends;
         });
     } catch(e) {
         console.log(e);
@@ -26,21 +26,21 @@ export async function GetUserProfile(iUsername) {
     }
 }
 
-function ReturnProfile(info) {
-    console.log(info);
-    var profile = {
-        Email : CheckForNull(info.Email),
-        Name : CheckForNull(info.Name),
-        Portrait : CheckForNull(info.Portrait),
-        Profile : CheckForNull(info.Profile),
-    }
-        return profile;
-}
+// function ReturnProfile(info) {
+//     console.log(info);
+//     var profile = {
+//         Email : CheckForNull(info.Email),
+//         Name : CheckForNull(info.Name),
+//         Portrait : CheckForNull(info.Portrait),
+//         Profile : CheckForNull(info.Profile),
+//     }
+//         return profile;
+// }
 
-function CheckForNull(field) {
-    if (field == null) {
-      return 'No data found';
-    } else {
-      return field;
-    }
-}
+// function CheckForNull(field) {
+//     if (field == null) {
+//       return 'No data found';
+//     } else {
+//       return field;
+//     }
+// }

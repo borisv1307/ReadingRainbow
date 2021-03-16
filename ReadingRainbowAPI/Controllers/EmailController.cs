@@ -4,8 +4,10 @@ using ReadingRainbowAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using ReadingRainbowAPI.DAL;
-using System;
+using System.Net;
 using ReadingRainbowAPI.Middleware;
+using System;
+using System.Web;
  
 namespace ReadingRainbowAPI.Controllers
 {
@@ -15,21 +17,34 @@ namespace ReadingRainbowAPI.Controllers
     public class EmailController : Controller
     {
         private readonly PersonRepository _personRepository;
+        private readonly ITokenClass _tokenClass;
 
-        public EmailController(PersonRepository personRepository)
+        public EmailController(PersonRepository personRepository, ITokenClass tokenClass)
         {
             _personRepository = personRepository;
+            _tokenClass = tokenClass;
         }
  
         [HttpGet]
         [Route("AddPerson/{token}/{name}")]
         public async Task<IActionResult> ConfirmEmail(string token, string name)
         {
-            var user = await _personRepository.GetPersonAsync(name);
+
+            var decodedUserName = HttpUtility.UrlDecode(name);
+            Console.WriteLine($"user name encoded: {name}, user name decoded {decodedUserName}");
+            
+            var user = await _personRepository.GetPersonAsync(decodedUserName);
             if (user == null)
                 return View("~/Views/Error.cshtml");
 
-            if (TokenClass.CompareToken(token, user.Token))
+
+            Console.WriteLine($"User Compare Token is {user.Token} should match {token}");
+
+            var decodedToken = HttpUtility.UrlDecode(token);
+
+            Console.WriteLine($"User Compare Token is {user.Token} should match decoded token {decodedToken}");
+
+            if (_tokenClass.CompareToken(decodedToken, user.Token) && _tokenClass.CheckTokenDate(user.TokenDate))
             {
                 user.EmailConfirmed = "True";
                 await _personRepository.UpdatePersonAsync(user);
